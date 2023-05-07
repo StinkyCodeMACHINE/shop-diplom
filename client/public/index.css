@@ -1,0 +1,233 @@
+* {
+  margin: 0;
+  padding: 0;
+  outline: none;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #f3f3f3;
+}
+
+.navbar {
+  height: 50px;
+  width: 100%;
+  background-color: #c4c4c4;
+  font-family: "Roboto";
+  font-weight: 400;
+  font-size: 18px;
+  display: flex;
+  padding: 15px 61px;
+  user-select: none;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:visited {
+  color: black;
+}
+
+.navbar-options {
+  margin-left: auto;
+  display: flex;
+  align-content: center;
+  justify-content: space-around;
+  cursor: pointer;
+}
+
+.login-form-container {
+  display: grid;
+  place-items: center;
+  height: 90vh;
+}
+
+.login-form {
+  background-color: #c4c4c4;
+  width: 560px;
+  padding: 20px 50px;
+  text-align: center;
+}
+
+.login-form > input {
+  width: 100%;
+  display: block;
+  color: black;
+  padding-left: 1rem;
+  background-color: transparent;
+  margin-bottom: 10px;
+}
+
+.login-form > input::placeholder {
+  color: black;
+  opacity: 1;
+}
+
+.login-form-options {
+  display: flex;
+}
+
+.login-form-options > button {
+  margin-left: auto;
+}
+
+.shop-container {
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+  padding: 60px 35px 0 35px;
+}
+
+.types {
+  width: 200px;
+  height: 254px;
+  background: #c4c4c4;
+}
+
+.device-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  row-gap: 20px;
+}
+
+.device-card {
+  width: 150px;
+}
+
+.device-image {
+  width: 150px;
+  height: 150px;
+}
+
+.type-and-rating {
+  display: flex;
+}
+
+.type-brand {
+  color: #817d7d;
+}
+
+.rating {
+  margin-left: auto;
+  width: 30%;
+}
+
+.types > div,
+.brands > div {
+  cursor: pointer;
+}
+
+.brands {
+  display: flex;
+  column-gap: 10px;
+}
+
+.device-page-main-container {
+  padding: 35px;
+}
+
+.device-page-top-container {
+  display: flex;
+  text-align: center;
+  justify-content: space-around;
+}
+
+.device-page-img {
+  width: 300px;
+}
+
+.device-page-rating {
+  background-image: url("/assets/gigastar.svg");
+  width: 300px;
+  height: 300px;
+  background-repeat: no-repeat;
+  display: grid;
+  place-items: center;
+  background-position: center;
+  background-size: contain;
+}
+
+.device-page-add-to-card-container {
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  padding: 23px 50px;
+  justify-content: space-between;
+  border: 6px solid gray;
+}
+
+.device-page-stat {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 23px;
+
+  color: #000000;
+}
+
+.admin-page-container {
+  padding: 69px 196px;
+}
+
+.admin-page-container > button {
+  display: block;
+  height: 64px;
+  background: #c4c4c4;
+  width: 331px;
+  margin: 24px;
+}
+
+.modal-container {
+  background-color: rgba(0, 0, 0, 0.7);
+  width: 100%;
+  height: calc(100vh - 50px);
+  position: absolute;
+  z-index: 999;
+  display: grid;
+  place-items: center;
+}
+
+.modal-inner-container {
+  width: 500px;
+  height: 300px;
+  background-color: #f3f3f3;
+  display: grid;
+  place-items: center;
+}
+
+.modal-inner-container select,
+input {
+  display: block;
+}
+
+.modal-stats {
+  display: flex;
+  column-gap: 8px;
+  margin: 0.5rem 0;
+}
+
+.modal-stats > input::placeholder {
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.pagination {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.page-number {
+  width: 20px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  color: blue;
+  user-select: none;
+  margin-left:-1px;
+  border: 1px solid gray;
+  cursor: pointer;
+}

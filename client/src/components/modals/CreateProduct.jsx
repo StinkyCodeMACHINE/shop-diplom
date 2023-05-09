@@ -1,16 +1,16 @@
-import { observer } from "mobx-react-lite";
 import react, { useContext, useState } from "react";
-import { Context } from "../../index.jsx";
-import { createDevice } from "../../API/deviceAPI";
+import { Context } from "../../App";
+import { createProduct } from "../../API/productAPI";
 
-export default observer(function CreateDevice({ isShown, hide }) {
-  const { device } = useContext(Context);
+export default function CreateProduct({ isShown, hide }) {
+  const { product } = useContext(Context);
+
   const [inputValues, setInputValues] = useState({
     name: "",
     price: 0,
     file: null,
-    brand: "",
-    type: "",
+    brand: product.brands[0].name,
+    type: product.types[0].name,
   });
   const [info, setInfo] = useState([]);
 
@@ -46,7 +46,7 @@ export default observer(function CreateDevice({ isShown, hide }) {
     }));
   }
 
-  function addDeviceHandler(e) {
+  async function addProductHandler(e) {
     e.preventDefault();
     const formData = new FormData();
     formData.append("name", inputValues.name);
@@ -54,23 +54,28 @@ export default observer(function CreateDevice({ isShown, hide }) {
     formData.append("img", inputValues.file);
     formData.append(
       "brandId",
-      device.brands.find((brand) => brand.name === inputValues.brand).id
+      product.brands.find((brand) => brand.name === inputValues.brand).id
     );
     formData.append(
       "typeId",
-      device.types.find((type) => type.name === inputValues.type).id
+      product.types.find((type) => type.name === inputValues.type).id
     );
-    // formData.append('brandId', device.selectedBrand.id)
-    // formData.append('typeId', device.selectedType.id)
     formData.append("info", JSON.stringify(info));
-    createDevice(formData).then((data) => hide("device"));
+    await createProduct(formData);
+    setInputValues({
+      name: "",
+      price: 0,
+      file: null,
+      brand: product.brands[0].name,
+      type: product.types[0].name,
+    });
+    
+    setInfo([])
   }
-
-  console.log(inputValues);
 
   return (
     <>
-      {isShown.device && (
+      {isShown.product && (
         <div className="modal-container">
           <div className="modal-inner-container">
             <form>
@@ -80,13 +85,9 @@ export default observer(function CreateDevice({ isShown, hide }) {
                 value={inputValues.type}
                 onChange={optionChangeHandler}
               >
-                {device.types.map((type) => {
+                {product.types.map((type) => {
                   return (
-                    <option
-                      onClick={() => device.setSelectedType(type)}
-                      key={type.id}
-                      value={type.name}
-                    >
+                    <option key={type.id} value={type.name}>
                       {type.name}
                     </option>
                   );
@@ -97,13 +98,9 @@ export default observer(function CreateDevice({ isShown, hide }) {
                 value={inputValues.brand}
                 onChange={optionChangeHandler}
               >
-                {device.brands.map((brand) => {
+                {product.brands.map((brand) => {
                   return (
-                    <option
-                      onClick={() => device.setSelectedBrand(brand)}
-                      key={brand.id}
-                      value={brand.name}
-                    >
+                    <option key={brand.id} value={brand.name}>
                       {brand.name}
                     </option>
                   );
@@ -132,7 +129,6 @@ export default observer(function CreateDevice({ isShown, hide }) {
                 placeholder="Введите стоимость устройства"
               />
               <input onChange={selectFile} type="file" />
-              <button onClick={addStatHandler}>Добавить новое свойство</button>
               {info.map((elem) => {
                 return (
                   <div className="modal-stats" key={elem.number}>
@@ -164,9 +160,10 @@ export default observer(function CreateDevice({ isShown, hide }) {
                   </div>
                 );
               })}
+              <button onClick={addStatHandler}>Добавить новое свойство</button>;
               <div>
-                <button onClick={() => hide("device")}>Закрыть</button>
-                <button onClick={addDeviceHandler}>Добавить</button>
+                <button onClick={() => hide("product")}>Закрыть</button>
+                <button onClick={addProductHandler}>Добавить</button>
               </div>
             </form>
           </div>
@@ -174,4 +171,4 @@ export default observer(function CreateDevice({ isShown, hide }) {
       )}
     </>
   );
-});
+}

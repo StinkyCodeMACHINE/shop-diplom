@@ -1,12 +1,12 @@
 import Admin from "../pages/Admin";
 import Auth from "../pages/Auth";
 import Basket from "../pages/Basket";
-import DevicePage from "../pages/DevicePage";
+import ProductPage from "../pages/ProductPage";
 import Shop from "../pages/Shop";
 import {
   ADMIN_ROUTE,
   BASKET_ROUTE,
-  DEVICE_ROUTE,
+  PRODUCT_ROUTE,
   LOGIN_ROUTE,
   REGISTRATION_ROUTE,
   SHOP_ROUTE,
@@ -37,7 +37,7 @@ export const publicRoutes = [
     element: <Auth />,
   },
   {
-    path: DEVICE_ROUTE + "/:id",
-    element: <DevicePage />,
+    path: PRODUCT_ROUTE + "/:id",
+    element: <ProductPage />,
   },
 ];

@@ -1,22 +1,22 @@
-const sequelize = require("./db");
+const db = require("./db");
 const { DataTypes } = require("sequelize");
 
-const user = sequelize.define("user", {
+const user = db.define("user", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   email: { type: DataTypes.STRING, unique: true },
   password: { type: DataTypes.STRING },
   role: { type: DataTypes.STRING, defaultValue: "USER" },
 });
 
-const basket = sequelize.define("basket", {
+const basket = db.define("basket", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
 });
 
-const basketDevice = sequelize.define("basket_device", {
+const basketProduct = db.define("basket_product", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
 });
 
-const device = sequelize.define("device", {
+const product = db.define("product", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   name: { type: DataTypes.STRING, unique: true, allowNull: false },
   price: { type: DataTypes.INTEGER, allowNull: false },
@@ -24,28 +24,28 @@ const device = sequelize.define("device", {
   img: { type: DataTypes.STRING, allowNull: false },
 });
 
-const type = sequelize.define("type", {
+const type = db.define("type", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   name: { type: DataTypes.STRING, unique: true, allowNull: false },
 });
 
-const brand = sequelize.define("brand", {
+const brand = db.define("brand", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   name: { type: DataTypes.STRING, unique: true, allowNull: false },
 });
 
-const rating = sequelize.define("rating", {
+const rating = db.define("rating", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   rating: { type: DataTypes.STRING, allowNull: false },
 });
 
-const deviceInfo = sequelize.define("device_info", {
+const productInfo = db.define("product_info", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   title: { type: DataTypes.STRING, allowNull: false },
   description: { type: DataTypes.STRING, allowNull: false },
 });
 
-const typeBrand = sequelize.define("type_brand", {
+const typeBrand = db.define("type_brand", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
 });
 
@@ -55,23 +55,23 @@ basket.belongsTo(user);
 user.hasMany(rating);
 rating.belongsTo(user);
 
-basket.hasMany(basketDevice);
-basketDevice.belongsTo(basket);
+basket.hasMany(basketProduct);
+basketProduct.belongsTo(basket);
 
-device.hasMany(basketDevice);
-basketDevice.belongsTo(device);
+product.hasMany(basketProduct);
+basketProduct.belongsTo(product);
 
-device.hasMany(deviceInfo, {as: 'info'});
-deviceInfo.belongsTo(device);
+product.hasMany(productInfo, { as: "info" });
+productInfo.belongsTo(product);
 
-device.hasMany(rating);
-rating.belongsTo(device);
+product.hasMany(rating);
+rating.belongsTo(product);
 
-brand.hasMany(device);
-device.belongsTo(brand);
+brand.hasMany(product);
+product.belongsTo(brand);
 
-type.hasMany(device);
-device.belongsTo(type);
+type.hasMany(product);
+product.belongsTo(type);
 
 type.belongsToMany(brand, { through: typeBrand });
 brand.belongsToMany(type, { through: typeBrand });
@@ -79,11 +79,11 @@ brand.belongsToMany(type, { through: typeBrand });
 module.exports = {
   user,
   basket,
-  basketDevice,
-  device,
+  basketProduct,
+  product,
   type,
   brand,
   rating,
   typeBrand,
-  deviceInfo,
+  productInfo,
 };

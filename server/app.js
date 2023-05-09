@@ -12,7 +12,7 @@ const fileUpload = require('express-fileupload')
 const port = process.env.PORT || 5500;
 
 const brandRouter = require("./routes/brandRouter");
-const deviceRouter = require("./routes/deviceRouter");
+const productRouter = require("./routes/productRouter");
 const typeRouter = require("./routes/typeRouter");
 const userRouter = require("./routes/userRouter");
 
@@ -30,7 +30,7 @@ app.use(fileUpload({}))
 app.use("/api/user", userRouter);
 app.use("/api/type", typeRouter);
 app.use("/api/brand", brandRouter);
-app.use("/api/device", deviceRouter);
+app.use("/api/product", productRouter);
 
 // Обработка ошибок, последний middleware
 app.use(errorHandler)

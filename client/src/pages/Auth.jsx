@@ -1,13 +1,12 @@
 import react, { useContext, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Context } from "..";
+import { Context } from "../App";
 import { login, registration } from "../API/userAPI";
 import { LOGIN_ROUTE, REGISTRATION_ROUTE, SHOP_ROUTE } from "../utils/consts";
-import {observer} from 'mobx-react-lite'
 
-export default observer(function Auth() {
-  const {user} = useContext(Context)
-  const navigate = useNavigate()
+export default function Auth() {
+  const { setUser } = useContext(Context);
+  const navigate = useNavigate();
   const location = useLocation();
   const isLogin = location.pathname === LOGIN_ROUTE;
   const [inputValues, setInputValues] = useState({ email: "", password: "" });
@@ -15,17 +14,15 @@ export default observer(function Auth() {
   const clickHandler = async (e) => {
     try {
       e.preventDefault();
-      let data
+      let data;
       if (isLogin) {
         data = await login(inputValues.email, inputValues.password);
       } else {
         data = await registration(inputValues.email, inputValues.password);
       }
-      user.setUser(data)
-      user.setIsAuth(true)
-      navigate(SHOP_ROUTE)
-    }
-    catch (err) {
+      setUser({ user: data, isAuth: true });
+      navigate(SHOP_ROUTE);
+    } catch (err) {
       console.log(err.response.data.message);
       // alert() //заменить на что-то покруче
     }
@@ -76,4 +73,4 @@ export default observer(function Auth() {
       </form>
     </div>
   );
-})
+};

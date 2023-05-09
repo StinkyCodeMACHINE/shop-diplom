@@ -20,18 +20,18 @@ export const getBrands = async () => {
   return data;
 };
 
-export const createDevice = async (device) => {
-  const { data } = await $authHost.post("/api/device", device);
+export const createProduct = async (device) => {
+  const { data } = await $authHost.post("/api/product", device);
   return data;
 };
 
-export const getDevices = async (typeId, brandId, page, limit) => {
-  const { data } = await $host.get("/api/device", {params: {typeId, brandId, page, limit}});
+export const getProducts = async (typeId, brandId, page, limit) => {
+  const { data } = await $host.get("/api/product", {params: {typeId, brandId, page, limit}});
   return data;
 };
 
-export const getOneDevice = async (id) => {
-  const { data } = await $host.get(`/api/device/${id}`);
+export const getOneProduct = async (id) => {
+  const { data } = await $host.get(`/api/product/${id}`);
   return data;
 };
 

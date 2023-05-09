@@ -84,17 +84,17 @@ a:visited {
   background: #c4c4c4;
 }
 
-.device-cards {
+.product-cards {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   row-gap: 20px;
 }
 
-.device-card {
+.product-card {
   width: 150px;
 }
 
-.device-image {
+.product-image {
   width: 150px;
   height: 150px;
 }
@@ -122,21 +122,21 @@ a:visited {
   column-gap: 10px;
 }
 
-.device-page-main-container {
+.product-page-main-container {
   padding: 35px;
 }
 
-.device-page-top-container {
+.product-page-top-container {
   display: flex;
   text-align: center;
   justify-content: space-around;
 }
 
-.device-page-img {
+.product-page-img {
   width: 300px;
 }
 
-.device-page-rating {
+.product-page-rating {
   background-image: url("/assets/gigastar.svg");
   width: 300px;
   height: 300px;
@@ -147,7 +147,7 @@ a:visited {
   background-size: contain;
 }
 
-.device-page-add-to-card-container {
+.product-page-add-to-card-container {
   height: 300px;
   display: flex;
   flex-direction: column;
@@ -156,7 +156,7 @@ a:visited {
   border: 6px solid gray;
 }
 
-.device-page-stat {
+.product-page-stat {
   height: 44px;
   display: flex;
   align-items: center;

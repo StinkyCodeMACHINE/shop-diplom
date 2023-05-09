@@ -1,6 +1,6 @@
 const uuid = require("uuid"); // генерирует случайные id
 const path = require("path");
-const { device, deviceInfo } = require("../db/models");
+const { product, productInfo } = require("../db/models");
 
 async function create(req, res, next) {
   try {
@@ -9,7 +9,7 @@ async function create(req, res, next) {
     let fileName = uuid.v4() + ".jpg";
     img.mv(path.resolve(__dirname, "..", "static", "product-images", fileName));
 
-    const deviceElem = await device.create({
+    const productElem = await product.create({
       name,
       price,
       brandId,
@@ -21,15 +21,15 @@ async function create(req, res, next) {
     if (info) {
       info = JSON.parse(info);
       info.forEach((element) => {
-        deviceInfo.create({
+        productInfo.create({
           title: element.title,
           description: element.description,
-          deviceId: deviceElem.id,
+          productId: productElem.id,
         });
       });
     }
 
-    res.json(deviceElem);
+    res.json(productElem);
   } catch (err) {
     next(new Error(err.message));
   }
@@ -40,44 +40,44 @@ async function getAll(req, res) {
   page = page || 1;
   limit = Number(limit) || 9;
   let offset = page * limit - limit;
-  let devices;
+  let products;
   if (!brandId && !typeId) {
-    devices = await device.findAndCountAll({
+    products = await product.findAndCountAll({
       limit,
       offset,
     });
   } else if (brandId && !typeId) {
-    devices = await device.findAndCountAll({
+    products = await product.findAndCountAll({
       where: { brandId },
       limit,
       offset,
     });
   } else if (!brandId && typeId) {
-    devices = await device.findAndCountAll({
+    products = await product.findAndCountAll({
       where: { typeId },
       limit,
       offset,
     });
   } else {
-    devices = await device.findAndCountAll({
+    products = await product.findAndCountAll({
       where: { typeId, brandId },
       limit,
       offset
     });
   }
-  res.json(devices);
+  res.json(products);
 }
 
 async function getOne(req, res) {
   const { id } = req.params;
-  const deviceElem = await device.findOne({
+  const productElem = await product.findOne({
     where: { id },
     include: {
-      model: deviceInfo,
+      model: productInfo,
       as: "info",
     },
   });
-  res.json(deviceElem);
+  res.json(productElem);
 }
 
 module.exports = {

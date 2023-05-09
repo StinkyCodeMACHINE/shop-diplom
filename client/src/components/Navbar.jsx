@@ -1,18 +1,16 @@
 import react, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Context } from "../index";
 import { ADMIN_ROUTE, LOGIN_ROUTE, SHOP_ROUTE } from "../utils/consts";
-import {observer} from 'mobx-react-lite'
+import { Context } from "../App";
 
-export default observer (function Navbar() {
-  const { user } = useContext(Context);
+export default function Navbar() {
+  const { user, setUser } = useContext(Context);
   const navigate = useNavigate();
 
   function logOut() {
-    user.setIsAuth(false);
-    localStorage.removeItem("token")
-    user.setUser({})
-    navigate(SHOP_ROUTE)
+    setUser({ user: {}, isAuth: false });
+    localStorage.removeItem("token");
+    navigate(SHOP_ROUTE);
   }
 
   return (
@@ -31,4 +29,4 @@ export default observer (function Navbar() {
       )}
     </div>
   );
-})
+};

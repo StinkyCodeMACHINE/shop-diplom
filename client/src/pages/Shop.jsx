@@ -1,46 +1,55 @@
-import react, { useContext, useEffect } from "react";
-import { Context } from "../index";
-import { observer } from "mobx-react-lite";
+import react, { useContext, useEffect, useState } from "react";
+import { Context } from "../App";
 import { useNavigate } from "react-router-dom";
-import { API_URL, DEVICE_ROUTE, PRODUCT_IMAGE_URL } from "../utils/consts";
-import { getBrands, getDevices, getTypes } from "../API/deviceAPI";
+import { API_URL, PRODUCT_ROUTE, PRODUCT_IMAGE_URL } from "../utils/consts";
+import { getBrands, getProducts, getTypes } from "../API/productAPI";
 import Pagination from "../components/Pagination";
-import DeviceCard from "../components/DeviceCard";
+import ProductCard from "../components/ProductCard";
 
-export default observer(function Shop() {
-  const { device } = useContext(Context);
+export default function Shop() {
+  const { product, setProduct } = useContext(Context);
 
   useEffect(() => {
-    getTypes().then((data) => device.setTypes(data));
-    getBrands().then((data) => device.setBrands(data));
+    getTypes().then((data) =>
+      setProduct((oldProduct) => ({ ...oldProduct, types: data }))
+    );
+    getBrands().then((data) =>
+      setProduct((oldProduct) => ({ ...oldProduct, brands: data }))
+    );
   }, []);
 
   //изменение пагинации
   useEffect(() => {
-    getDevices(
-      device.selectedType.id,
-      device.selectedBrand.id,
-      device.page,
+    getProducts(
+      product.selectedType.id,
+      product.selectedBrand.id,
+      product.page,
       3
     ).then((data) => {
-      device.setDevices(data.rows);
-      device.setTotalCount(data.count);
+      setProduct((oldProduct) => ({ ...oldProduct, products: data.rows }));
+      setProduct((oldProduct) => ({ ...oldProduct, totalCount: data.count }));
     });
-  }, [device.selectedBrand, device.selectedType, device.page]);
+  }, [product.selectedBrand, product.selectedType, product.page]);
 
   return (
     <div className="shop-container">
       <div className="types">
-        {device.types.map((eachType) => (
+        {product.types.map((eachType) => (
           <div
             key={eachType.id}
             style={
-              eachType.id === device.selectedType.id ? { color: "blue" } : {}
+              eachType.id === product.selectedType.id ? { color: "blue" } : {}
             }
             onClick={() =>
-              device.selectedType.id === eachType.id
-                ? device.setSelectedType({})
-                : device.setSelectedType(eachType)
+              product.selectedType.id === eachType.id
+                ? setProduct((oldProduct) => ({
+                    ...oldProduct,
+                    selectedType: {},
+                  }))
+                : setProduct((oldProduct) => ({
+                    ...oldProduct,
+                    selectedType: eachType,
+                  }))
             }
           >
             {eachType.name}
@@ -49,33 +58,39 @@ export default observer(function Shop() {
       </div>
       <div className="main-container">
         <div className="brands">
-          {device.brands.map((eachBrand) => (
+          {product.brands.map((eachBrand) => (
             <div
               key={eachBrand.id}
               style={
-                eachBrand.id === device.selectedBrand.id
+                eachBrand.id === product.selectedBrand.id
                   ? { color: "blue" }
                   : {}
               }
               onClick={() =>
-                device.selectedBrand.id === eachBrand.id
-                  ? device.setSelectedBrand({})
-                  : device.setSelectedBrand(eachBrand)
+                product.selectedBrand.id === eachBrand.id
+                  ? setProduct((oldProduct) => ({
+                      ...oldProduct,
+                      selectedBrand: {},
+                    }))
+                  : setProduct((oldProduct) => ({
+                      ...oldProduct,
+                      selectedBrand: eachBrand,
+                    }))
               }
             >
               {eachBrand.name}
             </div>
           ))}
         </div>
-        <div className="device-cards">
-          {device.devices.map((eachDevice) => (
-            <DeviceCard
-              key={eachDevice.id}
-              id={eachDevice.id}
-              typeId={eachDevice.typeId}
-              brandId={eachDevice.brandId}
-              img={eachDevice.img}
-              rating={eachDevice.rating}
+        <div className="product-cards">
+          {product.products.map((eachProduct) => (
+            <ProductCard
+              key={eachProduct.id}
+              id={eachProduct.id}
+              typeId={eachProduct.typeId}
+              brandId={eachProduct.brandId}
+              img={eachProduct.img}
+              rating={eachProduct.rating}
             />
           ))}
         </div>
@@ -83,4 +98,4 @@ export default observer(function Shop() {
       </div>
     </div>
   );
-});
+}

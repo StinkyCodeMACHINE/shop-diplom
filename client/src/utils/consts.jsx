@@ -6,3 +6,4 @@ export const BASKET_ROUTE = '/basket'
 export const DEVICE_ROUTE = '/DevicePage'
 
 export const API_URL = 'http://localhost:7000/'
+export const PRODUCT_IMAGE_URL = "product-images/";

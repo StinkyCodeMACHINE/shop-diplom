@@ -1,14 +1,13 @@
 const uuid = require("uuid"); // генерирует случайные id
 const path = require("path");
 const { device, deviceInfo } = require("../db/models");
-const apiError = require("../error/apiError");
 
 async function create(req, res, next) {
   try {
     let { name, price, brandId, typeId, info } = req.body;
     const { img } = req.files;
     let fileName = uuid.v4() + ".jpg";
-    img.mv(path.resolve(__dirname, "..", "static", fileName));
+    img.mv(path.resolve(__dirname, "..", "static", "product-images", fileName));
 
     const deviceElem = await device.create({
       name,
@@ -32,7 +31,7 @@ async function create(req, res, next) {
 
     res.json(deviceElem);
   } catch (err) {
-    next(apiError.badRequest(err.message));
+    next(new Error(err.message));
   }
 }
 
@@ -86,3 +85,4 @@ module.exports = {
   getAll,
   getOne,
 };
+

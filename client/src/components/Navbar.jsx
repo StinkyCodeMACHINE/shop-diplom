@@ -10,6 +10,7 @@ export default observer (function Navbar() {
 
   function logOut() {
     user.setIsAuth(false);
+    localStorage.removeItem("token")
     user.setUser({})
     navigate(SHOP_ROUTE)
   }

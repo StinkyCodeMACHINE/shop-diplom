@@ -1,27 +1,28 @@
 import react, { useContext, useEffect } from "react";
 import { Context } from "../index";
-import {observer} from "mobx-react-lite"
-import {useNavigate} from 'react-router-dom'
-import { API_URL, DEVICE_ROUTE } from "../utils/consts";
+import { observer } from "mobx-react-lite";
+import { useNavigate } from "react-router-dom";
+import { API_URL, DEVICE_ROUTE, PRODUCT_IMAGE_URL } from "../utils/consts";
 import { getBrands, getDevices, getTypes } from "../API/deviceAPI";
-import Pages from '../components/Pages'
+import Pagination from "../components/Pagination";
+import DeviceCard from "../components/DeviceCard";
 
 export default observer(function Shop() {
   const { device } = useContext(Context);
-  const navigate = useNavigate()
 
   useEffect(() => {
-    getTypes().then(data => device.setTypes(data))
+    getTypes().then((data) => device.setTypes(data));
     getBrands().then((data) => device.setBrands(data));
-    getDevices().then((data) => {
-      device.setDevices(data.rows)
-      device.setTotalCount(data.count)
-    });
-  }, [])
+  }, []);
 
   //изменение пагинации
   useEffect(() => {
-    getDevices(device.selectedType.id, device.selectedBrand.id, device.page, 3).then((data) => {
+    getDevices(
+      device.selectedType.id,
+      device.selectedBrand.id,
+      device.page,
+      3
+    ).then((data) => {
       device.setDevices(data.rows);
       device.setTotalCount(data.count);
     });
@@ -36,7 +37,11 @@ export default observer(function Shop() {
             style={
               eachType.id === device.selectedType.id ? { color: "blue" } : {}
             }
-            onClick={() => device.setSelectedType(eachType)}
+            onClick={() =>
+              device.selectedType.id === eachType.id
+                ? device.setSelectedType({})
+                : device.setSelectedType(eachType)
+            }
           >
             {eachType.name}
           </div>
@@ -52,7 +57,11 @@ export default observer(function Shop() {
                   ? { color: "blue" }
                   : {}
               }
-              onClick={() => device.setSelectedBrand(eachBrand)}
+              onClick={() =>
+                device.selectedBrand.id === eachBrand.id
+                  ? device.setSelectedBrand({})
+                  : device.setSelectedBrand(eachBrand)
+              }
             >
               {eachBrand.name}
             </div>
@@ -60,31 +69,18 @@ export default observer(function Shop() {
         </div>
         <div className="device-cards">
           {device.devices.map((eachDevice) => (
-            <div
+            <DeviceCard
               key={eachDevice.id}
-              className="device-card"
-              onClick={() => navigate(DEVICE_ROUTE + "/" + eachDevice.id)}
-            >
-              <img className="device-image" src={API_URL + eachDevice.img} />
-              <div className="type-and-rating">
-                <div className="type-brand">
-                  {device.types[eachDevice.typeId].name +
-                    " " +
-                    device.brands[eachDevice.brandId].name}
-                </div>
-                <div className="rating">
-                  {eachDevice.rating}
-                  <img src="/assets/star.svg" />
-                </div>
-              </div>
-              <div className="device-name">{eachDevice.name}</div>
-            </div>
+              id={eachDevice.id}
+              typeId={eachDevice.typeId}
+              brandId={eachDevice.brandId}
+              img={eachDevice.img}
+              rating={eachDevice.rating}
+            />
           ))}
         </div>
-        <Pages />
+        <Pagination />
       </div>
     </div>
   );
-})
-  
-
+});

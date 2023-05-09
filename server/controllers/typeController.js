@@ -1,5 +1,4 @@
 const {type} = require('../db/models')
-const apiError = require('../error/apiError')
 
 async function create(req, res) {
     try {

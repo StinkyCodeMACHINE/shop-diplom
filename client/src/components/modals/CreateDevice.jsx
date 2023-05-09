@@ -9,37 +9,64 @@ export default observer(function CreateDevice({ isShown, hide }) {
     name: "",
     price: 0,
     file: null,
+    brand: "",
+    type: "",
   });
   const [info, setInfo] = useState([]);
-  device.setSelectedType(device.types[0]);
-  device.setSelectedBrand(device.brands[0]);
+
   function addStatHandler(e) {
     e.preventDefault();
-    setInfo([...info, { title: "", description: "", number: Date.now() }]);
+    setInfo((prevInfo) => [
+      ...prevInfo,
+      { title: "", description: "", number: Date.now() },
+    ]);
   }
-  function removeHandler(number) {
-    setInfo(info.filter((stat) => stat.number !== number));
+
+  function removeStatHandler(number) {
+    setInfo((prevInfo) => prevInfo.filter((stat) => stat.number !== number));
   }
-  function changeInfo(key, value, number) {
-    setInfo(info.map(i=>i.number===number ? {...i, [key]: value} : i))
+
+  function changeStatHandler(key, value, number) {
+    setInfo((prevInfo) =>
+      prevInfo.map((i) => (i.number === number ? { ...i, [key]: value } : i))
+    );
+  }
+
+  function optionChangeHandler(e) {
+    setInputValues((prevInputValues) => ({
+      ...prevInputValues,
+      [e.target.name]: e.target.value,
+    }));
   }
 
   function selectFile(e) {
-    setInputValues({ ...inputValues, file: e.target.files[0] });
+    setInputValues((prevInputValues) => ({
+      ...prevInputValues,
+      file: e.target.files[0],
+    }));
   }
 
   function addDeviceHandler(e) {
     e.preventDefault();
-    const formData = new FormData
-    formData.append('name', inputValues.name)
-    formData.append('price', inputValues.price)
-    formData.append('img', inputValues.file)
-    formData.append('brandId', device.selectedBrand.id)
-    formData.append('typeId', device.selectedType.id)
-    formData.append('info', JSON.stringify(info))
+    const formData = new FormData();
+    formData.append("name", inputValues.name);
+    formData.append("price", inputValues.price);
+    formData.append("img", inputValues.file);
+    formData.append(
+      "brandId",
+      device.brands.find((brand) => brand.name === inputValues.brand).id
+    );
+    formData.append(
+      "typeId",
+      device.types.find((type) => type.name === inputValues.type).id
+    );
+    // formData.append('brandId', device.selectedBrand.id)
+    // formData.append('typeId', device.selectedType.id)
+    formData.append("info", JSON.stringify(info));
     createDevice(formData).then((data) => hide("device"));
-    
   }
+
+  console.log(inputValues);
 
   return (
     <>
@@ -48,24 +75,34 @@ export default observer(function CreateDevice({ isShown, hide }) {
           <div className="modal-inner-container">
             <form>
               <h2>Добавить устройство</h2>
-              <select name="types">
+              <select
+                name="type"
+                value={inputValues.type}
+                onChange={optionChangeHandler}
+              >
                 {device.types.map((type) => {
                   return (
                     <option
                       onClick={() => device.setSelectedType(type)}
                       key={type.id}
+                      value={type.name}
                     >
                       {type.name}
                     </option>
                   );
                 })}
               </select>
-              <select name="brands">
+              <select
+                name="brand"
+                value={inputValues.brand}
+                onChange={optionChangeHandler}
+              >
                 {device.brands.map((brand) => {
                   return (
                     <option
                       onClick={() => device.setSelectedBrand(brand)}
                       key={brand.id}
+                      value={brand.name}
                     >
                       {brand.name}
                     </option>
@@ -74,7 +111,10 @@ export default observer(function CreateDevice({ isShown, hide }) {
               </select>
               <input
                 onChange={(e) =>
-                  setInputValues({ ...inputValues, name: e.target.value })
+                  setInputValues((prevInputValues) => ({
+                    ...prevInputValues,
+                    name: e.target.value,
+                  }))
                 }
                 value={inputValues.name}
                 type="text"
@@ -82,10 +122,10 @@ export default observer(function CreateDevice({ isShown, hide }) {
               />
               <input
                 onChange={(e) =>
-                  setInputValues({
-                    ...inputValues,
+                  setInputValues((prevInputValues) => ({
+                    ...prevInputValues,
                     price: Number(e.target.value),
-                  })
+                  }))
                 }
                 value={inputValues.price}
                 type="number"
@@ -102,7 +142,7 @@ export default observer(function CreateDevice({ isShown, hide }) {
                       placeholder="Введите название свойства"
                       value={elem.title}
                       onChange={(e) =>
-                        changeInfo("title", e.target.value, elem.number)
+                        changeStatHandler("title", e.target.value, elem.number)
                       }
                     />
                     <input
@@ -111,10 +151,14 @@ export default observer(function CreateDevice({ isShown, hide }) {
                       placeholder="Введите значение свойства"
                       value={elem.description}
                       onChange={(e) =>
-                        changeInfo("description", e.target.value, elem.number)
+                        changeStatHandler(
+                          "description",
+                          e.target.value,
+                          elem.number
+                        )
                       }
                     />
-                    <button onClick={() => removeHandler(elem.number)}>
+                    <button onClick={() => removeStatHandler(elem.number)}>
                       Удалить
                     </button>
                   </div>

@@ -24,11 +24,10 @@ export default observer(function Auth() {
       user.setUser(data)
       user.setIsAuth(true)
       navigate(SHOP_ROUTE)
-      
-
     }
     catch (err) {
-      alert(err.response.data) //заменить на что-то покруче
+      console.log(err.response.data.message);
+      // alert() //заменить на что-то покруче
     }
   };
 

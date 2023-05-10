@@ -7,3 +7,4 @@ export const PRODUCT_ROUTE = "/ProductPage";
 
 export const API_URL = "http://localhost:7000/";
 export const PRODUCT_IMAGE_URL = "product-images/";
+export const PROFILE_IMAGE_URL = "profile-images/";

@@ -3,11 +3,12 @@ import { Context } from "../App";
 import { useNavigate } from "react-router-dom";
 import { API_URL, PRODUCT_ROUTE, PRODUCT_IMAGE_URL } from "../utils/consts";
 import { getBrands, getProducts, getTypes } from "../API/productAPI";
-import Pagination from "../components/Pagination";
-import ProductCard from "../components/ProductCard";
+import Pagination from "../components/Shop/Pagination";
+import ProductCard from "../components/Shop/ProductCard";
 
 export default function Shop() {
   const { product, setProduct } = useContext(Context);
+  
 
   useEffect(() => {
     getTypes().then((data) =>
@@ -24,12 +25,13 @@ export default function Shop() {
       product.selectedType.id,
       product.selectedBrand.id,
       product.page,
-      3
+      3,
+      product.name
     ).then((data) => {
       setProduct((oldProduct) => ({ ...oldProduct, products: data.rows }));
       setProduct((oldProduct) => ({ ...oldProduct, totalCount: data.count }));
     });
-  }, [product.selectedBrand, product.selectedType, product.page]);
+  }, [product.selectedBrand, product.selectedType, product.page, product.name]);
 
   return (
     <div className="shop-container">
@@ -91,6 +93,7 @@ export default function Shop() {
               brandId={eachProduct.brandId}
               img={eachProduct.img}
               rating={eachProduct.rating}
+              name={eachProduct.name}
             />
           ))}
         </div>

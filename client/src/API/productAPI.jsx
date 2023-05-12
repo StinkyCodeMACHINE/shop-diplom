@@ -1,37 +1,45 @@
 import { $authHost, $host } from "./axiosStuff";
 
-export const createType = async (type) => {
+export async function createType(type) {
   const { data } = await $authHost.post("/api/type", type);
-  return data 
-};
+  return data;
+}
 
-export const getTypes = async () => {
+export async function getTypes() {
   const { data } = await $host.get("/api/type");
-  return data; 
-};
+  return data;
+}
 
-export const createBrand = async (brand) => {
+export async function createBrand(brand) {
   const { data } = await $authHost.post("/api/brand", brand);
   return data;
-};
+}
 
-export const getBrands = async () => {
+export async function getBrands() {
   const { data } = await $host.get("/api/brand");
   return data;
-};
+}
 
-export const createProduct = async (device) => {
+export async function createProduct(device) {
   const { data } = await $authHost.post("/api/product", device);
   return data;
-};
+}
 
-export const getProducts = async (typeId, brandId, page, limit) => {
-  const { data } = await $host.get("/api/product", {params: {typeId, brandId, page, limit}});
+export async function getProducts(typeId, brandId, page, limit, name) {
+  const { data } = await $host.get("/api/product", {
+    params: { typeId, brandId, page, limit, name },
+  });
   return data;
-};
+}
 
-export const getOneProduct = async (id) => {
+export async function getProductsSearch(limit, name, typeId) {
+  const { data } = await $host.get("/api/product", {
+    params: { limit, name, typeId },
+  });
+  return data;
+}
+
+export async function getOneProduct(id) {
   const { data } = await $host.get(`/api/product/${id}`);
   return data;
-};
-
+}

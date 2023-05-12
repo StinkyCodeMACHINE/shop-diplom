@@ -1,6 +1,6 @@
 import react, { useContext, useState } from "react";
-import { Context } from "../../App";
-import { createProduct } from "../../API/productAPI";
+import { Context } from "../../../App";
+import { createProduct } from "../../../API/productAPI";
 
 export default function CreateProduct({ isShown, hide }) {
   const { product } = useContext(Context);
@@ -69,14 +69,17 @@ export default function CreateProduct({ isShown, hide }) {
       brand: product.brands[0].name,
       type: product.types[0].name,
     });
-    
-    setInfo([])
+
+    setInfo([]);
   }
 
   return (
     <>
       {isShown.product && (
-        <div className="modal-container">
+        <div
+          className="admin-page-modal-container"
+          onClick={() => hide("product")}
+        >
           <div className="modal-inner-container">
             <form>
               <h2>Добавить устройство</h2>

@@ -1,54 +1,77 @@
 import react, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getOneProduct } from "../API/productAPI";
-import Rating from "../components/Rating";
+import Rating from "../components/ProductPage.jsx/Rating";
+import AddRating from "../components/ProductPage.jsx/AddRating";
 import { API_URL, PRODUCT_IMAGE_URL } from "../utils/consts";
 
 export default function ProductPage() {
-  const [product, setProduct] = useState({ info: [] });
+  const [product, setProduct] = useState({ info: [], ratings: [] });
   const { id } = useParams();
+
   const rating = [
     {
+      id: 1,
+      name: "cat",
+      thumbsUp: 0,
       img: "1.jpg",
-      message: "AAAAAAAAA",
-      date: new Date(Date.now()).getFullYear(),
+      text: "AAAAAAAAA",
+      date: new Date(Date.now()),
       rating: 3,
     },
     {
+      id: 2,
+      name: "cat",
+      thumbsUp: 3,
       img: "1.jpg",
-      message: "BBBBBBBBBBBBBB",
-      date: new Date(Date.now()).getFullYear(),
+      text: "BBBBBBBBBBBBBB",
+      date: new Date(Date.now()),
       rating: 2,
     },
     {
+      id: 3,
+      name: "cat",
+      thumbsUp: 0,
       img: "1.jpg",
-      message: "CCCCCCCCCCCCC",
-      date: new Date(Date.now()).getFullYear(),
+      date: new Date(Date.now()),
       rating: 4,
     },
     {
+      id: 4,
+      name: "cat",
+      thumbsUp: 0,
       img: "1.jpg",
-      message:
-        "DDDDDDDdddddddddDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
-      date: new Date(Date.now()).getFullYear(),
+      text: "DDDDDDDdddddddddDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+      date: new Date(Date.now()),
       rating: 5,
     },
     {
+      id: 5,
+      name: "cat",
+      thumbsUp: 0,
       img: "1.jpg",
-      message: "EEEEEEEEEEEE",
-      date: new Date(Date.now()).getFullYear(),
+      text: "EEEEEEEEEEEE",
+      date: new Date(Date.now()),
       rating: 1,
     },
     {
+      id: 6,
+      name: "cat",
+      thumbsUp: 0,
       img: "1.jpg",
-      message: "FFFFFffFFFFFF",
-      date: new Date(Date.now()).getFullYear(),
+      text: "FFFFFffFFFFFF",
+      date: new Date(Date.now()),
       rating: 2,
     },
   ];
 
   useEffect(() => {
-    getOneProduct(id).then((data) => setProduct(data));
+    getOneProduct(id)
+      .then((data) => setProduct(data))
+      .then(
+        (data) =>
+          setProduct((oldProduct) => ({ ...oldProduct, ratings: rating })) //временно
+      );
   }, []);
 
   return (
@@ -85,14 +108,18 @@ export default function ProductPage() {
           </div>
 
           <h2>Отзывы: </h2>
-          <div className="product-page-stats">
-            {rating.map((ratingElem) => {
+          <AddRating product={product} setProduct={setProduct} />
+          <div className="product-page-ratings">
+            {product.ratings.map((ratingElem) => {
               return (
                 <Rating
+                  key={ratingElem.id}
                   img={ratingElem.img}
-                  message={ratingElem.message}
+                  text={ratingElem.text}
                   date={ratingElem.date}
                   rating={ratingElem.rating}
+                  name={ratingElem.name}
+                  thumbsUp={ratingElem.thumbsUp}
                 />
               );
             })}

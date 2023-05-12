@@ -1,4 +1,4 @@
-import Admin from "../pages/Admin";
+import AdminPanel from "../pages/AdminPanel";
 import Auth from "../pages/Auth";
 import Basket from "../pages/Basket";
 import ProductPage from "../pages/ProductPage";
@@ -12,11 +12,14 @@ import {
   SHOP_ROUTE,
 } from "./consts";
 
-export const authRoutes = [
+
+export const adminRoutes = [
   {
     path: ADMIN_ROUTE,
-    element: <Admin />,
+    element: <AdminPanel />,
   },
+];
+export const authRoutes = [
   {
     path: BASKET_ROUTE,
     element: <Basket />,

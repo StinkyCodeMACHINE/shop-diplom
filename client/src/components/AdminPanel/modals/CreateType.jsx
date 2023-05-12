@@ -1,11 +1,11 @@
 import react, { useState } from "react";
-import { createType } from "../../API/productAPI";
+import { createType } from "../../../API/productAPI";
 
 export default function CreateType({ isShown, hide }) {
   const [inputValues, setInputValues] = useState("");
   function addHandler() {
     createType({ name: inputValues }).then((data) => setInputValues(""));
-    setInputValues("")
+    setInputValues("");
   }
 
   function changeHandler(e) {
@@ -14,7 +14,10 @@ export default function CreateType({ isShown, hide }) {
   return (
     <>
       {isShown.type && (
-        <div className="modal-container">
+        <div
+          className="admin-page-modal-container"
+          onClick={() => hide("type")}
+        >
           <div className="modal-inner-container">
             <form>
               <input

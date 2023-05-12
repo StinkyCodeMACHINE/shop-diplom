@@ -1,9 +1,9 @@
 import react, {useState} from "react";
-import CreateType from '../components/modals/CreateType'
-import CreateBrand from "../components/modals/CreateBrand";
-import CreateProduct from "../components/modals/CreateProduct";
+import CreateType from '../components/AdminPanel/modals/CreateType'
+import CreateBrand from "../components/AdminPanel/modals/CreateBrand";
+import CreateProduct from "../components/AdminPanel/modals/CreateProduct";
 
-export default function Admin() {
+export default function AdminPanel() {
   const [isShown, setIsShown] = useState({type: false, brand:false, product:false})
   function show(what) {
     setIsShown({...isShown, [what]: true})

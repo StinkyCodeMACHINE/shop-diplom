@@ -1,5 +1,5 @@
 import react, { useState } from "react";
-import { createBrand } from "../../API/productAPI";
+import { createBrand } from "../../../API/productAPI";
 
 export default function CreateBrand({ isShown, hide }) {
   const [inputValues, setInputValues] = useState("");
@@ -15,7 +15,10 @@ export default function CreateBrand({ isShown, hide }) {
   return (
     <>
       {isShown.brand && (
-        <div className="modal-container">
+        <div
+          className="admin-page-modal-container"
+          onClick={() => hide("brand")}
+        >
           <div className="modal-inner-container">
             <form>
               <input

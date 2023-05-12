@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Context } from "../App";
+import { Context } from "../../App";
 
 export default function Pagination() {
   const { product, setProduct } = useContext(Context);
@@ -56,8 +56,9 @@ export default function Pagination() {
           setProduct((oldProduct) => ({
             ...oldProduct,
             page:
-              oldProduct.page !== pages[pages.length - 1] ?
-              oldProduct.page + 1 : oldProduct.page,
+              oldProduct.page !== pages[pages.length - 1]
+                ? oldProduct.page + 1
+                : oldProduct.page,
           }))
         }
       >
@@ -68,7 +69,7 @@ export default function Pagination() {
         onClick={() =>
           setProduct((oldProduct) => ({
             ...oldProduct,
-            page: pages[pages.length - 1]
+            page: pages[pages.length - 1],
           }))
         }
       >

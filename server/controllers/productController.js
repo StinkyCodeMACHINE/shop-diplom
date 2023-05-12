@@ -1,6 +1,7 @@
 const uuid = require("uuid"); // генерирует случайные id
 const path = require("path");
 const { product, productInfo } = require("../db/models");
+const { Op } = require("sequelize");
 
 async function create(req, res, next) {
   try {
@@ -36,33 +37,35 @@ async function create(req, res, next) {
 }
 
 async function getAll(req, res) {
-  let { brandId, typeId, limit, page } = req.query;
+  let { brandId, typeId, limit, page, name } = req.query;
   page = page || 1;
+  name = name || ""
   limit = Number(limit) || 9;
   let offset = page * limit - limit;
   let products;
   if (!brandId && !typeId) {
     products = await product.findAndCountAll({
+      where: { name: { [Op.like]: `%${name}%` } },
       limit,
       offset,
     });
   } else if (brandId && !typeId) {
     products = await product.findAndCountAll({
-      where: { brandId },
+      where: { brandId, name: { [Op.like]: `%${name}%` } },
       limit,
       offset,
     });
   } else if (!brandId && typeId) {
     products = await product.findAndCountAll({
-      where: { typeId },
+      where: { typeId, name: { [Op.like]: `%${name}%` } },
       limit,
       offset,
     });
   } else {
     products = await product.findAndCountAll({
-      where: { typeId, brandId },
+      where: { typeId, brandId, name: { [Op.like]: `%${name}%` } },
       limit,
-      offset
+      offset,
     });
   }
   res.json(products);

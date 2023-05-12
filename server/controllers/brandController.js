@@ -1,13 +1,12 @@
 const { brand } = require("../db/models");
 
-async function create(req, res) {
+async function create(req, res, next) {
   try {
     const { name } = req.body;
     const brandElem = await brand.create({ name });
     res.json(brandElem);
   } catch (err) {
-    console.log(err);
-    res.json({ message: "bad" });
+    next(new Error(err.message));
   }
 }
 

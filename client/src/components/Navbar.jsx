@@ -10,12 +10,12 @@ import { Context } from "../App";
 import { getProductsSearch } from "../API/productAPI";
 
 export default function Navbar() {
-  const { user, setUser, setProduct, product } = useContext(Context);
+  const { user, setUser, product, setProduct, whatIsShown, setWhatIsShown } =
+    useContext(Context);
   const [searchValues, setSearchValues] = useState({
     name: "",
     type: {},
     searchResults: [],
-    whatIsShown: "",
   });
   const navigate = useNavigate();
 
@@ -25,37 +25,40 @@ export default function Navbar() {
     navigate(SHOP_ROUTE);
   }
 
-  function onSubmitHandler() {
-    setProduct((oldProduct) => ({
+  async function onSubmitHandler() {
+    await setProduct((oldProduct) => ({
       ...oldProduct,
       name: searchValues.name,
       selectedType: searchValues.type ? searchValues.type : {},
     }));
-    setSearchValues((oldSearchValues) => ({
+    await setSearchValues((oldSearchValues) => ({
       ...oldSearchValues,
       name: "",
-      whatIsShown: ""
     }));
-    console.log(product);
+    await setWhatIsShown("");
     navigate(SHOP_ROUTE);
   }
 
   async function clickTypesHandler(e) {
-    Object.keys(searchValues.type).length !== 0
-      ? await setSearchValues((oldSearchValues) => ({
+    if (Object.keys(searchValues.type).length !== 0) {
+      await setSearchValues((oldSearchValues) => ({
+        ...oldSearchValues,
+        type: {},
+      }));
+      await setWhatIsShown("");
+    } else {
+      if (whatIsShown === "types") {
+        await setSearchValues((oldSearchValues) => ({
           ...oldSearchValues,
-          whatIsShown: "",
-          type: {},
-        }))
-      : searchValues.whatIsShown === "types"
-        ? await setSearchValues((oldSearchValues) => ({
-            ...oldSearchValues,
-            whatIsShown: "",
-          }))
-        : await setSearchValues((oldSearchValues) => ({
-            ...oldSearchValues,
-            whatIsShown: "types",
-          }));
+        }));
+        await setWhatIsShown("")
+      } else {
+        await setSearchValues((oldSearchValues) => ({
+          ...oldSearchValues,
+        }));
+        await setWhatIsShown("types")
+      }
+    }
   }
 
   async function onSearchChangeHandler(e) {
@@ -63,11 +66,15 @@ export default function Navbar() {
       await setSearchValues((oldSearchValues) => ({
         ...oldSearchValues,
         name: e.target.value,
-        whatIsShown: "results",
       }));
 
-      console.log("type: " + JSON.stringify(searchValues.type))
-      const data = await getProductsSearch(10, e.target.value, searchValues.type.id);
+      await setWhatIsShown("results");
+
+      const data = await getProductsSearch(
+        10,
+        e.target.value,
+        searchValues.type.id
+      );
 
       setSearchValues((oldSearchValues) => ({
         ...oldSearchValues,
@@ -93,10 +100,6 @@ export default function Navbar() {
           onClick={clickTypesHandler}
           className="navbar-search-bar-types-container"
         >
-          {console.log(
-            `type = ${searchValues.type} name: ${searchValues.type.name}`
-          )}
-
           <div>
             {Object.keys(searchValues.type).length === 0
               ? "Категории"
@@ -105,7 +108,7 @@ export default function Navbar() {
           {Object.keys(searchValues.type).length === 0 ? (
             <img
               style={
-                searchValues.whatIsShown !== "types"
+                whatIsShown !== "types"
                   ? { transform: "rotate(90deg)" }
                   : { transform: "rotate(-90deg)" }
               }
@@ -129,19 +132,16 @@ export default function Navbar() {
               await setSearchValues((oldSearchValues) => ({
                 ...oldSearchValues,
                 name: "",
-              }));
-              setSearchValues((oldSearchValues) => ({
-                ...oldSearchValues,
                 searchResults: [],
               }));
+              await setWhatIsShown("");
             }}
             className="navbar-x-icon"
             src={"/assets/x.svg"}
           />
-          {searchValues.whatIsShown === "results" && (
+          {whatIsShown === "results" && (
             <div className="navbar-search-bar-search-results">
               {searchValues.searchResults.map((searchResult) => {
-                console.log(searchResult);
                 return (
                   <div
                     onClick={async () => {
@@ -150,8 +150,8 @@ export default function Navbar() {
                         ...oldSearchValues,
                         name: "",
                         searchResults: [],
-                        whatIsShown: "",
                       }));
+                      await setWhatIsShown("");
                     }}
                     key={searchResult.name}
                     className="navbar-search-bar-search-result"
@@ -182,7 +182,7 @@ export default function Navbar() {
           />
         </div>
 
-        {searchValues.whatIsShown === "types" && (
+        {whatIsShown === "types" && (
           <div className="navbar-search-bar-types">
             {product.types.map((type) => {
               return (
@@ -191,12 +191,9 @@ export default function Navbar() {
                     await setSearchValues((oldSearchValues) => ({
                       ...oldSearchValues,
                       type: type,
-                      whatIsShown: "",
-
-                    }))
-                  }
-                    
-                  }
+                    }));
+                    await setWhatIsShown("");
+                  }}
                   key={type.name}
                   className="navbar-search-bar-type"
                 >
@@ -215,6 +212,9 @@ export default function Navbar() {
           <img className="navbar-cart-icon" src="/assets/cart.svg" />
           <div>{user.email}</div>
           <div>Избранное</div>
+          <div className="navbar-name">
+            {!user.user.name ? "Без имени" : user.user.name}
+          </div>
           <div onClick={logOutHandler}>Выйти</div>
         </div>
       ) : (
@@ -224,14 +224,9 @@ export default function Navbar() {
       )}
 
       {
-        searchValues.whatIsShown && (
+        (whatIsShown === "types" || whatIsShown === "results") && (
           <div
-            onClick={() =>
-              setSearchValues((oldSearchValues) => ({
-                ...oldSearchValues,
-                whatIsShown: "",
-              }))
-            }
+            onClick={async () => setWhatIsShown("")}
             className="navbar-modal-opacity"
           ></div>
         ) //тёмная штука

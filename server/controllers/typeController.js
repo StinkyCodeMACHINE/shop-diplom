@@ -1,14 +1,13 @@
 const {type} = require('../db/models')
 
-async function create(req, res) {
+async function create(req, res, next) {
     try {
         const {name} = req.body
         const typeElem = await type.create({name})
         res.json(typeElem);
     }
     catch (err) {
-        console.log(err)
-        res.json({message: "bad"});
+        next(new Error(err.message))
     }
 }
 

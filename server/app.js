@@ -38,7 +38,9 @@ app.use(errorHandler)
 async function start() {
   try {
     await db.authenticate();
-    await db.sync();
+    await db.sync({ alter: true });
+    // await db.sync({ force: true });
+
     app.listen(port, () => {
       console.log(`Server listening on port ${port}...`);
     });

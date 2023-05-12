@@ -21,10 +21,14 @@ export default function App() {
     totalCount: 0,
     limit: 3,
   });
+  const [whatIsShown, setWhatIsShown] = useState("")
+
+  console.log(`user: ${user.user.email} | role: ${user.user.role} | isAuth: ${user.isAuth}`);
+
 
   useEffect(() => {
     check().then((data) => {
-      setUser((oldUser) => ({ ...oldUser, isAuth: true }));
+      setUser({user: data, isAuth: true});
     });
   }, []);
 
@@ -35,6 +39,8 @@ export default function App() {
         setUser,
         product,
         setProduct,
+        whatIsShown,
+        setWhatIsShown
       }}
     >
       <div>

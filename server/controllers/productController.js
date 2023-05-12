@@ -5,10 +5,37 @@ const { Op } = require("sequelize");
 
 async function create(req, res, next) {
   try {
-    let { name, price, brandId, typeId, info } = req.body;
+    // let { name, price, brandId, typeId, info } = req.body;
+    // const { img } = req.files;
+    // let fileName = uuid.v4() + ".jpg";
+    // img.mv(path.resolve(__dirname, "..", "static", "product-images", fileName)); было
+
+    let { name, price, brandId, typeId, info} = req.body;
     const { img } = req.files;
-    let fileName = uuid.v4() + ".jpg";
-    img.mv(path.resolve(__dirname, "..", "static", "product-images", fileName));
+    console.log(img);
+    const fileNames = [];
+    if (Array.isArray(img)) {
+      for (let i = 0; i < img.length; i++) {
+        fileNames.push(uuid.v4() + ".jpg");
+        img[i].mv(
+          path.resolve(
+            __dirname,
+            "..",
+            "static",
+            "product-images",
+            fileNames[i]
+          )
+        );
+      }
+    }
+    else {
+      fileNames.push(uuid.v4() + ".jpg");
+      img.mv(
+        path.resolve(__dirname, "..", "static", "product-images", fileNames[0])
+      );
+    }
+    
+    console.log(fileNames)
 
     const productElem = await product.create({
       name,
@@ -16,7 +43,7 @@ async function create(req, res, next) {
       brandId,
       typeId,
       info,
-      img: fileName,
+      img: fileNames,
     });
 
     if (info) {

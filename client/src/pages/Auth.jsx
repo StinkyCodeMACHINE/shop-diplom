@@ -9,37 +9,58 @@ export default function Auth() {
   const navigate = useNavigate();
   const location = useLocation();
   const isLogin = location.pathname === LOGIN_ROUTE;
-  const [inputValues, setInputValues] = useState({ email: "", password: "" });
+  const [inputValues, setInputValues] = useState({
+    email: "",
+    password: "",
+    name: "",
+  });
 
-  const clickHandler = async (e) => {
+  async function clickHandler(e) {
     try {
       e.preventDefault();
       let data;
       if (isLogin) {
         data = await login(inputValues.email, inputValues.password);
       } else {
-        data = await registration(inputValues.email, inputValues.password);
+        data = await registration(
+          inputValues.name,
+          inputValues.email,
+          inputValues.password
+        );
       }
       setUser({ user: data, isAuth: true });
       navigate(SHOP_ROUTE);
     } catch (err) {
-      console.log(err.response.data.message);
       // alert() //заменить на что-то покруче
     }
-  };
+  }
 
-  const inputChangeHandler = async (e) => {
-    if (e.target.type === "email") {
-      setInputValues({ ...inputValues, email: e.target.value });
-    } else {
-      setInputValues({ ...inputValues, password: e.target.value });
+  async function inputChangeHandler(e) {
+    switch (e.target.type) {
+      case "email":
+        setInputValues({ ...inputValues, email: e.target.value });
+        break;
+      case "password":
+        setInputValues({ ...inputValues, password: e.target.value });
+        break;
+      case "text":
+        setInputValues({ ...inputValues, name: e.target.value });
+        break;
     }
-  };
+  }
 
   return (
     <div className="login-form-container">
       <form className="login-form">
         <h2>{isLogin ? "Авторизация" : "Регистрация"}</h2>
+        {!isLogin && (
+          <input
+            onChange={inputChangeHandler}
+            value={inputValues.name}
+            type="text"
+            placeholder="Введите ваше имя или фамилию..."
+          />
+        )}
         <input
           onChange={inputChangeHandler}
           value={inputValues.email}
@@ -73,4 +94,4 @@ export default function Auth() {
       </form>
     </div>
   );
-};
+}

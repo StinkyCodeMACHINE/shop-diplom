@@ -12,7 +12,7 @@ export default function ProductCard({ id, typeId, brandId, img, rating, name }) 
       className="product-card"
       onClick={() => navigate(PRODUCT_ROUTE + "/" + id)}
     >
-      <img className="product-image" src={API_URL + PRODUCT_IMAGE_URL + img} />
+      <img className="product-image" src={API_URL + PRODUCT_IMAGE_URL + img[0]} />
       <div className="type-and-rating">
         <div className="type-brand">
           {product.types.find((type) => type.id === typeId).name +

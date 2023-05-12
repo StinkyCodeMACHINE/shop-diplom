@@ -8,7 +8,6 @@ import ProductCard from "../components/Shop/ProductCard";
 
 export default function Shop() {
   const { product, setProduct } = useContext(Context);
-  
 
   useEffect(() => {
     getTypes().then((data) =>
@@ -32,6 +31,20 @@ export default function Shop() {
       setProduct((oldProduct) => ({ ...oldProduct, totalCount: data.count }));
     });
   }, [product.selectedBrand, product.selectedType, product.page, product.name]);
+
+  useEffect(() => {
+    setProduct((oldProduct) => ({ ...oldProduct, page: 1 }));
+    getProducts(
+      product.selectedType.id,
+      product.selectedBrand.id,
+      product.page,
+      3,
+      product.name
+    ).then((data) => {
+      setProduct((oldProduct) => ({ ...oldProduct, products: data.rows }));
+      setProduct((oldProduct) => ({ ...oldProduct, totalCount: data.count }));
+    });
+  }, [product.selectedBrand, product.selectedType]);
 
   return (
     <div className="shop-container">

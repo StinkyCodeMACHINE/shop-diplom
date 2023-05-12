@@ -1,25 +1,28 @@
-import react, {useState} from "react";
-import CreateType from '../components/AdminPanel/modals/CreateType'
+import react, { useState, useContext } from "react";
+import CreateType from "../components/AdminPanel/modals/CreateType";
 import CreateBrand from "../components/AdminPanel/modals/CreateBrand";
 import CreateProduct from "../components/AdminPanel/modals/CreateProduct";
+import { Context } from "../App";
 
 export default function AdminPanel() {
-  const [isShown, setIsShown] = useState({type: false, brand:false, product:false})
+  const { product, setWhatIsShown } = useContext(Context);
+
   function show(what) {
-    setIsShown({...isShown, [what]: true})
+    setWhatIsShown(what);
   }
-  function hide(what) {
-    setIsShown({ ...isShown, [what]: false });
+  function hide() {
+    setWhatIsShown("");
   }
   return (
     <>
-      <CreateType isShown={isShown} hide={hide} />
-      <CreateBrand isShown={isShown} hide={hide} />
-      <CreateProduct isShown={isShown} hide={hide} />
+      <CreateType hide={hide} />
+      <CreateBrand hide={hide} />
+      {(product.brands[0] &&
+        product.types[0]) && <CreateProduct hide={hide} />}
       <div className="admin-page-container">
         <button onClick={() => show("type")}>Добавить новый тип</button>
-        <button onClick={() => show("brand")}>Добавить новый Brand</button>
-        <button onClick={() => show("product")}>Добавить новый девайс</button>
+        <button onClick={() => show("brand")}>Добавить новый бренд</button>
+        <button onClick={() => show("product")}>Добавить новый товар</button>
       </div>
     </>
   );

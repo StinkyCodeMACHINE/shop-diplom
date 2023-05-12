@@ -1,22 +1,30 @@
-import react, { useState } from "react";
+import react, { useState, useContext } from "react";
 import { createType } from "../../../API/productAPI";
+import { Context } from "../../../App";
+
 
 export default function CreateType({ isShown, hide }) {
   const [inputValues, setInputValues] = useState("");
-  function addHandler() {
-    createType({ name: inputValues }).then((data) => setInputValues(""));
-    setInputValues("");
+  const { whatIsShown } = useContext(Context);
+
+  async function addHandler(e) {
+    e.preventDefault()
+    await createType({ name: inputValues })
+    await setInputValues("")
   }
 
   function changeHandler(e) {
     setInputValues(e.target.value);
   }
+  
   return (
     <>
-      {isShown.type && (
+      {whatIsShown==="type" && (
         <div
-          className="admin-page-modal-container"
-          onClick={() => hide("type")}
+          className="admin-page-modal-opacity"
+          onClick={(e) =>
+            e.target.classList.contains("admin-page-modal-opacity") && hide()
+          }
         >
           <div className="modal-inner-container">
             <form>
@@ -27,7 +35,7 @@ export default function CreateType({ isShown, hide }) {
                 placeholder="Введите название типа"
               />
               <div>
-                <button onClick={() => hide("type")}>Закрыть</button>
+                <button onClick={() => hide()}>Закрыть</button>
                 <button onClick={addHandler}>Добавить</button>
               </div>
             </form>

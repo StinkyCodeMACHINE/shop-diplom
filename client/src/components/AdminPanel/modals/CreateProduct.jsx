@@ -1,14 +1,15 @@
-import react, { useContext, useState } from "react";
-import { Context } from "../../../App";
+import react, { useState, useContext } from "react";
 import { createProduct } from "../../../API/productAPI";
+import { Context } from "../../../App";
 
 export default function CreateProduct({ isShown, hide }) {
   const { product } = useContext(Context);
+  const { whatIsShown } = useContext(Context);
 
   const [inputValues, setInputValues] = useState({
     name: "",
     price: 0,
-    file: null,
+    files: null,
     brand: product.brands[0].name,
     type: product.types[0].name,
   });
@@ -39,10 +40,11 @@ export default function CreateProduct({ isShown, hide }) {
     }));
   }
 
-  function selectFile(e) {
+  function selectFiles(e) {
+    
     setInputValues((prevInputValues) => ({
       ...prevInputValues,
-      file: e.target.files[0],
+      files: e.target.files,
     }));
   }
 
@@ -51,7 +53,9 @@ export default function CreateProduct({ isShown, hide }) {
     const formData = new FormData();
     formData.append("name", inputValues.name);
     formData.append("price", inputValues.price);
-    formData.append("img", inputValues.file);
+    for (let i=0; i<inputValues.files.length; i++) {
+      formData.append("img", inputValues.files[i]);
+    }
     formData.append(
       "brandId",
       product.brands.find((brand) => brand.name === inputValues.brand).id
@@ -65,7 +69,7 @@ export default function CreateProduct({ isShown, hide }) {
     setInputValues({
       name: "",
       price: 0,
-      file: null,
+      files: null,
       brand: product.brands[0].name,
       type: product.types[0].name,
     });
@@ -75,10 +79,12 @@ export default function CreateProduct({ isShown, hide }) {
 
   return (
     <>
-      {isShown.product && (
+      {whatIsShown === "product" && (
         <div
-          className="admin-page-modal-container"
-          onClick={() => hide("product")}
+          className="admin-page-modal-opacity"
+          onClick={(e) =>
+            e.target.classList.contains("admin-page-modal-opacity") && hide()
+          }
         >
           <div className="modal-inner-container">
             <form>
@@ -131,7 +137,7 @@ export default function CreateProduct({ isShown, hide }) {
                 type="number"
                 placeholder="Введите стоимость устройства"
               />
-              <input onChange={selectFile} type="file" />
+              <input onChange={selectFiles} type="file" multiple />
               {info.map((elem) => {
                 return (
                   <div className="modal-stats" key={elem.number}>
@@ -165,7 +171,7 @@ export default function CreateProduct({ isShown, hide }) {
               })}
               <button onClick={addStatHandler}>Добавить новое свойство</button>;
               <div>
-                <button onClick={() => hide("product")}>Закрыть</button>
+                <button onClick={() => hide()}>Закрыть</button>
                 <button onClick={addProductHandler}>Добавить</button>
               </div>
             </form>

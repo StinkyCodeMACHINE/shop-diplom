@@ -10,7 +10,6 @@ export default function Pagination() {
     pages.push(i + 1);
   }
 
-  console.log("pages last: " + pages[pages.length - 1]);
 
   return (
     <div className="pagination">

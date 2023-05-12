@@ -3,8 +3,9 @@ const { DataTypes } = require("sequelize");
 
 const user = db.define("user", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  email: { type: DataTypes.STRING, unique: true },
-  password: { type: DataTypes.STRING },
+  name: { type: DataTypes.STRING, defaultValue: "Кто-то", allowNull: false },
+  email: { type: DataTypes.STRING, unique: true, allowNull: false },
+  password: { type: DataTypes.STRING, allowNull: false },
   role: { type: DataTypes.STRING, defaultValue: "USER" },
 });
 
@@ -21,17 +22,19 @@ const product = db.define("product", {
   name: { type: DataTypes.STRING, unique: true, allowNull: false },
   price: { type: DataTypes.INTEGER, allowNull: false },
   rating: { type: DataTypes.INTEGER, defaultValue: 0 },
-  img: { type: DataTypes.STRING, allowNull: false },
+  img: { type: DataTypes.JSON, allowNull: false },
 });
 
 const type = db.define("type", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   name: { type: DataTypes.STRING, unique: true, allowNull: false },
+  img: { type: DataTypes.STRING }, // заменить allowNull: false
 });
 
 const brand = db.define("brand", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   name: { type: DataTypes.STRING, unique: true, allowNull: false },
+  img: { type: DataTypes.STRING }, // заменить allowNull: false
 });
 
 const rating = db.define("rating", {

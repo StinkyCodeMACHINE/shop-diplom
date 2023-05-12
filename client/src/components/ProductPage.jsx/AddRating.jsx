@@ -12,7 +12,6 @@ export default function AddRating({ product, setProduct }) {
   for (let i = 0; i < 5; i++) {
     starsArr.push(i + 1);
   }
-  console.log(product.ratings);
   function addHandler(e) {
     e.preventDefault();
     product.ratings.push({

@@ -11,10 +11,12 @@ export const $authHost = axios.create({
     baseURL: API_URL
 });
 
-const authInterceptor = config => {
-    config.headers.authorization = `Bearer ${localStorage.getItem('token')}`
-    return config
-}
+$authHost.defaults.headers.common.Authorization = `Bearer ${localStorage.getItem("token")}`
 
-$authHost.interceptors.request.use(authInterceptor);
+// const authInterceptor = config => {
+//     config.headers.authorization = `Bearer ${localStorage.getItem('token')}`
+//     return config
+// }
+
+// $authHost.interceptors.request.use(authInterceptor);
 

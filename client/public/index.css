@@ -21,7 +21,7 @@ body {
   font-family: "Roboto";
   font-weight: 400;
   font-size: 18px;
-  padding: 10px 61px;
+  padding: 0.4rem 1rem;
   user-select: none;
   display: grid;
   grid-template-columns: 1fr 3fr 1fr;
@@ -79,6 +79,7 @@ body {
 
 .navbar-types-icon {
   transition: transform 500ms ease-out;
+  transform: rotate(90deg)
 }
 
 .navbar-search-bar-submit-button-container {
@@ -100,7 +101,8 @@ body {
     brightness(104%) contrast(86%);
   width: 19px;
   position: absolute;
-  top: 0%;
+  top: 50%;
+  transform: translateY(-50%);
   left: 92%;
   cursor: pointer;
 }
@@ -301,12 +303,13 @@ a:visited {
   margin: 24px;
 }
 
-.admin-page-modal-container {
-  background-color: rgba(0, 0, 0, 0.7);
-  width: 100%;
+.admin-page-modal-opacity {
   height: calc(100vh - var(--navbar-height));
-  position: absolute;
-  z-index: 999;
+  width: 100%;
+  position: fixed;
+  background-color: hsla(0, 0%, 0%, 0.7);
+  left: 0;
+  top: var(--navbar-height);
   display: grid;
   place-items: center;
 }
@@ -317,6 +320,9 @@ a:visited {
   background-color: #f3f3f3;
   display: grid;
   place-items: center;
+  z-index: 999;
+  position: absolute;
+  
 }
 
 .modal-inner-container select,

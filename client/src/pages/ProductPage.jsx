@@ -79,7 +79,7 @@ export default function ProductPage() {
       <div className="product-page-main-container">
         <div className="product-page-top-container">
           <img
-            src={product.img ? API_URL + PRODUCT_IMAGE_URL + product.img : ""}
+            src={product.img ? API_URL + PRODUCT_IMAGE_URL + product.img[0] : ""}
             className="product-page-img"
           />
           <div className="product-page-name-and-rating">

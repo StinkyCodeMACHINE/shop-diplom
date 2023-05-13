@@ -4,11 +4,11 @@ const {
   addToFavourite,
   removeFromFavourite,
   getFavouriteProducts,
-  getFavouriteIds
+  getFavouriteId
 } = require("../controllers/productController");
 const checkAuth = require("../middleware/authMiddleware");
 
-router.get("/", checkAuth, getFavouriteIds);
+router.get("/:id", checkAuth, getFavouriteId);
 router.post("/product/:id", checkAuth, addToFavourite);
 router.delete("/product/:id", checkAuth, removeFromFavourite);
 router.get("/product/", checkAuth, getFavouriteProducts);

@@ -2,20 +2,20 @@ import react, { useContext, useEffect, useState } from "react";
 import { Context } from "../App";
 import { useNavigate } from "react-router-dom";
 import { API_URL, PRODUCT_ROUTE, PRODUCT_IMAGE_URL } from "../utils/consts";
-import { getBrands, getProducts, getTypes } from "../API/productAPI";
+import { getBrands, getFavouriteIds, getProducts, getTypes } from "../API/productAPI";
 import Pagination from "../components/Shop/Pagination";
 import ProductCard from "../components/Shop/ProductCard";
 
 export default function Shop() {
-  const { product, setProduct } = useContext(Context);
-
+  const { product, setProduct, user } = useContext(Context);
+  
   useEffect(() => {
     getTypes().then((data) =>
       setProduct((oldProduct) => ({ ...oldProduct, types: data }))
-    );
-    getBrands().then((data) =>
+    ).then(getBrands().then((data) =>
       setProduct((oldProduct) => ({ ...oldProduct, brands: data }))
-    );
+    ))
+    
   }, []);
 
   //изменение пагинации
@@ -27,8 +27,11 @@ export default function Shop() {
       3,
       product.name
     ).then((data) => {
-      setProduct((oldProduct) => ({ ...oldProduct, products: data.rows }));
-      setProduct((oldProduct) => ({ ...oldProduct, totalCount: data.count }));
+      setProduct((oldProduct) => ({
+        ...oldProduct,
+        products: data.rows,
+        totalCount: data.count,
+      }));
     });
   }, [product.selectedBrand, product.selectedType, product.page, product.name]);
 
@@ -41,11 +44,15 @@ export default function Shop() {
       3,
       product.name
     ).then((data) => {
-      setProduct((oldProduct) => ({ ...oldProduct, products: data.rows }));
-      setProduct((oldProduct) => ({ ...oldProduct, totalCount: data.count }));
+      setProduct((oldProduct) => ({
+        ...oldProduct,
+        products: data.rows,
+        totalCount: data.count,
+      }));
     });
   }, [product.selectedBrand, product.selectedType]);
 
+  console.log("favorite: " + JSON.stringify(product.favourite));
   return (
     <div className="shop-container">
       <div className="types">

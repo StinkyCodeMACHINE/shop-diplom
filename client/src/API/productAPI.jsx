@@ -44,8 +44,37 @@ export async function getOneProduct(id) {
   return data;
 }
 
-export async function addToFavourite(id) {
-  const { data } = await $authHost.post(`/api/product/${id}`);
+export async function addToFavourite(id, userId) {
+  const { data } = await $authHost.post(`/api/favourite/product/${id}`, {
+    productId: id,
+    userId,
+  });
+  return data;
+}
+
+export async function removeFromFavourite(id) {
+  const { data } = await $authHost.delete(`/api/favourite/product/${id}`);
+  return data;
+}
+
+export async function getFavouriteIds(userId) {
+  console.log("userId: " + userId)
+  const { data } = await $authHost.get(`/api/favourite/`, {
+    params: {
+      userId,
+    },
+  });
+  return data;
+}
+
+export async function getFavouriteProducts(page, limit, userId) {
+  const { data } = await $authHost.get(`/api/favourite/product/`, {
+    params: {
+      userId,
+      limit,
+      page,
+    },
+  });
   return data;
 }
 

@@ -144,6 +144,8 @@ body {
   padding: 0.5rem 0.5rem;
 }
 
+
+
 a {
   text-decoration: none;
 }
@@ -219,6 +221,25 @@ a:visited {
 .product-image {
   width: 150px;
   height: 150px;
+}
+
+.product-heart-icon-container {
+  cursor: pointer;
+  position: relative;
+}
+
+.product-heart {
+  
+}
+
+.product-heart-empty {
+  position: relative;
+}
+
+.product-heart-full {
+  transition: 600ms opacity ease-in;
+  position: absolute;
+  left: 0;
 }
 
 .type-and-rating {

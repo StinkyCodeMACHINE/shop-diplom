@@ -114,15 +114,13 @@ async function getFavouriteProducts(req, res, next) {
   }
 }
 
-async function getFavouriteId(req, res, next) {
+async function getFavouriteIds(req, res, next) {
   try {
-    const { userId } = req.query;
-    const { id } = req.params;
-    const favouriteIds = await favourite.find({
+    let { userId } = req.query;
+    const favouriteIds = await favourite.findAll({
       where: {
-        userId,
-        id,
-      },
+        userId
+      }
     });
 
     res.json(favouriteIds);
@@ -189,5 +187,5 @@ module.exports = {
   addToFavourite,
   removeFromFavourite,
   getFavouriteProducts,
-  getFavouriteId,
+  getFavouriteIds,
 };

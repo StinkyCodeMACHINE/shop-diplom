@@ -57,11 +57,11 @@ export async function removeFromFavourite(id) {
   return data;
 }
 
-export async function getFavouriteId(id, userId) {
+export async function getFavouriteIds(userId) {
   console.log("userId: " + userId)
-  const { data } = await $authHost.get(`/api/favourite/${id}`, {
+  const { data } = await $authHost.get(`/api/favourite/`, {
     params: {
-      userId
+      userId,
     },
   });
   return data;

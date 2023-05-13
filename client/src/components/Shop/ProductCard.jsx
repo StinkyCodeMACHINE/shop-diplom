@@ -15,16 +15,7 @@ export default function ProductCard({
   const { product, user } = useContext(Context);
   const [isFavourite, setIsFavourite] = useState(product.favourite.includes(id)); //заменить
 
-  useEffect(() => {
-    if (user.isAuth) {
-      getFavouriteId(user.user.id).then((data) => {
-        const favourite = [];
-        data.forEach((dataElem) => favourite.push(dataElem.productId));
-        setProduct((oldProduct) => ({ ...oldProduct, favourite: favourite }));
-      });
-    }
-  }, []);
-
+  
   const navigate = useNavigate();
   return (
     <div className="product-card">

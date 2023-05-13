@@ -8,13 +8,21 @@ import ProductCard from "../components/Shop/ProductCard";
 
 export default function Shop() {
   const { product, setProduct, user } = useContext(Context);
-  
+ 
   useEffect(() => {
-    getTypes().then((data) =>
-      setProduct((oldProduct) => ({ ...oldProduct, types: data }))
-    ).then(getBrands().then((data) =>
-      setProduct((oldProduct) => ({ ...oldProduct, brands: data }))
-    ))
+    let stuff = {types: {}, brands: {}, favourite}
+    getTypes()
+      .then((data) =>
+        setProduct((oldProduct) => ({ ...oldProduct, types: data }))
+      )
+      .then(
+        getBrands().then((data) =>
+          setProduct((oldProduct) => ({ ...oldProduct, brands: data }))
+        )
+      )
+      .then(getFavouriteIds(user.user.id).then((data) => {
+        setProduct((oldProduct) => ({ ...oldProduct, favourite: [1] }));
+      }));
     
   }, []);
 
@@ -52,7 +60,6 @@ export default function Shop() {
     });
   }, [product.selectedBrand, product.selectedType]);
 
-  console.log("favorite: " + JSON.stringify(product.favourite));
   return (
     <div className="shop-container">
       <div className="types">

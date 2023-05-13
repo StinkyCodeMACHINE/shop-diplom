@@ -10,7 +10,6 @@ export default function Shop() {
   const { product, setProduct, user } = useContext(Context);
  
   useEffect(() => {
-    let stuff = {types: {}, brands: {}, favourite}
     getTypes()
       .then((data) =>
         setProduct((oldProduct) => ({ ...oldProduct, types: data }))
@@ -21,9 +20,13 @@ export default function Shop() {
         )
       )
       .then(getFavouriteIds(user.user.id).then((data) => {
-        setProduct((oldProduct) => ({ ...oldProduct, favourite: [1] }));
+        const favouriteList = []
+        data.forEach(dataElem => favouriteList.push(dataElem.productId))
+        setProduct((oldProduct) => ({
+          ...oldProduct,
+          favourite: favouriteList,
+        }));
       }));
-    
   }, []);
 
   //изменение пагинации
@@ -59,6 +62,8 @@ export default function Shop() {
       }));
     });
   }, [product.selectedBrand, product.selectedType]);
+
+  console.log("favourites: " + product.favourite)
 
   return (
     <div className="shop-container">

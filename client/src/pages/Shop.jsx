@@ -9,6 +9,7 @@ import ProductCard from "../components/Shop/ProductCard";
 export default function Shop() {
   const { product, setProduct, user } = useContext(Context);
  
+ 
   useEffect(() => {
     getTypes()
       .then((data) =>

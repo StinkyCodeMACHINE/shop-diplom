@@ -15,20 +15,21 @@ export default function App() {
     products: [],
     selectedType: {},
     selectedBrand: {},
-    
+
     name: "",
     page: 1,
     totalCount: 0,
     limit: 3,
   });
-  const [whatIsShown, setWhatIsShown] = useState("")
+  const [whatIsShown, setWhatIsShown] = useState("");
 
-  console.log(`user: ${user.user.email} | role: ${user.user.role} | isAuth: ${user.isAuth}`);
-
+  console.log(
+    `user: ${user.user.email} | role: ${user.user.role} | isAuth: ${user.isAuth}`
+  );
 
   useEffect(() => {
     check().then((data) => {
-      setUser({user: data, isAuth: true});
+      setUser({ user: data, isAuth: true });
     });
   }, []);
 
@@ -40,7 +41,7 @@ export default function App() {
         product,
         setProduct,
         whatIsShown,
-        setWhatIsShown
+        setWhatIsShown,
       }}
     >
       <div>
@@ -66,4 +67,4 @@ export default function App() {
       </div>
     </Context.Provider>
   );
-};
+}

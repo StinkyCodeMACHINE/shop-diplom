@@ -43,3 +43,9 @@ export async function getOneProduct(id) {
   const { data } = await $host.get(`/api/product/${id}`);
   return data;
 }
+
+export async function addToFavourite(id) {
+  const { data } = await $authHost.post(`/api/product/${id}`);
+  return data;
+}
+

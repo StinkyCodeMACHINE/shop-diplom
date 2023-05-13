@@ -1,6 +1,6 @@
 const uuid = require("uuid"); // генерирует случайные id
 const path = require("path");
-const { product, productInfo } = require("../db/models");
+const { product, productInfo, favourite } = require("../db/models");
 const { Op } = require("sequelize");
 
 async function create(req, res, next) {
@@ -63,6 +63,25 @@ async function create(req, res, next) {
   }
 }
 
+async function addToFavourite(req, res) {
+  try {
+    let { productId, userId } = req.body;
+
+    const favouriteElem = await favourite.create({
+      productId,
+      userId,
+    });
+
+    res.json(productElem);
+  }
+  catch (err) {
+    next(new Error(err.message))
+  }
+  
+  
+
+}
+
 async function getAll(req, res) {
   let { brandId, typeId, limit, page, name } = req.query;
   page = page || 1;
@@ -110,9 +129,12 @@ async function getOne(req, res) {
   res.json(productElem);
 }
 
+
+
 module.exports = {
   create,
   getAll,
   getOne,
+  addToFavourite,
 };
 

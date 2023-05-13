@@ -10,7 +10,7 @@ async function create(req, res, next) {
     // let fileName = uuid.v4() + ".jpg";
     // img.mv(path.resolve(__dirname, "..", "static", "product-images", fileName)); было
 
-    let { name, price, brandId, typeId, info} = req.body;
+    let { name, price, brandId, typeId, info } = req.body;
     const { img } = req.files;
     console.log(img);
     const fileNames = [];
@@ -27,15 +27,14 @@ async function create(req, res, next) {
           )
         );
       }
-    }
-    else {
+    } else {
       fileNames.push(uuid.v4() + ".jpg");
       img.mv(
         path.resolve(__dirname, "..", "static", "product-images", fileNames[0])
       );
     }
-    
-    console.log(fileNames)
+
+    console.log(fileNames);
 
     const productElem = await product.create({
       name,
@@ -63,58 +62,110 @@ async function create(req, res, next) {
   }
 }
 
-async function addToFavourite(req, res) {
+async function addToFavourite(req, res, next) {
   try {
-    let { productId, userId } = req.body;
+    const { productId, userId } = req.body;
 
     const favouriteElem = await favourite.create({
       productId,
       userId,
     });
 
-    res.json(productElem);
+    res.json(favouriteElem);
+  } catch (err) {
+    next(new Error(err.message));
   }
-  catch (err) {
-    next(new Error(err.message))
-  }
-  
-  
+}
 
+async function removeFromFavourite(req, res, next) {
+  try {
+    let { id } = req.params;
+
+    const favouriteElem = await favourite.destroy({
+      where: {
+        productId: id,
+      },
+    });
+    res.json(favouriteElem);
+  } catch (err) {
+    next(new Error(err.message));
+  }
+}
+
+async function getFavouriteProducts(req, res, next) {
+  try {
+    let { limit, page, userId } = req.query;
+    page = page || 1;
+    limit = Number(limit) || 9;
+    let offset = page * limit - limit;
+    let products;
+    products = await product.findAndCountAll({
+      limit,
+      offset,
+      include: {
+        model: favourite,
+        required: true,
+      },
+    });
+   
+    res.json(products);
+  } catch (err) {
+    next(new Error(err.message));
+  }
+}
+
+async function getFavouriteIds(req, res, next) {
+  try {
+    let { userId } = req.query;
+    const favouriteIds = await favourite.findAll({
+      where: {
+        userId
+      }
+    });
+
+    res.json(favouriteIds);
+  } catch (err) {
+    next(new Error(err.message));
+  }
 }
 
 async function getAll(req, res) {
-  let { brandId, typeId, limit, page, name } = req.query;
-  page = page || 1;
-  name = name || ""
-  limit = Number(limit) || 9;
-  let offset = page * limit - limit;
-  let products;
-  if (!brandId && !typeId) {
-    products = await product.findAndCountAll({
-      where: { name: { [Op.like]: `%${name}%` } },
-      limit,
-      offset,
-    });
-  } else if (brandId && !typeId) {
-    products = await product.findAndCountAll({
-      where: { brandId, name: { [Op.like]: `%${name}%` } },
-      limit,
-      offset,
-    });
-  } else if (!brandId && typeId) {
-    products = await product.findAndCountAll({
-      where: { typeId, name: { [Op.like]: `%${name}%` } },
-      limit,
-      offset,
-    });
-  } else {
-    products = await product.findAndCountAll({
-      where: { typeId, brandId, name: { [Op.like]: `%${name}%` } },
-      limit,
-      offset,
-    });
+  try {
+    let { brandId, typeId, limit, page, name } = req.query;
+    page = page || 1;
+    name = name || "";
+    limit = Number(limit) || 9;
+    let offset = page * limit - limit;
+    let products;
+    if (!brandId && !typeId) {
+      products = await product.findAndCountAll({
+        where: { name: { [Op.like]: `%${name}%` } },
+        limit,
+        offset,
+      });
+    } else if (brandId && !typeId) {
+      products = await product.findAndCountAll({
+        where: { brandId, name: { [Op.like]: `%${name}%` } },
+        limit,
+        offset,
+      });
+    } else if (!brandId && typeId) {
+      products = await product.findAndCountAll({
+        where: { typeId, name: { [Op.like]: `%${name}%` } },
+        limit,
+        offset,
+      });
+    } else {
+      products = await product.findAndCountAll({
+        where: { typeId, brandId, name: { [Op.like]: `%${name}%` } },
+        limit,
+        offset,
+      });
+    }
+    res.json(products);
+  } catch (err) {
+    next(new Error(err.message));
   }
-  res.json(products);
 }
 
 async function getOne(req, res) {
@@ -129,12 +180,12 @@ async function getOne(req, res) {
   res.json(productElem);
 }
 
-
-
 module.exports = {
   create,
   getAll,
   getOne,
   addToFavourite,
+  removeFromFavourite,
+  getFavouriteProducts,
+  getFavouriteIds,
 };
-

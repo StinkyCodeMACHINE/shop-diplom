@@ -15,6 +15,8 @@ const brandRouter = require("./routes/brandRouter");
 const productRouter = require("./routes/productRouter");
 const typeRouter = require("./routes/typeRouter");
 const userRouter = require("./routes/userRouter");
+const favouriteRouter = require("./routes/favouriteRouter");
+
 
 // разрешение обращения от других источников
 // app.use((req, res, next) => {
@@ -31,6 +33,7 @@ app.use("/api/user", userRouter);
 app.use("/api/type", typeRouter);
 app.use("/api/brand", brandRouter);
 app.use("/api/product", productRouter);
+app.use("/api/favourite", favouriteRouter);
 
 // Обработка ошибок, последний middleware
 app.use(errorHandler)

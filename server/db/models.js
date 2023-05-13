@@ -25,12 +25,21 @@ const product = db.define("product", {
   img: { type: DataTypes.JSON, allowNull: false },
 });
 
-const favourite = db.define("favourite", {
-  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-}, 
-{
-  freezeTableName: true
-});
+const favourite = db.define(
+  "favourite",
+  {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  },
+  {
+    freezeTableName: true,
+    indexes: [
+      {
+        unique: true,
+        fields: ["productId"],
+      },
+    ],
+  }
+);
 
 const type = db.define("type", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
@@ -59,16 +68,14 @@ const productInfo = db.define(
   { freezeTableName: true }
 );
 
-
-
 user.hasOne(basket);
 basket.belongsTo(user);
 
 user.hasMany(rating);
 rating.belongsTo(user);
 
-user.hasMany(favourite)
-favourite.belongsTo(user)
+user.hasMany(favourite);
+favourite.belongsTo(user);
 
 basket.hasMany(basketProduct);
 basketProduct.belongsTo(basket);
@@ -82,16 +89,14 @@ productInfo.belongsTo(product);
 product.hasMany(rating);
 rating.belongsTo(product);
 
-product.hasMany(favourite)
-favourite.belongsTo(product)
+product.hasOne(favourite);
+favourite.belongsTo(product);
 
 brand.hasMany(product);
 product.belongsTo(brand);
 
 type.hasMany(product);
 product.belongsTo(type);
-
-
 
 module.exports = {
   user,
@@ -102,4 +107,5 @@ module.exports = {
   brand,
   rating,
   productInfo,
+  favourite,
 };

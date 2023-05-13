@@ -12,6 +12,7 @@ export default function App() {
   const [product, setProduct] = useState({
     types: [],
     brands: [],
+    favourite: [],
     products: [],
     selectedType: {},
     selectedBrand: {},

@@ -1,10 +1,11 @@
 import react, { useContext, useEffect, useState } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, Link } from "react-router-dom";
 import {
   getOneProduct,
   getFavouriteIds,
   removeFromFavourite,
-  addToFavourite
+  addToFavourite,
+  getTypes,
 } from "../API/productAPI";
 import Rating from "../components/ProductPage.jsx/Rating";
 import AddRating from "../components/ProductPage.jsx/AddRating";
@@ -14,9 +15,12 @@ import { Context } from "../App";
 export default function ProductPage() {
   const [productElem, setProductElem] = useState({ info: [], ratings: [] });
   const { product, setProduct, user } = useContext(Context);
+  const [currentSelection, setCurrentSelection] = useState(0)
 
   const { id } = useParams();
   const { state } = useLocation();
+
+  const [isHoveredOver, setIsHoveredOver] = useState(false);
 
   const rating = [
     {
@@ -75,43 +79,78 @@ export default function ProductPage() {
   ];
 
   useEffect(() => {
+    console.log("ass1")
     async function apiCalls() {
       const favourite = user.user.id ? await getFavouriteIds(user.user.id) : [];
+      const types = product.types.length===0 ? await getTypes() : product.types;
       await setProduct((oldProduct) => ({
         ...oldProduct,
         favourite,
+        types
       }));
     }
 
     apiCalls();
-  }, [user.user.id]);
+  }, []);
 
   useEffect(() => {
+    console.log("ass2");
     async function apiCalls() {
-      let data = await getOneProduct(id);
-      await setProductElem(data);
-      await setProductElem((oldProductElem) => ({
-        ...oldProductElem,
+      const oneProduct = await getOneProduct(id);
+      await setProductElem({
+        ...oneProduct,
         ratings: rating,
-      }));
+        type:
+          product.types.length > 0
+            ? product.types.find((type) => type.id === oneProduct.typeId).name
+            : "",
+      });
     }
     apiCalls();
-  }, [state]);
+  }, [state, product.types]);
 
+  console.log("PP types: " + JSON.stringify(product.types))
   return (
     productElem.img && (
       <div className="product-page-main-container">
+        {productElem.type && (
+          <div className="product-page-group-and-type">
+            <Link className="product-page-group">{productElem.type}</Link>
+            <div>{">"}</div>
+            <Link className="product-page-type">{productElem.type}</Link>
+          </div>
+        )}
+
         <div className="product-page-top-container">
-          <img
-            src={
-              productElem.img
-                ? API_URL + PRODUCT_IMAGE_URL + productElem.img[0]
-                : ""
-            }
-            className="product-page-img"
-          />
+          <div className="product-page-name-and-pic-container">
+            <div className="product-page-name">
+              <div className="product-page-name">{productElem.name}</div>
+            </div>
+            <div className="product-page-img-and-subimgs">
+                <div className="product-page-subimgs-container">
+                  {productElem.img.map((imgElem, index) => {
+                       return (
+                         <img
+                           className="product-page-subimg"
+                           src={API_URL + PRODUCT_IMAGE_URL + imgElem}
+                           style={currentSelection === index ? {outline: "1px solid blue"} : {}}
+                           onClick={() => setCurrentSelection(index)}
+                         />
+                       );
+                  })}
+                </div>
+              <img
+                src={
+                  productElem.img
+                    ? API_URL + PRODUCT_IMAGE_URL + productElem.img[currentSelection]
+                    : ""
+                }
+                className="product-page-img"
+              />
+            </div>
+          </div>
+
           <div className="product-page-name-and-rating">
-            <div className="product-page-name">{productElem.name}</div>
             <div className="product-page-rating">{productElem.rating}</div>
           </div>
           <div className="productElem-page-add-to-card-container">
@@ -120,7 +159,11 @@ export default function ProductPage() {
             {user.isAuth && (
               <div
                 onClick={async () => {
-                  if (product.favourite.find((elem) => elem.productId === Number(id))) {
+                  if (
+                    product.favourite.find(
+                      (elem) => elem.productId === Number(id)
+                    )
+                  ) {
                     await removeFromFavourite(id);
                   } else {
                     await addToFavourite(id, user.user.id);
@@ -131,6 +174,12 @@ export default function ProductPage() {
                     favourite: favourite,
                   }));
                 }}
+                onMouseOver={async () => {
+                  setIsHoveredOver(true);
+                }}
+                onMouseLeave={async () => {
+                  setIsHoveredOver(false);
+                }}
                 className="product-heart-container"
               >
                 <div className="product-heart-icon-container">
@@ -139,14 +188,16 @@ export default function ProductPage() {
                     src="/assets/eheart.svg"
                   />
                   <img
-                    className={
-                      product.favourite.find((elem) => elem.productId === Number(id))
-                        ? "product-heart product-heart-full shown"
-                        : "product-heart product-heart-full hidden"
-                    }
+                    className="product-heart product-heart-full"
                     style={
-                      product.favourite.find((elem) => elem.productId === Number(id))
-                        ? { opacity: 1 }
+                      product.favourite.find(
+                        (elem) => elem.productId === Number(id)
+                      )
+                        ? isHoveredOver
+                          ? { opacity: 0, transition: "600ms opacity ease-in" }
+                          : { opacity: 1 }
+                        : isHoveredOver
+                        ? { opacity: 1, transition: "600ms opacity ease-in" }
                         : {}
                     }
                     src="/assets/fheart.svg"
@@ -177,7 +228,10 @@ export default function ProductPage() {
           </div>
 
           <h2>Отзывы: </h2>
-          <AddRating product={productElem} setProductElem={setProductElem} />
+          <AddRating
+            productElem={productElem}
+            setProductElem={setProductElem}
+          />
           <div className="product-page-ratings">
             {productElem.ratings.map((ratingElem) => {
               return (

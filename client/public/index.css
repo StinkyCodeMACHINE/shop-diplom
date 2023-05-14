@@ -258,16 +258,7 @@ a:visited {
   cursor: pointer;
 }
 
-.product-heart-container:hover .product-heart-full.hidden {
-  transition: 600ms opacity ease-in;
-  opacity: 1;
-}
 
-
-.product-heart-container:hover .product-heart-full.shown {
-  transition: 600ms opacity ease-in;
-  opacity: 0;
-}
 
 .product-heart-icon-container {
   position: relative;
@@ -329,8 +320,17 @@ a:visited {
   justify-content: space-around;
 }
 
+.product-page-img-and-subimgs {
+  display: flex;
+}
+
 .product-page-img {
   width: 300px;
+}
+
+.product-page-subimg {
+  width: 40px;
+  display: block;
 }
 
 .product-page-rating {
@@ -351,6 +351,10 @@ a:visited {
   padding: 23px 50px;
   justify-content: space-between;
   border: 6px solid gray;
+}
+
+.product-page-group-and-type {
+  display: flex;
 }
 
 .product-page-stat {

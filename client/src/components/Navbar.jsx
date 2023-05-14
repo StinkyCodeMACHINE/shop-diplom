@@ -10,7 +10,6 @@ import {
 } from "../utils/consts";
 import { Context } from "../App";
 import {
-  getFavouriteIds,
   getProductsSearch,
   getTypes,
 } from "../API/productAPI";
@@ -28,11 +27,11 @@ export default function Navbar() {
   useEffect(() => {
     async function apiCalls() {
       const types = await getTypes();
-      
       await setProduct((oldProduct) => ({
         ...oldProduct,
         types: types.length>0 ? types : [],
       }));
+      console.log(`Navbar shit 1 types${JSON.stringify(product.types)}`)
     }
 
     apiCalls();
@@ -80,7 +79,6 @@ export default function Navbar() {
     }
   }
 
-  console.log("navbar product.favourite: ", JSON.stringify(product.favourite));
 
   async function onSearchChangeHandler(e) {
     if (e.target.value.length > 0) {
@@ -112,10 +110,12 @@ export default function Navbar() {
       }));
     }
   }
+  console.log("navbar product.favourite: ", JSON.stringify(product.favourite));
+  console.log("navbar render types: " + JSON.stringify(product.types))
 
   return (
     <header className="navbar">
-      <Link to={SHOP_ROUTE}>КупиДевайс</Link>
+      <Link to={SHOP_ROUTE}>Шазам</Link>
       <div className="navbar-search-bar-container">
         <div
           onClick={clickTypesHandler}
@@ -263,12 +263,13 @@ export default function Navbar() {
       )}
 
       {
+        //тёмная штука
         (whatIsShown === "types" || whatIsShown === "results") && (
           <div
             onClick={async () => setWhatIsShown("")}
             className="navbar-modal-opacity"
           ></div>
-        ) //тёмная штука
+        )
       }
     </header>
   );

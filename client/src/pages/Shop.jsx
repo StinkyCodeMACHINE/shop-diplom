@@ -13,6 +13,7 @@ import ProductCard from "../components/Shop/ProductCard";
 
 export default function Shop() {
   const { product, setProduct, user } = useContext(Context);
+  const [renderedOnce, setRenderedOnce] = useState(false)
 
   useEffect(() => {
     async function apiCalls() {
@@ -53,6 +54,7 @@ export default function Shop() {
     }
 
     apiCalls();
+    
 
     console.log("2 useeffect селбренды селтипы и пейдж и имя");
   }, [product.page]);
@@ -73,8 +75,8 @@ export default function Shop() {
         page: 1,
       }));
     }
-
-    apiCalls();
+    renderedOnce && apiCalls()
+    setRenderedOnce(true)
 
     console.log("3 useeffect селбренды селтипы");
   }, [product.selectedBrand, product.selectedType, product.name]);

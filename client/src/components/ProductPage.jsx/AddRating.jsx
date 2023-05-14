@@ -1,6 +1,6 @@
 import react, { useState } from "react";
 
-export default function AddRating({ product, setProduct }) {
+export default function AddRating({ productElem, setProductElem }) {
   const [inputValues, setInputValues] = useState({
     text: "",
     textLength: 0,
@@ -14,7 +14,7 @@ export default function AddRating({ product, setProduct }) {
   }
   function addHandler(e) {
     e.preventDefault();
-    product.ratings.push({
+    productElem.ratings.push({
       id: 7,
       name: "",
       thumbsUp: 1,
@@ -23,7 +23,7 @@ export default function AddRating({ product, setProduct }) {
       date: new Date(Date.now()),
       rating: inputValues.rating,
     });
-    setProduct((oldProduct) => ({ ...oldProduct }));
+    setProductElem((oldProduct) => ({ ...oldProduct }));
   }
 
   return (

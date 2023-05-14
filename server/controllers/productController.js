@@ -107,7 +107,7 @@ async function getFavouriteProducts(req, res, next) {
         required: true,
       },
     });
-   
+
     res.json(products);
   } catch (err) {
     next(new Error(err.message));
@@ -119,8 +119,8 @@ async function getFavouriteIds(req, res, next) {
     let { userId } = req.query;
     const favouriteIds = await favourite.findAll({
       where: {
-        userId
-      }
+        userId,
+      },
     });
 
     res.json(favouriteIds);

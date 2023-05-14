@@ -1,5 +1,4 @@
 import react, { useContext, useEffect, useState } from "react";
-import { nanoid } from "nanoid";
 import { useNavigate } from "react-router-dom";
 import { Context } from "../../App";
 import { API_URL, PRODUCT_IMAGE_URL, PRODUCT_ROUTE } from "../../utils/consts";
@@ -19,14 +18,10 @@ export default function ProductCard({
 }) {
   const { product, setProduct, user } = useContext(Context);
 
+  const [isHoveredOver, setIsHoveredOver] = useState(false)
+
   const navigate = useNavigate();
-  console.log(
-    id +
-      " " +
-      nanoid() +
-      " " +
-      product.favourite.find((elem) => elem.productId === id)
-  );
+  
   return (
     <div className="product-card">
       <img
@@ -71,6 +66,12 @@ export default function ProductCard({
               favourite: favourite,
             }));
           }}
+          onMouseOver={async () => {
+            setIsHoveredOver(true);
+          }}
+          onMouseLeave={async () => {
+            setIsHoveredOver(false);
+          }}
           className="product-heart-container"
         >
           <div className="product-heart-icon-container">
@@ -79,14 +80,14 @@ export default function ProductCard({
               src="/assets/eheart.svg"
             />
             <img
-              className={
-                product.favourite.find((elem) => elem.productId === id)
-                  ? "product-heart product-heart-full shown"
-                  : "product-heart product-heart-full hidden"
-              }
+              className="product-heart product-heart-full"
               style={
                 product.favourite.find((elem) => elem.productId === id)
-                  ? { opacity: 1 }
+                  ? isHoveredOver
+                    ? { opacity: 0, transition: "600ms opacity ease-in" }
+                    : { opacity: 1 }
+                  : isHoveredOver
+                  ? { opacity: 1, transition: "600ms opacity ease-in" }
                   : {}
               }
               src="/assets/fheart.svg"

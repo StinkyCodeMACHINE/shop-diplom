@@ -23,49 +23,64 @@ export default function App() {
     limit: 3,
   });
   const [whatIsShown, setWhatIsShown] = useState("");
+  const [authChecked, setAuthChecked] = useState(false);
 
   console.log(
     `user: ${user.user.email} | role: ${user.user.role} | isAuth: ${user.isAuth}`
   );
 
   useEffect(() => {
-    check().then((data) => {
-      setUser({ user: data, isAuth: true });
-    });
+    async function apiCalls() {
+      try {
+        const data = await check()
+        await setUser({ user: data, isAuth: true });
+      }
+      catch (err) {
+
+      }
+      finally {
+        await setAuthChecked(true);
+      }
+    }
+    apiCalls()
   }, []);
 
   return (
-    <Context.Provider
-      value={{
-        user,
-        setUser,
-        product,
-        setProduct,
-        whatIsShown,
-        setWhatIsShown,
-      }}
-    >
-      <div>
-        <Navbar />
-        <Routes>
-          {user.isAuth &&
-            authRoutes.map((route) => {
-              const { path, element } = route;
-              return <Route key={path} path={path} element={element} />;
-            })}
-          {user.user.role === "ADMIN" &&
-            adminRoutes.map((route) => {
-              const { path, element } = route;
-              return <Route key={path} path={path} element={element} />;
-            })}
-          {publicRoutes.map((route) => {
-            const { path, element } = route;
-            return <Route key={path} path={path} element={element} />;
-          })}
+    <>
+      {authChecked && (
+        <Context.Provider
+          value={{
+            user,
+            setUser,
+            product,
+            setProduct,
+            whatIsShown,
+            setWhatIsShown,
+          }}
+        >
+          <div>
+            <Navbar />
+            <Routes>
+              {user.isAuth &&
+                authRoutes.map((route) => {
+                  const { path, element } = route;
+                  return <Route key={path} path={path} element={element} />;
+                })}
+              {user.user.role === "ADMIN" &&
+                adminRoutes.map((route) => {
+                  const { path, element } = route;
+                  return <Route key={path} path={path} element={element} />;
+                })}
+              {publicRoutes.map((route) => {
+                const { path, element } = route;
+                return <Route key={path} path={path} element={element} />;
+              })}
 
-          <Route path="*" element={<Navigate to={SHOP_ROUTE} />} />
-        </Routes>
-      </div>
-    </Context.Provider>
+              <Route path="*" element={<Navigate to={SHOP_ROUTE} />} />
+            </Routes>
+          </div>
+        </Context.Provider>
+      )}
+    </>
   );
 }

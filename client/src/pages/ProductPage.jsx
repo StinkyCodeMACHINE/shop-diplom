@@ -1,13 +1,21 @@
-import react, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import react, { useContext, useEffect, useState } from "react";
+import { useParams, useLocation } from "react-router-dom";
 import { getOneProduct } from "../API/productAPI";
 import Rating from "../components/ProductPage.jsx/Rating";
 import AddRating from "../components/ProductPage.jsx/AddRating";
 import { API_URL, PRODUCT_IMAGE_URL } from "../utils/consts";
+import { Context } from "../App";
 
 export default function ProductPage() {
-  const [product, setProduct] = useState({ info: [], ratings: [] });
+  const [productElem, setProductElem] = useState({ info: [], ratings: [] });
+  const {product} = useContext(Context)
+  
   const { id } = useParams();
+  const { state } = useLocation();
+  
+  const [isFavourite, setIsFavourite] = useState(
+    product.favourite.find((elem) => elem.product === id) ? true : false
+  );
 
   const rating = [
     {
@@ -66,35 +74,75 @@ export default function ProductPage() {
   ];
 
   useEffect(() => {
+    async function apiCalls() {}
     getOneProduct(id)
-      .then((data) => setProduct(data))
+      .then((data) => setProductElem(data))
       .then(
         (data) =>
-          setProduct((oldProduct) => ({ ...oldProduct, ratings: rating })) //временно
+          setProductElem((oldProductElem) => ({
+            ...oldProductElem,
+            ratings: rating,
+          })) //временно
       );
-  }, []);
+  }, [state]);
+
+  useEffect(() => {
+    setIsFavourite(
+      product.favourite.find((elem) => elem.product === id) ? true : false
+    );
+  }, [product.favourite, ]);
 
   return (
-    product.img && (
+    productElem.img && (
       <div className="product-page-main-container">
         <div className="product-page-top-container">
           <img
-            src={product.img ? API_URL + PRODUCT_IMAGE_URL + product.img[0] : ""}
+            src={
+              productElem.img ? API_URL + PRODUCT_IMAGE_URL + productElem.img[0] : ""
+            }
             className="product-page-img"
           />
           <div className="product-page-name-and-rating">
-            <div className="product-page-name">{product.name}</div>
-            <div className="product-page-rating">{product.rating}</div>
+            <div className="product-page-name">{productElem.name}</div>
+            <div className="product-page-rating">{productElem.rating}</div>
           </div>
-          <div className="product-page-add-to-card-container">
-            <div>От {product.price} руб.</div>
+          <div className="productElem-page-add-to-card-container">
+            <div>От {productElem.price} руб.</div>
+
+            <div
+              onClick={async () => {
+                await setIsFavourite(!isFavourite);
+                isFavourite
+                  ? await removeFromFavourite(id, user.user.id)
+                  : await addToFavourite(id, user.user.id);
+              }}
+              className="product-heart-container"
+            >
+              <div className="product-heart-icon-container">
+                <img
+                  style={!isFavourite ? { zIndex: 500 } : {}}
+                  className="product-heart product-heart-empty"
+                  src="/assets/eheart.svg"
+                />
+                <img
+                  className="product-heart product-heart-full"
+                  style={
+                    isFavourite ? { opacity: 1, zIndex: 500 } : { opacity: 0 }
+                  }
+                  src="/assets/fheart.svg"
+                />
+              </div>
+
+              <div className="product-heart-text">Добавить в избранное</div>
+            </div>
+
             <button>Добавить в корзину</button>
           </div>
         </div>
         <div className="product-page-bottom-container">
           <h2>Характеристики: </h2>
           <div className="product-page-stats">
-            {product.info.map((stat) => {
+            {productElem.info.map((stat) => {
               return (
                 <div
                   key={stat.id}
@@ -108,9 +156,9 @@ export default function ProductPage() {
           </div>
 
           <h2>Отзывы: </h2>
-          <AddRating product={product} setProduct={setProduct} />
+          <AddRating product={productElem} setProductElem={setProductElem} />
           <div className="product-page-ratings">
-            {product.ratings.map((ratingElem) => {
+            {productElem.ratings.map((ratingElem) => {
               return (
                 <Rating
                   key={ratingElem.id}

@@ -1,13 +1,15 @@
-import react, { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import react, { useContext, useEffect, useState } from "react";
+import { Link, useNavigate,  } from "react-router-dom";
+import {nanoid} from "nanoid"
 import {
   ADMIN_ROUTE,
+  FAVOURITE_ROUTE,
   LOGIN_ROUTE,
   PRODUCT_ROUTE,
   SHOP_ROUTE,
 } from "../utils/consts";
 import { Context } from "../App";
-import { getProductsSearch } from "../API/productAPI";
+import { getProductsSearch, getTypes } from "../API/productAPI";
 
 export default function Navbar() {
   const { user, setUser, product, setProduct, whatIsShown, setWhatIsShown } =
@@ -51,15 +53,32 @@ export default function Navbar() {
         await setSearchValues((oldSearchValues) => ({
           ...oldSearchValues,
         }));
-        await setWhatIsShown("")
+        await setWhatIsShown("");
       } else {
         await setSearchValues((oldSearchValues) => ({
           ...oldSearchValues,
         }));
-        await setWhatIsShown("types")
+        await setWhatIsShown("types");
       }
     }
   }
+
+  useEffect(() => {
+    async function apiCalls() {
+        const result = await getTypes();
+        await setProduct((oldProduct) => ({
+          ...oldProduct,
+          types: result,
+        }));
+    }
+
+      if (product.types.length === 0) {
+        apiCalls();
+      }
+
+    
+      
+  }, [])
 
   async function onSearchChangeHandler(e) {
     if (e.target.value.length > 0) {
@@ -145,13 +164,13 @@ export default function Navbar() {
                 return (
                   <div
                     onClick={async () => {
-                      navigate(PRODUCT_ROUTE + `/${searchResult.id}`);
                       await setSearchValues((oldSearchValues) => ({
                         ...oldSearchValues,
                         name: "",
                         searchResults: [],
                       }));
                       await setWhatIsShown("");
+                      navigate(PRODUCT_ROUTE + `/${searchResult.id}`, { state: nanoid() }); //для ререндера той же страницы
                     }}
                     key={searchResult.name}
                     className="navbar-search-bar-search-result"
@@ -209,9 +228,17 @@ export default function Navbar() {
           {user.user.role === "ADMIN" && (
             <div onClick={() => navigate(ADMIN_ROUTE)}>Админ</div>
           )}
-          <img className="navbar-cart-icon" src="/assets/cart.svg" />
+          <div className="navbar-cart-container">
+            <div className="navbar-cart-text">Корзина</div>
+            <img className="navbar-cart-icon" src="/assets/cart.svg" />
+          </div>
           <div>{user.email}</div>
-          <div>Избранное</div>
+
+          <div onClick={() => navigate(FAVOURITE_ROUTE)} className="navbar-favourite-container">
+            <div className="navbar-favourite-text">Избранное</div>
+            <img className="navbar-favourite-icon" src="/assets/fheart.svg"/>
+          </div>
+
           <div className="navbar-name">
             {!user.user.name ? "Без имени" : user.user.name}
           </div>

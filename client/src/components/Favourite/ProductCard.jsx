@@ -12,7 +12,7 @@ export default function ProductCard({
   rating,
   name,
 }) {
-  const { product, user } = useContext(Context);
+  const { product, setProduct, user } = useContext(Context);
   const [isFavourite, setIsFavourite] = useState(
     product.favourite.find((elem) => elem.productId === id) ? true : false
   );
@@ -54,32 +54,19 @@ export default function ProductCard({
       >
         {name}
       </div>
-      {user.isAuth && (
-        <div
-          onClick={async () => {
-            await setIsFavourite(!isFavourite);
-            isFavourite
-              ? await removeFromFavourite(id, user.user.id)
-              : await addToFavourite(id, user.user.id);
-          }}
-          className="product-heart-container"
-        >
-          <div className="product-heart-icon-container">
-            <img
-              style={!isFavourite ? { zIndex: 500 } : {}}
-              className="product-heart product-heart-empty"
-              src="/assets/eheart.svg"
-            />
-            <img
-              className="product-heart product-heart-full"
-              style={isFavourite ? { opacity: 1, zIndex: 500 } : { opacity: 0 }}
-              src="/assets/fheart.svg"
-            />
-          </div>
-
-          <div className="product-heart-text">Добавить в избранное</div>
-        </div>
-      )}
+      <div onClick={async () => {
+        await removeFromFavourite(id)
+        const result = {};
+        result.favourite = user.user.id
+          ? await getFavouriteIds(user.user.id)
+          : [];
+        await setProduct((oldProduct) => ({
+          ...oldProduct,
+          favourite: result.favourite,
+        }));
+      }} className="product-remove-favourite-button">
+            Убрать из избранного
+      </div>
     </div>
   );
 }

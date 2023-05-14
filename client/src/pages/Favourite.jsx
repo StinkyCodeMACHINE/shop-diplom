@@ -15,8 +15,6 @@ import ProductCard from "../components/Favourite/ProductCard";
 export default function Favourite() {
   const { product, setProduct, user } = useContext(Context);
 
-  const [favouriteProducts, setFavouriteProducts] = useState([]);
-
   useEffect(() => {
     async function apiCalls() {
       const result = {};
@@ -34,7 +32,7 @@ export default function Favourite() {
     apiCalls();
 
     console.log("1 useeffect бренды типы и фавориты");
-  }, [user.user.id, product.favourite]);
+  }, [user.user.id]);
 
   //изменение пагинации
   useEffect(() => {

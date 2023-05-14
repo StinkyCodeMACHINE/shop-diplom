@@ -1,6 +1,11 @@
 import react, { useContext, useEffect, useState } from "react";
 import { useParams, useLocation } from "react-router-dom";
-import { getOneProduct } from "../API/productAPI";
+import {
+  getOneProduct,
+  getFavouriteIds,
+  removeFromFavourite,
+  addToFavourite
+} from "../API/productAPI";
 import Rating from "../components/ProductPage.jsx/Rating";
 import AddRating from "../components/ProductPage.jsx/AddRating";
 import { API_URL, PRODUCT_IMAGE_URL } from "../utils/consts";
@@ -8,14 +13,10 @@ import { Context } from "../App";
 
 export default function ProductPage() {
   const [productElem, setProductElem] = useState({ info: [], ratings: [] });
-  const {product} = useContext(Context)
-  
+  const { product, setProduct, user } = useContext(Context);
+
   const { id } = useParams();
   const { state } = useLocation();
-  
-  const [isFavourite, setIsFavourite] = useState(
-    product.favourite.find((elem) => elem.product === id) ? true : false
-  );
 
   const rating = [
     {
@@ -74,23 +75,28 @@ export default function ProductPage() {
   ];
 
   useEffect(() => {
-    async function apiCalls() {}
-    getOneProduct(id)
-      .then((data) => setProductElem(data))
-      .then(
-        (data) =>
-          setProductElem((oldProductElem) => ({
-            ...oldProductElem,
-            ratings: rating,
-          })) //временно
-      );
-  }, [state]);
+    async function apiCalls() {
+      const favourite = user.user.id ? await getFavouriteIds(user.user.id) : [];
+      await setProduct((oldProduct) => ({
+        ...oldProduct,
+        favourite,
+      }));
+    }
+
+    apiCalls();
+  }, [user.user.id]);
 
   useEffect(() => {
-    setIsFavourite(
-      product.favourite.find((elem) => elem.product === id) ? true : false
-    );
-  }, [product.favourite, ]);
+    async function apiCalls() {
+      let data = await getOneProduct(id);
+      await setProductElem(data);
+      await setProductElem((oldProductElem) => ({
+        ...oldProductElem,
+        ratings: rating,
+      }));
+    }
+    apiCalls();
+  }, [state]);
 
   return (
     productElem.img && (
@@ -98,7 +104,9 @@ export default function ProductPage() {
         <div className="product-page-top-container">
           <img
             src={
-              productElem.img ? API_URL + PRODUCT_IMAGE_URL + productElem.img[0] : ""
+              productElem.img
+                ? API_URL + PRODUCT_IMAGE_URL + productElem.img[0]
+                : ""
             }
             className="product-page-img"
           />
@@ -109,32 +117,45 @@ export default function ProductPage() {
           <div className="productElem-page-add-to-card-container">
             <div>От {productElem.price} руб.</div>
 
-            <div
-              onClick={async () => {
-                await setIsFavourite(!isFavourite);
-                isFavourite
-                  ? await removeFromFavourite(id, user.user.id)
-                  : await addToFavourite(id, user.user.id);
-              }}
-              className="product-heart-container"
-            >
-              <div className="product-heart-icon-container">
-                <img
-                  style={!isFavourite ? { zIndex: 500 } : {}}
-                  className="product-heart product-heart-empty"
-                  src="/assets/eheart.svg"
-                />
-                <img
-                  className="product-heart product-heart-full"
-                  style={
-                    isFavourite ? { opacity: 1, zIndex: 500 } : { opacity: 0 }
+            {user.isAuth && (
+              <div
+                onClick={async () => {
+                  if (product.favourite.find((elem) => elem.productId === Number(id))) {
+                    await removeFromFavourite(id);
+                  } else {
+                    await addToFavourite(id, user.user.id);
                   }
-                  src="/assets/fheart.svg"
-                />
-              </div>
+                  let favourite = await getFavouriteIds(user.user.id);
+                  await setProduct((oldProduct) => ({
+                    ...oldProduct,
+                    favourite: favourite,
+                  }));
+                }}
+                className="product-heart-container"
+              >
+                <div className="product-heart-icon-container">
+                  <img
+                    className="product-heart product-heart-empty"
+                    src="/assets/eheart.svg"
+                  />
+                  <img
+                    className={
+                      product.favourite.find((elem) => elem.productId === Number(id))
+                        ? "product-heart product-heart-full shown"
+                        : "product-heart product-heart-full hidden"
+                    }
+                    style={
+                      product.favourite.find((elem) => elem.productId === Number(id))
+                        ? { opacity: 1 }
+                        : {}
+                    }
+                    src="/assets/fheart.svg"
+                  />
+                </div>
 
-              <div className="product-heart-text">Добавить в избранное</div>
-            </div>
+                <div className="product-heart-text">Добавить в избранное</div>
+              </div>
+            )}
 
             <button>Добавить в корзину</button>
           </div>

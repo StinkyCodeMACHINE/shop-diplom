@@ -1,6 +1,6 @@
 import react, { useContext, useEffect, useState } from "react";
-import { Link, useNavigate,  } from "react-router-dom";
-import {nanoid} from "nanoid"
+import { Link, useNavigate } from "react-router-dom";
+import { nanoid } from "nanoid";
 import {
   ADMIN_ROUTE,
   FAVOURITE_ROUTE,
@@ -9,7 +9,11 @@ import {
   SHOP_ROUTE,
 } from "../utils/consts";
 import { Context } from "../App";
-import { getProductsSearch, getTypes } from "../API/productAPI";
+import {
+  getFavouriteIds,
+  getProductsSearch,
+  getTypes,
+} from "../API/productAPI";
 
 export default function Navbar() {
   const { user, setUser, product, setProduct, whatIsShown, setWhatIsShown } =
@@ -20,6 +24,19 @@ export default function Navbar() {
     searchResults: [],
   });
   const navigate = useNavigate();
+
+  useEffect(() => {
+    async function apiCalls() {
+      const types = await getTypes();
+      
+      await setProduct((oldProduct) => ({
+        ...oldProduct,
+        types: types.length>0 ? types : [],
+      }));
+    }
+
+    apiCalls();
+  }, []);
 
   function logOutHandler() {
     setUser({ user: {}, isAuth: false });
@@ -63,22 +80,7 @@ export default function Navbar() {
     }
   }
 
-  useEffect(() => {
-    async function apiCalls() {
-        const result = await getTypes();
-        await setProduct((oldProduct) => ({
-          ...oldProduct,
-          types: result,
-        }));
-    }
-
-      if (product.types.length === 0) {
-        apiCalls();
-      }
-
-    
-      
-  }, [])
+  console.log("navbar product.favourite: ", JSON.stringify(product.favourite));
 
   async function onSearchChangeHandler(e) {
     if (e.target.value.length > 0) {
@@ -170,7 +172,9 @@ export default function Navbar() {
                         searchResults: [],
                       }));
                       await setWhatIsShown("");
-                      navigate(PRODUCT_ROUTE + `/${searchResult.id}`, { state: nanoid() }); //для ререндера той же страницы
+                      navigate(PRODUCT_ROUTE + `/${searchResult.id}`, {
+                        state: nanoid(),
+                      }); //для ререндера той же страницы
                     }}
                     key={searchResult.name}
                     className="navbar-search-bar-search-result"
@@ -234,9 +238,17 @@ export default function Navbar() {
           </div>
           <div>{user.email}</div>
 
-          <div onClick={() => navigate(FAVOURITE_ROUTE)} className="navbar-favourite-container">
+          <div
+            onClick={() => navigate(FAVOURITE_ROUTE)}
+            className="navbar-favourite-container"
+          >
             <div className="navbar-favourite-text">Избранное</div>
-            <img className="navbar-favourite-icon" src="/assets/fheart.svg"/>
+            <div className="navbar-favourite-icon-container">
+              <img className="navbar-favourite-icon" src="/assets/fheart.svg" />
+              <div className="navbar-favourite-count-container">
+                {product.favourite.length}
+              </div>
+            </div>
           </div>
 
           <div className="navbar-name">

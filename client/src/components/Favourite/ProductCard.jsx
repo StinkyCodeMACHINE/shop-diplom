@@ -2,7 +2,7 @@ import react, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Context } from "../../App";
 import { API_URL, PRODUCT_IMAGE_URL, PRODUCT_ROUTE } from "../../utils/consts";
-import { addToFavourite, removeFromFavourite } from "../../API/productAPI";
+import { removeFromFavourite, getFavouriteIds } from "../../API/productAPI";
 
 export default function ProductCard({
   id,
@@ -13,15 +13,6 @@ export default function ProductCard({
   name,
 }) {
   const { product, setProduct, user } = useContext(Context);
-  const [isFavourite, setIsFavourite] = useState(
-    product.favourite.find((elem) => elem.productId === id) ? true : false
-  );
-
-  useEffect(() => {
-    setIsFavourite(
-      product.favourite.find((elem) => elem.productId === id) ? true : false
-    );
-  }, [product.favourite]);
 
   const navigate = useNavigate();
   return (

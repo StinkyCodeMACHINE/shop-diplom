@@ -130,7 +130,7 @@ export default function Shop() {
             </div>
           ))}
         </div>
-        {(product.types.length > 0 && product.brands.length > 0)(
+        {(product.types.length > 0 && product.brands.length > 0 ) && (
           <div className="product-cards">
             {product.products.map((eachProduct) => (
               <ProductCard

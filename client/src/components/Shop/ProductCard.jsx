@@ -1,8 +1,13 @@
 import react, { useContext, useEffect, useState } from "react";
+import { nanoid } from "nanoid";
 import { useNavigate } from "react-router-dom";
 import { Context } from "../../App";
 import { API_URL, PRODUCT_IMAGE_URL, PRODUCT_ROUTE } from "../../utils/consts";
-import { addToFavourite, removeFromFavourite } from "../../API/productAPI";
+import {
+  addToFavourite,
+  removeFromFavourite,
+  getFavouriteIds,
+} from "../../API/productAPI";
 
 export default function ProductCard({
   id,
@@ -12,18 +17,16 @@ export default function ProductCard({
   rating,
   name,
 }) {
-  const { product, user } = useContext(Context);
-  const [isFavourite, setIsFavourite] = useState(
-    product.favourite.find((elem) => elem.productId === id) ? true : false
-  );
-
-  useEffect(() => {
-    setIsFavourite(
-      product.favourite.find((elem) => elem.productId === id) ? true : false
-    );
-  }, [product.favourite]);
+  const { product, setProduct, user } = useContext(Context);
 
   const navigate = useNavigate();
+  console.log(
+    id +
+      " " +
+      nanoid() +
+      " " +
+      product.favourite.find((elem) => elem.productId === id)
+  );
   return (
     <div className="product-card">
       <img
@@ -57,22 +60,35 @@ export default function ProductCard({
       {user.isAuth && (
         <div
           onClick={async () => {
-            await setIsFavourite(!isFavourite);
-            isFavourite
-              ? await removeFromFavourite(id, user.user.id)
-              : await addToFavourite(id, user.user.id);
+            if (product.favourite.find((elem) => elem.productId === id)) {
+              await removeFromFavourite(id);
+            } else {
+              await addToFavourite(id, user.user.id);
+            }
+            let favourite = await getFavouriteIds(user.user.id);
+            await setProduct((oldProduct) => ({
+              ...oldProduct,
+              favourite: favourite,
+            }));
           }}
           className="product-heart-container"
         >
           <div className="product-heart-icon-container">
             <img
-              style={!isFavourite ? { zIndex: 500 } : {}}
               className="product-heart product-heart-empty"
               src="/assets/eheart.svg"
             />
             <img
-              className="product-heart product-heart-full"
-              style={isFavourite ? { opacity: 1, zIndex: 500 } : { opacity: 0 }}
+              className={
+                product.favourite.find((elem) => elem.productId === id)
+                  ? "product-heart product-heart-full shown"
+                  : "product-heart product-heart-full hidden"
+              }
+              style={
+                product.favourite.find((elem) => elem.productId === id)
+                  ? { opacity: 1 }
+                  : {}
+              }
               src="/assets/fheart.svg"
             />
           </div>

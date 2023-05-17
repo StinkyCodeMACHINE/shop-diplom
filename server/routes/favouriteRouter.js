@@ -5,7 +5,7 @@ const {
   removeFromFavourite,
   getFavouriteProducts,
   getFavouriteIds
-} = require("../controllers/productController");
+} = require("../controllers/favouriteController");
 const checkAuth = require("../middleware/authMiddleware");
 
 router.get("/", checkAuth, getFavouriteIds);

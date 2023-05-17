@@ -1,5 +1,5 @@
 import AdminPanel from "../pages/AdminPanel";
-import Auth from "../pages/Auth";
+import LogIn from "../pages/LogIn";
 import Basket from "../pages/Basket";
 import ProductPage from "../pages/ProductPage";
 import Shop from "../pages/Shop";
@@ -39,11 +39,11 @@ export const publicRoutes = [
   },
   {
     path: LOGIN_ROUTE,
-    element: <Auth />,
+    element: <LogIn />,
   },
   {
     path: REGISTRATION_ROUTE,
-    element: <Auth />,
+    element: <LogIn />,
   },
   {
     path: PRODUCT_ROUTE + "/:id",

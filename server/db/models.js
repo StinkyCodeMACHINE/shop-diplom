@@ -7,6 +7,8 @@ const user = db.define("user", {
   email: { type: DataTypes.STRING, unique: true, allowNull: false },
   password: { type: DataTypes.STRING, allowNull: false },
   role: { type: DataTypes.STRING, defaultValue: "USER" },
+  isActivated: {type: DataTypes.BOOLEAN, defaultValue: false},
+  activationLink: {type: DataTypes.TEXT}
 });
 
 const basket = db.define("basket", {

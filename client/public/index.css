@@ -258,8 +258,6 @@ a:visited {
   cursor: pointer;
 }
 
-
-
 .product-heart-icon-container {
   position: relative;
 }
@@ -479,13 +477,37 @@ input {
   margin-right: 1rem;
 }
 
-.product-rating-thumbsup-icon {
+.product-rating-thumbsup-thumbsdown-container img {
   width: 18px;
 }
 
-.product-rating-thumbsup-container {
+.product-rating-thumbsup-thumbsdown-container {
   display: flex;
   align-items: center;
+}
+
+.product-rating-thumbsup-thumbsdown-inner-container {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  border: 1px solid black;
+  border-radius: 1rem;
+  user-select: none;
+  padding: 0.3rem;
+}
+
+.product-rating-thumb-counter {
+  background-color: var(--navbar-background-color);
+  width: 16px;
+  height: 16px;
+  place-items: center;
+  border-radius: 50%;
+  font-size: 0.8rem;
+  display: grid;
+}
+
+.product-rating-thumb-icon-container {
+  display: flex;
 }
 
 .favourite-container {

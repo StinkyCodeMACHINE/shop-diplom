@@ -1,7 +1,15 @@
 import react from "react";
 import { API_URL, PROFILE_IMAGE_URL } from "../../utils/consts";
 
-export default function Rating({ img, text, date, rating, thumbsUp, name }) {
+export default function Rating({
+  img,
+  text,
+  date,
+  rating,
+  thumbsUp,
+  thumbsDown,
+  name,
+}) {
   const starsArr = [];
   for (let i = 0; i < 5; i++) {
     starsArr.push(i + 1);
@@ -37,13 +45,37 @@ export default function Rating({ img, text, date, rating, thumbsUp, name }) {
           {`${date.getHours()}:${date.getMinutes()} ${date.getDate()}.${date.getMonth()}.${date.getFullYear()}`}
         </div>
         <p className="product-rating-text">{text}</p>
-        <div className="product-rating-thumbsup-container">
-          <div>Понравилось? </div>
-
-          <img
-            className="product-rating-thumbsup-icon"
-            src={"/assets/like.png"}
-          />
+        <div className="product-rating-thumbsup-thumbsdown-container">
+          <div
+            onClick={() => {
+              thumbsUp = thumbsUp + 1; //заменить
+            }}
+            className="product-rating-thumbsup-thumbsdown-inner-container"
+          >
+            <div>Понравилось? </div>
+            <div className="product-rating-thumb-icon-container">
+              <img
+                className="product-rating-thumbsup-icon"
+                src={"/assets/like.png"}
+              />
+              <div className="product-rating-thumb-counter">{thumbsUp}</div>
+            </div>
+          </div>
+          <div
+            onClick={() => {
+              thumbsDown = thumbsDown + 1; //заменить
+            }}
+            className="product-rating-thumbsup-thumbsdown-inner-container"
+          >
+            <div>Не понравилось? </div>
+            <div className="product-rating-thumb-icon-container">
+              <img
+                className="product-rating-thumbsdown-icon"
+                src={"/assets/dislike.png"}
+              />
+              <div className="product-rating-thumb-counter">{thumbsDown}</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -27,6 +27,7 @@ export default function ProductPage() {
       id: 1,
       name: "cat",
       thumbsUp: 0,
+      thumbsDown: 0,
       img: "1.jpg",
       text: "AAAAAAAAA",
       date: new Date(Date.now()),
@@ -36,6 +37,7 @@ export default function ProductPage() {
       id: 2,
       name: "cat",
       thumbsUp: 3,
+      thumbsDown: 0,
       img: "1.jpg",
       text: "BBBBBBBBBBBBBB",
       date: new Date(Date.now()),
@@ -45,6 +47,7 @@ export default function ProductPage() {
       id: 3,
       name: "cat",
       thumbsUp: 0,
+      thumbsDown: 3,
       img: "1.jpg",
       date: new Date(Date.now()),
       rating: 4,
@@ -53,6 +56,7 @@ export default function ProductPage() {
       id: 4,
       name: "cat",
       thumbsUp: 0,
+      thumbsDown: 4,
       img: "1.jpg",
       text: "DDDDDDDdddddddddDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
       date: new Date(Date.now()),
@@ -62,6 +66,7 @@ export default function ProductPage() {
       id: 5,
       name: "cat",
       thumbsUp: 0,
+      thumbsDown: 0,
       img: "1.jpg",
       text: "EEEEEEEEEEEE",
       date: new Date(Date.now()),
@@ -71,6 +76,7 @@ export default function ProductPage() {
       id: 6,
       name: "cat",
       thumbsUp: 0,
+      thumbsDown: 2,
       img: "1.jpg",
       text: "FFFFFffFFFFFF",
       date: new Date(Date.now()),
@@ -243,6 +249,7 @@ export default function ProductPage() {
                   rating={ratingElem.rating}
                   name={ratingElem.name}
                   thumbsUp={ratingElem.thumbsUp}
+                  thumbsDown={ratingElem.thumbsDown}
                 />
               );
             })}

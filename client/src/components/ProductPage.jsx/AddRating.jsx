@@ -16,8 +16,9 @@ export default function AddRating({ productElem, setProductElem }) {
     e.preventDefault();
     productElem.ratings.push({
       id: 7,
-      name: "",
-      thumbsUp: 1,
+      name: "dog",
+      thumbsUp: 0,
+      thumbsDown: 0,
       img: "1.jpg",
       text: inputValues.text,
       date: new Date(Date.now()),

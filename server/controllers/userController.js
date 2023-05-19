@@ -65,6 +65,7 @@ async function login(req, res, next) {
     userElem.email,
     userElem.role
   );
+  console.log(`token from shit ${token}`)
   res.json({ token });
 }
 

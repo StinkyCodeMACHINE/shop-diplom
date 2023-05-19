@@ -5,7 +5,7 @@ import { login, registration } from "../API/userAPI";
 import { LOGIN_ROUTE, REGISTRATION_ROUTE, SHOP_ROUTE } from "../utils/consts";
 
 export default function LogIn() {
-  const { setUser } = useContext(Context);
+  const { setUser, user } = useContext(Context);
   const navigate = useNavigate();
   const location = useLocation();
   const isLogin = location.pathname === LOGIN_ROUTE;
@@ -30,11 +30,9 @@ export default function LogIn() {
           inputValues.email,
           inputValues.password
         );
-        console.log(data);
         await setInputValues({ email: "", password: "", name: "" });
         await setSignedUp(true);
       }
-      // заменить на что-то покруче
     } catch (err) {
       // alert() //заменить на что-то покруче
       console.log(err.message)

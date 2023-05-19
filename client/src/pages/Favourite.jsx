@@ -5,28 +5,32 @@ import { API_URL, PRODUCT_ROUTE, PRODUCT_IMAGE_URL } from "../utils/consts";
 import {
   getBrands,
   getFavouriteIds,
-  getProducts,
   getTypes,
-  getFavouriteProducts
+  getFavouriteProducts,
 } from "../API/productAPI";
 import Pagination from "../components/Favourite/Pagination";
 import ProductCard from "../components/Favourite/ProductCard";
 
 export default function Favourite() {
   const { product, setProduct, user } = useContext(Context);
+  const [renderedOnce, setRenderedOnce] = useState(false);
 
   useEffect(() => {
     async function apiCalls() {
       const result = {};
       result.types = await getTypes();
       result.brands = await getBrands();
-      result.favourite = user.user.id ? await getFavouriteIds(user.user.id) : [];
+      result.favourite = user.user.id
+        ? await getFavouriteIds(user.user.id)
+        : [];
       await setProduct((oldProduct) => ({
         ...oldProduct,
         types: result.types,
         brands: result.brands,
         favourite: result.favourite,
       }));
+
+      setRenderedOnce(true);
     }
 
     apiCalls();
@@ -66,28 +70,32 @@ export default function Favourite() {
     console.log("3 useeffect селбренды селтипы");
   }, []);
 
-  return (
-    <div className="favourite-container">
-      <div className="favourite-inner-container">
-        <h2>Избранное</h2>
-        {product.types.length > 0 && (
-          <div className="product-cards">
-            {product.products.map((eachProduct) => (
-              <ProductCard
-                key={eachProduct.id}
-                id={eachProduct.id}
-                typeId={eachProduct.typeId}
-                brandId={eachProduct.brandId}
-                img={eachProduct.img}
-                rating={eachProduct.rating}
-                name={eachProduct.name}
-              />
-            ))}
-          </div>
-        )}
+  console.log("fav brands: " + product.brands);
 
-        <Pagination />
+  return (
+    renderedOnce && (
+      <div className="favourite-container">
+        <div className="favourite-inner-container">
+          <h2>Избранное</h2>
+          {product.types.length > 0 && (
+            <div className="product-cards">
+              {product.products.map((eachProduct) => (
+                <ProductCard
+                  key={eachProduct.id}
+                  id={eachProduct.id}
+                  typeId={eachProduct.typeId}
+                  brandId={eachProduct.brandId}
+                  img={eachProduct.img}
+                  rating={eachProduct.rating}
+                  name={eachProduct.name}
+                />
+              ))}
+            </div>
+          )}
+
+          <Pagination />
+        </div>
       </div>
-    </div>
+    )
   );
 }

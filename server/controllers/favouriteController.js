@@ -43,6 +43,9 @@ async function getFavouriteProducts(req, res, next) {
       include: {
         model: favourite,
         required: true,
+        where: {
+          userId
+        },
       },
     });
 

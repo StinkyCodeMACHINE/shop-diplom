@@ -39,10 +39,13 @@ export default function ProductCard({
           {rating > 0 ? (
             <>
               <div>{rating}</div>
-              <img src="/assets/star.svg" />
+              <img src="/assets/fratingstar.png" />
             </>
           ) : (
-            <div>Нет отзывов</div>
+            <>
+              <div>Нет отзывов</div>
+              <img src="/assets/eratingstar.png" />
+            </>
           )}
         </div>
       </div>

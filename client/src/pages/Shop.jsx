@@ -29,12 +29,15 @@ export default function Shop() {
         brands: result.brands,
         favourite: result.favourite,
       }));
+      console.log("1 useeffect бренды типы и фавориты product: " + JSON.stringify(product, null, 2))
+      console.log("1 useeffect бренды типы и фавориты user: " + JSON.stringify(user, null, 2))
+
     }
 
     apiCalls();
 
     console.log("1 useeffect бренды типы и фавориты");
-  }, [user.user.id]);
+  }, [user]);
 
   //изменение пагинации
   useEffect(() => {

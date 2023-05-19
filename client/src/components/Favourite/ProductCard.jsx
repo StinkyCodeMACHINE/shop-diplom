@@ -32,10 +32,13 @@ export default function ProductCard({
           {rating > 0 ? (
             <>
               <div>{rating}</div>
-              <img src="/assets/star.svg" />
+              <img src="/assets/fratingstar.png" />
             </>
           ) : (
-            <div>Нет отзывов</div>
+            <>
+              <div>Нет отзывов</div>
+              <img src="/assets/eratingstar.png" />
+            </>
           )}
         </div>
       </div>
@@ -45,18 +48,21 @@ export default function ProductCard({
       >
         {name}
       </div>
-      <div onClick={async () => {
-        await removeFromFavourite(id)
-        const result = {};
-        result.favourite = user.user.id
-          ? await getFavouriteIds(user.user.id)
-          : [];
-        await setProduct((oldProduct) => ({
-          ...oldProduct,
-          favourite: result.favourite,
-        }));
-      }} className="product-remove-favourite-button">
-            Убрать из избранного
+      <div
+        onClick={async () => {
+          await removeFromFavourite(id);
+          const result = {};
+          result.favourite = user.user.id
+            ? await getFavouriteIds(user.user.id)
+            : [];
+          await setProduct((oldProduct) => ({
+            ...oldProduct,
+            favourite: result.favourite,
+          }));
+        }}
+        className="product-remove-favourite-button"
+      >
+        Убрать из избранного
       </div>
     </div>
   );

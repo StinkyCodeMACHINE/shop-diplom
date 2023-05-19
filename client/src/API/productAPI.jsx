@@ -58,6 +58,7 @@ export async function removeFromFavourite(id) {
 }
 
 export async function getFavouriteIds(userId) {
+  console.log(`token from shit: ${localStorage.getItem("token")}`);
   const { data } = await $authHost.get(`/api/favourite/`, {
     params: {
       userId,

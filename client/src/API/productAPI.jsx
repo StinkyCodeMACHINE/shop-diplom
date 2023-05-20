@@ -1,51 +1,51 @@
-import { $authHost, $host } from "./axiosStuff";
+import { axiosAuthReq, axiosReq } from "./axiosStuff";
 
 export async function createType(type) {
-  const { data } = await $authHost.post("/api/type", type);
+  const { data } = await axiosAuthReq.post("/api/type", type);
   return data;
 }
 
 export async function getTypes() {
-  const { data } = await $host.get("/api/type");
+  const { data } = await axiosReq.get("/api/type");
   return data;
 }
 
 export async function createBrand(brand) {
-  const { data } = await $authHost.post("/api/brand", brand);
+  const { data } = await axiosAuthReq.post("/api/brand", brand);
   return data;
 }
 
 export async function getBrands() {
-  const { data } = await $host.get("/api/brand");
+  const { data } = await axiosReq.get("/api/brand");
   return data;
 }
 
 export async function createProduct(device) {
-  const { data } = await $authHost.post("/api/product", device);
+  const { data } = await axiosAuthReq.post("/api/product", device);
   return data;
 }
 
 export async function getProducts(typeId, brandId, page, limit, name) {
-  const { data } = await $host.get("/api/product", {
+  const { data } = await axiosReq.get("/api/product", {
     params: { typeId, brandId, page, limit, name },
   });
   return data;
 }
 
 export async function getProductsSearch(limit, name, typeId) {
-  const { data } = await $host.get("/api/product", {
+  const { data } = await axiosReq.get("/api/product", {
     params: { limit, name, typeId },
   });
   return data;
 }
 
 export async function getOneProduct(id) {
-  const { data } = await $host.get(`/api/product/${id}`);
+  const { data } = await axiosReq.get(`/api/product/${id}`);
   return data;
 }
 
 export async function addToFavourite(id, userId) {
-  const { data } = await $authHost.post(`/api/favourite/product/${id}`, {
+  const { data } = await axiosAuthReq.post(`/api/favourite/product/${id}`, {
     productId: id,
     userId,
   });
@@ -53,13 +53,13 @@ export async function addToFavourite(id, userId) {
 }
 
 export async function removeFromFavourite(id) {
-  const { data } = await $authHost.delete(`/api/favourite/product/${id}`);
+  const { data } = await axiosAuthReq.delete(`/api/favourite/product/${id}`);
   return data;
 }
 
 export async function getFavouriteIds(userId) {
   console.log(`token from shit: ${localStorage.getItem("token")}`);
-  const { data } = await $authHost.get(`/api/favourite/`, {
+  const { data } = await axiosAuthReq.get(`/api/favourite/`, {
     params: {
       userId,
     },
@@ -68,7 +68,7 @@ export async function getFavouriteIds(userId) {
 }
 
 export async function getFavouriteProducts(page, limit, userId) {
-  const { data } = await $authHost.get(`/api/favourite/product/`, {
+  const { data } = await axiosAuthReq.get(`/api/favourite/product/`, {
     params: {
       userId,
       limit,
@@ -77,4 +77,3 @@ export async function getFavouriteProducts(page, limit, userId) {
   });
   return data;
 }
-

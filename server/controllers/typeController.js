@@ -2,8 +2,8 @@ const {type} = require('../db/models')
 
 async function create(req, res, next) {
     try {
-        const {name} = req.body
-        const typeElem = await type.create({name})
+        const {name, img} = req.body
+        const typeElem = await type.create({name, img})
         res.json(typeElem);
     }
     catch (err) {

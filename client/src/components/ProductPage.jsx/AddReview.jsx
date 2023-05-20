@@ -1,6 +1,6 @@
 import react, { useState } from "react";
 
-export default function AddRating({ productElem, setProductElem }) {
+export default function AddReview({ productElem, setProductElem }) {
   const [inputValues, setInputValues] = useState({
     text: "",
     textLength: 0,

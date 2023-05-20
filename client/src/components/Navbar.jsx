@@ -9,12 +9,10 @@ import {
   SHOP_ROUTE,
 } from "../utils/consts";
 import { Context } from "../App";
-import {
-  getProductsSearch,
-  getTypes,
-} from "../API/productAPI";
+import { getProductsSearch, getTypes } from "../API/productAPI";
 
 export default function Navbar() {
+  const navigate = useNavigate();
   const { user, setUser, product, setProduct, whatIsShown, setWhatIsShown } =
     useContext(Context);
   const [searchValues, setSearchValues] = useState({
@@ -22,16 +20,15 @@ export default function Navbar() {
     type: {},
     searchResults: [],
   });
-  const navigate = useNavigate();
 
   useEffect(() => {
     async function apiCalls() {
       const types = await getTypes();
       await setProduct((oldProduct) => ({
         ...oldProduct,
-        types: types.length>0 ? types : [],
+        types: types.length > 0 ? types : [],
       }));
-      console.log(`Navbar shit 1 types${JSON.stringify(product.types)}`)
+      console.log(`Navbar shit 1 types${JSON.stringify(product.types)}`);
     }
 
     apiCalls();
@@ -79,7 +76,6 @@ export default function Navbar() {
     }
   }
 
-
   async function onSearchChangeHandler(e) {
     if (e.target.value.length > 0) {
       await setSearchValues((oldSearchValues) => ({
@@ -111,11 +107,13 @@ export default function Navbar() {
     }
   }
   console.log("navbar product.favourite: ", JSON.stringify(product.favourite));
-  console.log("navbar render types: " + JSON.stringify(product.types))
+  console.log("navbar render types: " + JSON.stringify(product.types));
 
   return (
     <header className="navbar">
-      <Link to={SHOP_ROUTE}>Шазам</Link>
+      <Link to={SHOP_ROUTE} onClick={(e) => setWhatIsShown("")}>
+        Шазам
+      </Link>
       <div className="navbar-search-bar-container">
         <div
           onClick={clickTypesHandler}
@@ -130,7 +128,7 @@ export default function Navbar() {
             <img
               style={
                 whatIsShown !== "types"
-                  ? { transform: "rotate(90deg)" }
+                  ? { transform: "rotate(-270deg)" }
                   : { transform: "rotate(-90deg)" }
               }
               className="navbar-types-icon"

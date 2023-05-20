@@ -7,8 +7,8 @@ import {
   addToFavourite,
   getTypes,
 } from "../API/productAPI";
-import Rating from "../components/ProductPage.jsx/Rating";
-import AddRating from "../components/ProductPage.jsx/AddRating";
+import Review from "../components/ProductPage.jsx/Review";
+import AddReview from "../components/ProductPage.jsx/AddReview";
 import { API_URL, PRODUCT_IMAGE_URL } from "../utils/consts";
 import { Context } from "../App";
 
@@ -121,6 +121,8 @@ export default function ProductPage() {
       <div className="product-page-main-container">
         {productElem.type && (
           <div className="product-page-group-and-type">
+            <Link className="product-page-catalogue">Каталог</Link>
+            <div>{">"}</div>
             <Link className="product-page-group">{productElem.type}</Link>
             <div>{">"}</div>
             <Link className="product-page-type">{productElem.type}</Link>
@@ -133,22 +135,28 @@ export default function ProductPage() {
               <div className="product-page-name">{productElem.name}</div>
             </div>
             <div className="product-page-img-and-subimgs">
-                <div className="product-page-subimgs-container">
-                  {productElem.img.map((imgElem, index) => {
-                       return (
-                         <img
-                           className="product-page-subimg"
-                           src={API_URL + PRODUCT_IMAGE_URL + imgElem}
-                           style={currentSelection === index ? {outline: "1px solid blue"} : {}}
-                           onClick={() => setCurrentSelection(index)}
-                         />
-                       );
-                  })}
-                </div>
+              <div className="product-page-subimgs-container">
+                {productElem.img.map((imgElem, index) => {
+                  return (
+                    <img
+                      className="product-page-subimg"
+                      src={API_URL + PRODUCT_IMAGE_URL + imgElem}
+                      style={
+                        currentSelection === index
+                          ? { outline: "1px solid blue" }
+                          : {}
+                      }
+                      onClick={() => setCurrentSelection(index)}
+                    />
+                  );
+                })}
+              </div>
               <img
                 src={
                   productElem.img
-                    ? API_URL + PRODUCT_IMAGE_URL + productElem.img[currentSelection]
+                    ? API_URL +
+                      PRODUCT_IMAGE_URL +
+                      productElem.img[currentSelection]
                     : ""
                 }
                 className="product-page-img"
@@ -234,14 +242,14 @@ export default function ProductPage() {
           </div>
 
           <h2>Отзывы: </h2>
-          <AddRating
+          <AddReview
             productElem={productElem}
             setProductElem={setProductElem}
           />
           <div className="product-page-ratings">
             {productElem.ratings.map((ratingElem) => {
               return (
-                <Rating
+                <Review
                   key={ratingElem.id}
                   img={ratingElem.img}
                   text={ratingElem.text}

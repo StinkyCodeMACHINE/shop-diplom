@@ -10,6 +10,7 @@ export default function AdminPanel() {
   function show(what) {
     setWhatIsShown(what);
   }
+
   function hide() {
     setWhatIsShown("");
   }
@@ -17,8 +18,7 @@ export default function AdminPanel() {
     <>
       <CreateType hide={hide} />
       <CreateBrand hide={hide} />
-      {(product.brands[0] &&
-        product.types[0]) && <CreateProduct hide={hide} />}
+      <CreateProduct hide={hide} />
       <div className="admin-page-container">
         <button onClick={() => show("type")}>Добавить новый тип</button>
         <button onClick={() => show("brand")}>Добавить новый бренд</button>

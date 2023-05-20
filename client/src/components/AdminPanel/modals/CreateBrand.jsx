@@ -3,13 +3,22 @@ import { createBrand } from "../../../API/productAPI";
 import { Context } from "../../../App";
 
 export default function CreateBrand({ isShown, hide }) {
-  const [inputValues, setInputValues] = useState("");
+  const [inputValues, setInputValues] = useState({
+    name:"",
+    file: null
+  });
   const { whatIsShown} = useContext(Context);
 
   async function addHandler(e) {
     e.preventDefault();
-    await createBrand({ name: inputValues }).then((data) => setInputValues(""));
-    setInputValues("");
+
+    const formData = new FormData();
+    formData.append("name", inputValues.name);
+    formData.append("img", inputValues.file);
+
+    // await createBrand({ name: inputValues })
+    await createBrand(formData)
+    await setInputValues({name: "", file: null});
   }
 
   function changeHandler(e) {
@@ -29,10 +38,16 @@ export default function CreateBrand({ isShown, hide }) {
             <form>
               <input
                 onChange={changeHandler}
-                value={inputValues}
+                value={inputValues.name}
                 type="text"
                 placeholder="Введите название бренда"
               />
+              <input onChange={(e) => {
+                  setInputValues((prevInputValues) => ({
+                    ...prevInputValues,
+                    file: e.target.files[0],
+                  }));
+                }} type="file"/>
               <div>
                 <button onClick={() => hide()}>Закрыть</button>
                 <button onClick={addHandler}>Добавить</button>

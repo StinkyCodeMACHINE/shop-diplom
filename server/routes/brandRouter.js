@@ -1,9 +1,9 @@
 const express = require("express");
 const router = new express.Router();
-const {create, getAll} = require('../controllers/brandController')
-const checkRole = require('../middleware/checkRoleMiddleWare')
+const { create, getAll } = require("../controllers/brandController");
+const checkRole = require("../middleware/checkRole");
 
-router.get('/', getAll)
-router.post('/', checkRole('ADMIN'), create)
+router.get("/", getAll);
+router.post("/", checkRole("ADMIN"), create);
 
 module.exports = router;

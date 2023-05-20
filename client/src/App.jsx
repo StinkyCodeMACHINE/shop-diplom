@@ -10,6 +10,7 @@ export const Context = createContext(null);
 export default function App() {
   const [user, setUser] = useState({ user: {}, isAuth: false });
   const [product, setProduct] = useState({
+    groups: [],
     types: [],
     brands: [],
     favourite: [],

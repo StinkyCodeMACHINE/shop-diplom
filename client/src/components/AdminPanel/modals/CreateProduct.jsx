@@ -29,8 +29,8 @@ export default function CreateProduct({ isShown, hide }) {
 
       await setInputValues((oldInputValues) => ({
         ...oldInputValues,
-        brand: product.brands[0].name,
-        type: product.types[0].name,
+        brand: product.brands.length > 0 ? product.brands[0].name : "",
+        type: product.types.length > 0 ? product.types[0].name : "",
       }))
     }
 

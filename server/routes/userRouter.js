@@ -7,9 +7,9 @@ const {
   check,
   test,
 } = require("../controllers/userController");
-const authMiddleware = require("../middleware/authMiddleware");
+const checkAuth = require("../middleware/checkAuth");
 
-router.get("/auth", authMiddleware, check);
+router.get("/auth", checkAuth, check);
 // router.get("/activation/:link", activateAccount);
 router.get("/activation/:link", activateAccount);
 

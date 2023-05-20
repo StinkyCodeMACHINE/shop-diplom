@@ -4,7 +4,7 @@ const path = require("path")
 const express = require("express");
 
 const db = require("./db/db");
-const errorHandler = require("./middleware/errorHandlingMiddleware");
+const errorHandler = require("./middleware/errorHandler");
 
 const app = express();
 const cors = require('cors') // разрешает от других ист
@@ -13,6 +13,7 @@ const port = process.env.PORT || 5500;
 
 const brandRouter = require("./routes/brandRouter");
 const productRouter = require("./routes/productRouter");
+const groupRouter = require("./routes/groupRouter");
 const typeRouter = require("./routes/typeRouter");
 const userRouter = require("./routes/userRouter");
 const favouriteRouter = require("./routes/favouriteRouter");
@@ -30,6 +31,7 @@ app.use(express.json())
 app.use(express.static(path.resolve(__dirname, 'static')))
 app.use(fileUpload({}))
 app.use("/api/user", userRouter);
+app.use("/api/group", groupRouter);
 app.use("/api/type", typeRouter);
 app.use("/api/brand", brandRouter);
 app.use("/api/product", productRouter);

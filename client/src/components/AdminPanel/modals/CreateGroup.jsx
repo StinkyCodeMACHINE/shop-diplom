@@ -1,13 +1,14 @@
 import react, { useState, useContext } from "react";
-import { createBrand } from "../../../API/productAPI";
+import { createGroup } from "../../../API/productAPI";
 import { Context } from "../../../App";
 
-export default function CreateBrand({ isShown, hide }) {
+export default function CreateGroup({ isShown, hide }) {
   const [inputValues, setInputValues] = useState({
-    name:"",
-    file: null
+    name: "",
+    file: null,
   });
-  const { whatIsShown} = useContext(Context);
+  
+  const { whatIsShown } = useContext(Context);
 
   async function addHandler(e) {
     e.preventDefault();
@@ -16,14 +17,13 @@ export default function CreateBrand({ isShown, hide }) {
     formData.append("name", inputValues.name);
     formData.append("img", inputValues.file);
 
-    // await createBrand({ name: inputValues })
-    await createBrand(formData)
-    await setInputValues({name: "", file: null});
+    await createGroup(formData);
+    await setInputValues({ name: "", file: null });
   }
 
   return (
     <>
-      {whatIsShown==="brand" && (
+      {whatIsShown === "group" && (
         <div
           className="admin-page-modal-opacity"
           onClick={(e) =>
@@ -39,14 +39,17 @@ export default function CreateBrand({ isShown, hide }) {
                 }))}}
                 value={inputValues.name}
                 type="text"
-                placeholder="Введите название бренда"
+                placeholder="Введите название группы"
               />
-              <input onChange={(e) => {
+              <input
+                onChange={(e) => {
                   setInputValues((prevInputValues) => ({
                     ...prevInputValues,
                     file: e.target.files[0],
                   }));
-                }} type="file"/>
+                }}
+                type="file"
+              />
               <div>
                 <button onClick={() => hide()}>Закрыть</button>
                 <button onClick={addHandler}>Добавить</button>
@@ -56,6 +59,5 @@ export default function CreateBrand({ isShown, hide }) {
         </div>
       )}
     </>
-    
   );
 }

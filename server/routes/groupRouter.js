@@ -1,6 +1,6 @@
 const express = require("express");
 const router = new express.Router();
-const { create, getAll } = require("../controllers/typeController");
+const { create, getAll } = require("../controllers/groupController");
 const checkRole = require("../middleware/checkRole");
 
 router.get("/", getAll);

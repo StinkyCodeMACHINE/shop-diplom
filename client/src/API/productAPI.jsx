@@ -10,6 +10,16 @@ export async function getTypes() {
   return data;
 }
 
+export async function createGroup(group) {
+  const { data } = await axiosAuthReq.post("/api/group", group);
+  return data;
+}
+
+export async function getGroups() {
+  const { data } = await axiosReq.get("/api/group");
+  return data;
+}
+
 export async function createBrand(brand) {
   const { data } = await axiosAuthReq.post("/api/brand", brand);
   return data;

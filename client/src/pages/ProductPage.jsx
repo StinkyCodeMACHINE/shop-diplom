@@ -6,6 +6,7 @@ import {
   removeFromFavourite,
   addToFavourite,
   getTypes,
+  getGroups,
 } from "../API/productAPI";
 import Review from "../components/ProductPage.jsx/Review";
 import AddReview from "../components/ProductPage.jsx/AddReview";
@@ -14,8 +15,10 @@ import { Context } from "../App";
 
 export default function ProductPage() {
   const [productElem, setProductElem] = useState({ info: [], ratings: [] });
+  const [currentSelection, setCurrentSelection] = useState(0);
+
+  const [renderedOnce, setRenderedOnce] = useState(false);
   const { product, setProduct, user } = useContext(Context);
-  const [currentSelection, setCurrentSelection] = useState(0)
 
   const { id } = useParams();
   const { state } = useLocation();
@@ -85,14 +88,18 @@ export default function ProductPage() {
   ];
 
   useEffect(() => {
-    console.log("ass1")
+    console.log("ass1");
     async function apiCalls() {
       const favourite = user.user.id ? await getFavouriteIds(user.user.id) : [];
-      const types = product.types.length===0 ? await getTypes() : product.types;
+      const types =
+        product.types.length === 0 ? await getTypes() : product.types;
+      const groups =
+        product.groups.length === 0 ? await getGroups() : product.groups;
       await setProduct((oldProduct) => ({
         ...oldProduct,
         favourite,
-        types
+        types,
+        groups,
       }));
     }
 
@@ -103,29 +110,37 @@ export default function ProductPage() {
     console.log("ass2");
     async function apiCalls() {
       const oneProduct = await getOneProduct(id);
+      const type = product.types.find((type) => type.id === oneProduct.typeId);
+      console.log("type groupId: " + type.groupId);
+      console.log(product.types);
+      console.log("type: " + JSON.stringify(type));
+      console.log("groups: " + product.groups);
+      const group = product.groups.find((group) => group.id === type.groupId);
+
       await setProductElem({
         ...oneProduct,
         ratings: rating,
-        type:
-          product.types.length > 0
-            ? product.types.find((type) => type.id === oneProduct.typeId).name
-            : "",
+        type: type ? type : "",
+        group: group ? group : "",
       });
     }
-    apiCalls();
+
+    product.types.length > 0 && product.groups.length > 0 && apiCalls();
+    setRenderedOnce(true);
   }, [state, product.types]);
 
-  console.log("PP types: " + JSON.stringify(product.types))
+  console.log("PP types: " + JSON.stringify(product.types));
   return (
-    productElem.img && (
+    productElem.img &&
+    renderedOnce && (
       <div className="product-page-main-container">
         {productElem.type && (
           <div className="product-page-group-and-type">
             <Link className="product-page-catalogue">Каталог</Link>
             <div>{">"}</div>
-            <Link className="product-page-group">{productElem.type}</Link>
+            <Link className="product-page-group">{productElem.group.name}</Link>
             <div>{">"}</div>
-            <Link className="product-page-type">{productElem.type}</Link>
+            <Link className="product-page-type">{productElem.type.name}</Link>
           </div>
         )}
 

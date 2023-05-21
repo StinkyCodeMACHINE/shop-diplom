@@ -23,7 +23,7 @@ export default function CreateType({ isShown, hide }) {
 
       await setInputValues((oldInputValues) => ({
         ...oldInputValues,
-        group: product.groups.length>0 ? product.groups[0].name : "",
+        group: product.groups.length > 0 ? product.groups[0].name : "",
       }));
     }
 
@@ -37,7 +37,10 @@ export default function CreateType({ isShown, hide }) {
     const formData = new FormData();
     formData.append("name", inputValues.name);
     formData.append("img", inputValues.file);
-    formData.append("groupId", inputValues.group);
+    formData.append(
+      "groupId",
+      product.groups.find((group) => group.name === inputValues.group).id
+    );
     await createType(formData);
     await setInputValues({ name: "", file: null });
   }
@@ -60,7 +63,7 @@ export default function CreateType({ isShown, hide }) {
               <form>
                 <input
                   value={inputValues.name}
-                  onChange={changeHandler}
+                  onChange={(e) => {setInputValues(oldInputValues => ({...oldInputValues, name: e.target.value}))}}
                   type="text"
                   placeholder="Введите название типа"
                 />

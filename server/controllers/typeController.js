@@ -9,7 +9,7 @@ async function create(req, res, next) {
     let fileName = uuid.v4() + ".jpg";
     img.mv(path.resolve(__dirname, "..", "static", "type-images", fileName));
     
-    const typeElem = await type.create({ name, img: fileName });
+    const typeElem = await type.create({ name, img: fileName, groupId });
     res.json(typeElem);
   } catch (err) {
     next(new Error(err.message));

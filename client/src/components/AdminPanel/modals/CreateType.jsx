@@ -1,6 +1,7 @@
 import react, { useState, useEffect, useContext } from "react";
 import { createType, getGroups } from "../../../API/productAPI";
 import { Context } from "../../../App";
+import { nanoid } from "nanoid"
 
 export default function CreateType({ isShown, hide }) {
   const [inputValues, setInputValues] = useState({
@@ -8,6 +9,7 @@ export default function CreateType({ isShown, hide }) {
     file: null,
     group: "",
   });
+  const [info, setInfo] = useState([]);
 
   const [renderedOnce, setRenderedOnce] = useState(false);
 
@@ -41,12 +43,22 @@ export default function CreateType({ isShown, hide }) {
       "groupId",
       product.groups.find((group) => group.name === inputValues.group).id
     );
+    formData.append("info", JSON.stringify(info));
     await createType(formData);
-    await setInputValues({ name: "", file: null });
+    await setInputValues({ name: "", file: null, group: "" });
+    await setInfo([]);
   }
 
-  function changeHandler(e) {
-    setInputValues(e.target.value);
+  function addStatHandler(e) {
+    e.preventDefault();
+    setInfo((prevInfo) => [
+      ...prevInfo,
+      { key: "", number: nanoid() },
+    ]);
+  }
+
+  function removeStatHandler(number) {
+    setInfo((prevInfo) => prevInfo.filter((stat) => stat.number !== number));
   }
 
   return (
@@ -63,7 +75,12 @@ export default function CreateType({ isShown, hide }) {
               <form>
                 <input
                   value={inputValues.name}
-                  onChange={(e) => {setInputValues(oldInputValues => ({...oldInputValues, name: e.target.value}))}}
+                  onChange={(e) => {
+                    setInputValues((oldInputValues) => ({
+                      ...oldInputValues,
+                      name: e.target.value,
+                    }));
+                  }}
                   type="text"
                   placeholder="Введите название типа"
                 />
@@ -94,6 +111,35 @@ export default function CreateType({ isShown, hide }) {
                   }}
                   type="file"
                 />
+                {info.map((elem) => {
+                  return (
+                    <div className="modal-stats" key={elem.number}>
+                      <input
+                        className="modal-stat-name"
+                        type="text"
+                        placeholder="Введите название свойства"
+                        value={elem.key}
+                        onChange={(e) =>
+                          {
+                            setInfo((prevInfo) =>
+                              prevInfo.map((i) =>
+                                i.number === elem.number
+                                  ? { ...i, key: e.target.value }
+                                  : i
+                              )
+                            );
+                          }
+                        }
+                      />
+                      <button onClick={() => removeStatHandler(elem.number)}>
+                        Удалить
+                      </button>
+                    </div>
+                  );
+                })}
+                <button onClick={addStatHandler}>
+                  Добавить новое свойство
+                </button>
                 <div>
                   <button onClick={() => hide()}>Закрыть</button>
                   <button onClick={addHandler}>Добавить</button>

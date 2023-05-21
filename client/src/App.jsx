@@ -15,13 +15,14 @@ export default function App() {
     brands: [],
     favourite: [],
     products: [],
+    selectedGroup: {},
     selectedType: {},
     selectedBrand: {},
-
+    sortingValue: { value: { byWhat: "", order: "DESC" }, text: "Отсутствует" },
     name: "",
     page: 1,
     totalCount: 0,
-    limit: 3,
+    limit: 5,
   });
   const [whatIsShown, setWhatIsShown] = useState("");
   const [authChecked, setAuthChecked] = useState(false);

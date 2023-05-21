@@ -15,6 +15,7 @@ export default function ProductCard({
   img,
   rating,
   name,
+  price
 }) {
   const { product, setProduct, user } = useContext(Context);
 
@@ -54,6 +55,12 @@ export default function ProductCard({
         className="product-name"
       >
         {name}
+      </div>
+      <div
+        onClick={() => navigate(PRODUCT_ROUTE + "/" + id)}
+        className="product-name"
+      >
+        {price}&#x20BD;
       </div>
       {user.isAuth && (
         <div

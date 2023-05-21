@@ -1,23 +1,31 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Context } from "../../App";
 
 export default function Pagination() {
   const { product, setProduct } = useContext(Context);
 
+  // const [ pages, setPages] = useState([])
+
   const pageCount = Math.ceil(product.totalCount / product.limit);
   const pages = [];
-  for (let i = 0; i < pageCount; i++) {
-    pages.push(i + 1);
+  if (product.page >= 4) {
+    pages.push(product.page - 3);
+    pages.push(product.page - 2);
+    pages.push(product.page - 1);
+    for (let i = product.page - 1; i < pageCount && i < product.page + 3; i++) {
+      pages.push(i + 1);
+    }
+  } else {
+    for (let i = 0; i < pageCount && i < 7; i++) {
+      pages.push(i + 1);
+    }
   }
-
 
   return (
     <div className="pagination">
       <div
         className="page-number"
-        onClick={() =>
-          setProduct((oldProduct) => ({ ...oldProduct, page: pages[0] }))
-        }
+        onClick={() => setProduct((oldProduct) => ({ ...oldProduct, page: 1 }))}
       >
         {"<<"}
       </div>
@@ -68,7 +76,7 @@ export default function Pagination() {
         onClick={() =>
           setProduct((oldProduct) => ({
             ...oldProduct,
-            page: pages[pages.length - 1],
+            page: pageCount,
           }))
         }
       >

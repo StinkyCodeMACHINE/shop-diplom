@@ -15,7 +15,7 @@ const basket = db.define("basket", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
 });
 
-const basketProduct = db.define("basket_product", {
+const basketProduct = db.define("basketProduct", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
 });
 
@@ -56,6 +56,15 @@ const type = db.define("type", {
   img: { type: DataTypes.STRING }, // заменить allowNull: false
 });
 
+const defaultTypeInfo = db.define(
+  "typeDefaultInfo",
+  {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    key: { type: DataTypes.STRING, allowNull: false },
+  },
+  { freezeTableName: true }
+);
+
 const brand = db.define("brand", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   name: { type: DataTypes.STRING, unique: true, allowNull: false },
@@ -72,11 +81,11 @@ const review = db.define("review", {
 });
 
 const productInfo = db.define(
-  "product_info",
+  "productInfo",
   {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    title: { type: DataTypes.STRING, allowNull: false },
-    description: { type: DataTypes.STRING, allowNull: false },
+    key: { type: DataTypes.STRING, allowNull: false },
+    value: { type: DataTypes.STRING, allowNull: false },
   },
   { freezeTableName: true }
 );
@@ -114,6 +123,9 @@ type.belongsTo(group);
 type.hasMany(product);
 product.belongsTo(type);
 
+type.hasMany(defaultTypeInfo);
+defaultTypeInfo.belongsTo(type)
+
 module.exports = {
   user,
   basket,
@@ -121,6 +133,7 @@ module.exports = {
   product,
   group,
   type,
+  defaultTypeInfo,
   brand,
   review,
   productInfo,

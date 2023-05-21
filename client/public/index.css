@@ -312,6 +312,29 @@ a:visited {
   column-gap: 10px;
 }
 
+.shop-main-container-top-options {
+  display: flex;
+  align-items: center;
+}
+
+.shop-main-container-top-option-container {
+  display: flex;
+  cursor: pointer;
+  position: relative;
+}
+
+.shop-main-container-top-sorting-options {
+  cursor: pointer;
+  background-color: white;
+  position: absolute;
+  top: 100%;
+  width: 150px;
+}
+
+.shop-main-container-top-sorting-options label {
+  cursor: pointer;
+}
+
 .product-page-main-container {
   padding: 35px;
 }
@@ -406,7 +429,7 @@ a:visited {
 }
 
 .modal-inner-container select,
-input {
+.modal-inner-container input {
   display: block;
 }
 

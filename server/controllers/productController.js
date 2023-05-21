@@ -2,6 +2,7 @@ const uuid = require("uuid"); // генерирует случайные id
 const path = require("path");
 const { product, productInfo, favourite } = require("../db/models");
 const { Op } = require("sequelize");
+const { Sequelize } = require("sequelize");
 
 async function create(req, res, next) {
   try {
@@ -41,16 +42,20 @@ async function create(req, res, next) {
       price,
       brandId,
       typeId,
-      info,
       img: fileNames,
+    });
+
+    console.log(info);
+    JSON.parse(info).forEach((element) => {
+      console.log(`key: ${element.key}, value: ${element.value}`);
     });
 
     if (info) {
       info = JSON.parse(info);
       info.forEach((element) => {
         productInfo.create({
-          title: element.title,
-          description: element.description,
+          key: element.key,
+          value: element.value,
           productId: productElem.id,
         });
       });
@@ -62,39 +67,68 @@ async function create(req, res, next) {
   }
 }
 
-
-
-async function getAll(req, res) {
+async function getAll(req, res, next) {
   try {
-    let { brandId, typeId, limit, page, name } = req.query;
+    let { brandId, typeId, limit, page, name, sorting } = req.query;
     page = page || 1;
     name = name || "";
     limit = Number(limit) || 9;
+    const order = sorting &&
+      sorting.byWhat && [[sorting.byWhat, sorting.order]];
     let offset = page * limit - limit;
     let products;
+
     if (!brandId && !typeId) {
       products = await product.findAndCountAll({
         where: { name: { [Op.like]: `%${name}%` } },
         limit,
         offset,
+        // attributes: [
+        //   'id', 'name', 'price', 'newPrice', 'rating', 'img', 'brandId', 'typeId', [Sequelize.literal('price/"newPrice"'), 'discount']
+        // ],
+        attributes: {
+          include: [[Sequelize.literal('price/"newPrice"'), 'discount']],
+        },
+        order,
       });
     } else if (brandId && !typeId) {
       products = await product.findAndCountAll({
         where: { brandId, name: { [Op.like]: `%${name}%` } },
         limit,
         offset,
+        // attributes: [
+        //   'id', 'name', 'price', 'newPrice', 'rating', 'img', 'brandId', 'typeId', [Sequelize.literal('price/"newPrice"'), 'discount']
+        // ],
+        attributes: {
+          include: [[Sequelize.literal('price/"newPrice"'), 'discount']],
+        },
+        order,
       });
     } else if (!brandId && typeId) {
       products = await product.findAndCountAll({
         where: { typeId, name: { [Op.like]: `%${name}%` } },
         limit,
         offset,
+        // attributes: [
+        //   'id', 'name', 'price', 'newPrice', 'rating', 'img', 'brandId', 'typeId', [Sequelize.literal('price/"newPrice"'), 'discount']
+        // ],
+        attributes: {
+          include: [[Sequelize.literal('price/"newPrice"'), 'discount']],
+        },
+        order,
       });
     } else {
       products = await product.findAndCountAll({
         where: { typeId, brandId, name: { [Op.like]: `%${name}%` } },
         limit,
         offset,
+        // attributes: [
+        //   'id', 'name', 'price', 'newPrice', 'rating', 'img', 'brandId', 'typeId', [Sequelize.literal('price/"newPrice"'), 'discount']
+        // ],
+        attributes: {
+          include: [[Sequelize.literal('price/"newPrice"'), 'discount']],
+        },
+        order,
       });
     }
     res.json(products);

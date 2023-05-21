@@ -250,7 +250,7 @@ export default function ProductPage() {
                   style={stat.id % 2 === 1 ? { backgroundColor: "white" } : {}}
                   className="product-page-stat"
                 >
-                  {stat.title}: {stat.description}
+                  {stat.key}: {stat.value}
                 </div>
               );
             })}

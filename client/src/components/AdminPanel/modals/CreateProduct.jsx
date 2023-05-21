@@ -1,6 +1,7 @@
 import react, { useState, useEffect, useContext } from "react";
-import { createProduct, getTypes, getBrands } from "../../../API/productAPI";
+import { createProduct, getTypes, getBrands, getDefaultTypeInfo } from "../../../API/productAPI";
 import { Context } from "../../../App";
+import { nanoid } from "nanoid";
 
 export default function CreateProduct({ isShown, hide }) {
   const { product, setProduct, whatIsShown } = useContext(Context);
@@ -13,6 +14,7 @@ export default function CreateProduct({ isShown, hide }) {
     type: "",
   });
 
+  const [defaultInfo, setDeafultInfo] = useState([])
   const [info, setInfo] = useState([]);
 
   const [renderedOnce, setRenderedOnce] = useState(false);
@@ -31,7 +33,7 @@ export default function CreateProduct({ isShown, hide }) {
         ...oldInputValues,
         brand: product.brands.length > 0 ? product.brands[0].name : "",
         type: product.types.length > 0 ? product.types[0].name : "",
-      }))
+      }));
     }
 
     apiCalls();
@@ -39,11 +41,29 @@ export default function CreateProduct({ isShown, hide }) {
     setRenderedOnce(true);
   }, []);
 
+  useEffect(() => {
+    async function apiCalls() {
+      const typeInfo = await getDefaultTypeInfo(
+        product.types.find((type) => type.name === inputValues.type).id
+      )
+      await setDeafultInfo(typeInfo.map(elem => ({...elem, value: ""})));
+
+    }
+    renderedOnce && apiCalls();
+
+  }, [inputValues.type]);
+
+  function changeDefaultStatHandler(key, value, id) {
+    setDeafultInfo((prevInfo) =>
+      prevInfo.map((i) => (i.id === id ? { ...i, [key]: value } : i))
+    );
+  }
+
   function addStatHandler(e) {
     e.preventDefault();
     setInfo((prevInfo) => [
       ...prevInfo,
-      { title: "", description: "", number: Date.now() },
+      { key: "", value: "", number: nanoid() },
     ]);
   }
 
@@ -51,11 +71,15 @@ export default function CreateProduct({ isShown, hide }) {
     setInfo((prevInfo) => prevInfo.filter((stat) => stat.number !== number));
   }
 
+
+    
   function changeStatHandler(key, value, number) {
     setInfo((prevInfo) =>
       prevInfo.map((i) => (i.number === number ? { ...i, [key]: value } : i))
     );
   }
+
+
 
   function optionChangeHandler(e) {
     setInputValues((prevInputValues) => ({
@@ -67,6 +91,8 @@ export default function CreateProduct({ isShown, hide }) {
   async function addProductHandler(e) {
     e.preventDefault();
     const formData = new FormData();
+    console.log(`brands from createproduct: ${JSON.stringify(product.brands)}`)
+    console.log(`brandex from createproduct: ${inputValues.brand}`);
     formData.append("name", inputValues.name);
     formData.append("price", inputValues.price);
     for (let i = 0; i < inputValues.files.length; i++) {
@@ -80,7 +106,8 @@ export default function CreateProduct({ isShown, hide }) {
       "typeId",
       product.types.find((type) => type.name === inputValues.type).id
     );
-    formData.append("info", JSON.stringify(info));
+    console.log(`info from createProduct: ${JSON.stringify([...defaultInfo, info])}`);
+    formData.append("info", JSON.stringify([...defaultInfo, ...info]));
     await createProduct(formData);
     await setInputValues({
       name: "",
@@ -164,6 +191,32 @@ export default function CreateProduct({ isShown, hide }) {
                   type="file"
                   multiple
                 />
+                {defaultInfo.map((elem) => {
+                  return (
+                    <div className="modal-stats" key={elem.id}>
+                      <input
+                        className="modal-stat-name"
+                        type="text"
+                        placeholder="Введите название свойства"
+                        value={elem.key}
+                        disabled
+                      />
+                      <input
+                        className="modal-stat-value"
+                        type="text"
+                        placeholder="Введите значение свойства"
+                        value={elem.value}
+                        onChange={(e) =>
+                          changeDefaultStatHandler(
+                            "value",
+                            e.target.value,
+                            elem.id
+                          )
+                        }
+                      />
+                    </div>
+                  );
+                })}
                 {info.map((elem) => {
                   return (
                     <div className="modal-stats" key={elem.number}>
@@ -171,23 +224,19 @@ export default function CreateProduct({ isShown, hide }) {
                         className="modal-stat-name"
                         type="text"
                         placeholder="Введите название свойства"
-                        value={elem.title}
+                        value={elem.key}
                         onChange={(e) =>
-                          changeStatHandler(
-                            "title",
-                            e.target.value,
-                            elem.number
-                          )
+                          changeStatHandler("key", e.target.value, elem.number)
                         }
                       />
                       <input
                         className="modal-stat-value"
                         type="text"
                         placeholder="Введите значение свойства"
-                        value={elem.description}
+                        value={elem.value}
                         onChange={(e) =>
                           changeStatHandler(
-                            "description",
+                            "value",
                             e.target.value,
                             elem.number
                           )
@@ -202,7 +251,7 @@ export default function CreateProduct({ isShown, hide }) {
                 <button onClick={addStatHandler}>
                   Добавить новое свойство
                 </button>
-                ;
+
                 <div>
                   <button onClick={() => hide()}>Закрыть</button>
                   <button onClick={addProductHandler}>Добавить</button>

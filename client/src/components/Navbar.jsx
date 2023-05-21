@@ -9,7 +9,7 @@ import {
   SHOP_ROUTE,
 } from "../utils/consts";
 import { Context } from "../App";
-import { getProductsSearch, getTypes } from "../API/productAPI";
+import { getGroups, getProductsSearch, getTypes } from "../API/productAPI";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -23,10 +23,12 @@ export default function Navbar() {
 
   useEffect(() => {
     async function apiCalls() {
-      const types = await getTypes();
+      const types = product.types.length > 0 ? product.types : await getTypes();
+      const groups = product.groups.length > 0 ? product.groups : await getGroups();
       await setProduct((oldProduct) => ({
         ...oldProduct,
-        types: types.length > 0 ? types : [],
+        types,
+        groups
       }));
       console.log(`Navbar shit 1 types${JSON.stringify(product.types)}`);
     }
@@ -44,7 +46,18 @@ export default function Navbar() {
     await setProduct((oldProduct) => ({
       ...oldProduct,
       name: searchValues.name,
-      selectedType: searchValues.type ? searchValues.type : {},
+      selectedType:
+        Object.keys(searchValues.type).length > 0 ? searchValues.type : {},
+      selectedGroup:
+        Object.keys(searchValues.type).length > 0
+          ? product.groups.find(
+              (group) => group.id === searchValues.type.groupId
+            )
+          : {},
+      sortingValue: {
+        value: { byWhat: "", order: "DESC" },
+        text: "Отсутствует",
+      },
     }));
     await setSearchValues((oldSearchValues) => ({
       ...oldSearchValues,
@@ -86,9 +99,7 @@ export default function Navbar() {
       await setWhatIsShown("results");
 
       const data = await getProductsSearch(
-        10,
-        e.target.value,
-        searchValues.type.id
+        {limit: 10, name: e.target.value, typeId: searchValues.type.id}
       );
 
       setSearchValues((oldSearchValues) => ({

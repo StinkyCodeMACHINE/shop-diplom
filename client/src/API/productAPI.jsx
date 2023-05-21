@@ -10,6 +10,11 @@ export async function getTypes() {
   return data;
 }
 
+export async function getDefaultTypeInfo(id) {
+  const { data } = await axiosReq.get(`/api/type/${id}`);
+  return data;
+}
+
 export async function createGroup(group) {
   const { data } = await axiosAuthReq.post("/api/group", group);
   return data;
@@ -35,14 +40,14 @@ export async function createProduct(device) {
   return data;
 }
 
-export async function getProducts(typeId, brandId, page, limit, name) {
+export async function getProducts({typeId, brandId, page, limit, name, sorting}) {
   const { data } = await axiosReq.get("/api/product", {
-    params: { typeId, brandId, page, limit, name },
+    params: { typeId, brandId, page, limit, name, sorting },
   });
   return data;
 }
 
-export async function getProductsSearch(limit, name, typeId) {
+export async function getProductsSearch({limit, name, typeId}) {
   const { data } = await axiosReq.get("/api/product", {
     params: { limit, name, typeId },
   });

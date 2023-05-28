@@ -17,7 +17,9 @@ async function create(req, res, next) {
 }
 
 async function getAll(req, res) {
-  const groups = await group.findAll();
+  const groups = await group.findAll({
+    order: [['name', 'DESC']]
+  });
   res.json(groups);
 }
 

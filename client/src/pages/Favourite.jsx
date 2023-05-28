@@ -1,7 +1,12 @@
 import react, { useContext, useEffect, useState } from "react";
 import { Context } from "../App";
 import { useNavigate } from "react-router-dom";
-import { API_URL, PRODUCT_ROUTE, PRODUCT_IMAGE_URL } from "../utils/consts";
+import {
+  API_URL,
+  PRODUCT_ROUTE,
+  PRODUCT_IMAGE_URL,
+  productLimitValues,
+} from "../utils/consts";
 import {
   getBrands,
   getFavouriteIds,
@@ -12,7 +17,8 @@ import Pagination from "../components/Favourite/Pagination";
 import ProductCard from "../components/Favourite/ProductCard";
 
 export default function Favourite() {
-  const { product, setProduct, user } = useContext(Context);
+  const { product, setProduct, user, whatIsShown, setWhatIsShown } =
+    useContext(Context);
   const [renderedOnce, setRenderedOnce] = useState(false);
 
   useEffect(() => {
@@ -41,7 +47,11 @@ export default function Favourite() {
   //изменение пагинации
   useEffect(() => {
     async function apiCalls() {
-      let data = await getFavouriteProducts(product.page, 3, user.user.id);
+      let data = await getFavouriteProducts(
+        product.page,
+        product.limit,
+        user.user.id
+      );
       await setProduct((oldProduct) => ({
         ...oldProduct,
         products: data.rows,
@@ -56,7 +66,7 @@ export default function Favourite() {
 
   useEffect(() => {
     async function apiCalls() {
-      let data = await getFavouriteProducts(1, 3, user.user.id);
+      let data = await getFavouriteProducts(1, product.limit, user.user.id);
       await setProduct((oldProduct) => ({
         ...oldProduct,
         products: data.rows,
@@ -68,7 +78,7 @@ export default function Favourite() {
     apiCalls();
 
     console.log("3 useeffect селбренды селтипы");
-  }, []);
+  }, [product.limit]);
 
   console.log("fav brands: " + product.brands);
 
@@ -76,7 +86,47 @@ export default function Favourite() {
     renderedOnce && (
       <div className="favourite-container">
         <div className="favourite-inner-container">
-          <h2>Избранное</h2>
+          <div className="shop-main-container-top-options">
+            <h2>Избранное</h2>
+            <div className="shop-main-container-top-option-container">
+              <div
+                onClick={() =>
+                  whatIsShown !== "limit"
+                    ? setWhatIsShown("limit")
+                    : setWhatIsShown("")
+                }
+              >
+                Показывать: <span>{product.limit}</span>
+              </div>
+              <img
+                style={
+                  whatIsShown !== "limit"
+                    ? { transform: "rotate(-270deg)" }
+                    : { transform: "rotate(-90deg)" }
+                }
+                src="/assets/drop-down-arrow.svg"
+                className="navbar-types-icon"
+              />
+              {whatIsShown === "limit" && (
+                <div className="shop-main-container-top-sorting-options">
+                  {productLimitValues.map((elem) => (
+                    <div
+                      key={elem.value}
+                      onClick={() => {
+                        setWhatIsShown("");
+                        setProduct((oldProduct) => ({
+                          ...oldProduct,
+                          limit: elem.value,
+                        }));
+                      }}
+                    >
+                      {elem.value}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
           {product.types.length > 0 && (
             <div className="product-cards">
               {product.products.map((eachProduct) => (

@@ -31,8 +31,8 @@ export default function CreateProduct({ isShown, hide }) {
 
       await setInputValues((oldInputValues) => ({
         ...oldInputValues,
-        brand: product.brands.length > 0 ? product.brands[0].name : "",
-        type: product.types.length > 0 ? product.types[0].name : "",
+        brand: result.brands.length > 0 ? result.brands[0].name : "",
+        type: result.types.length > 0 ? result.types[0].name : "",
       }));
     }
 
@@ -46,16 +46,16 @@ export default function CreateProduct({ isShown, hide }) {
       const typeInfo = await getDefaultTypeInfo(
         product.types.find((type) => type.name === inputValues.type).id
       )
-      await setDeafultInfo(typeInfo.map(elem => ({...elem, value: ""})));
+      await setDeafultInfo(typeInfo.map(elem => ({id: elem.id, key: elem.key, value: ""})));
 
     }
     renderedOnce && apiCalls();
 
   }, [inputValues.type]);
 
-  function changeDefaultStatHandler(key, value, id) {
+  function changeDefaultStatHandler(value, id) {
     setDeafultInfo((prevInfo) =>
-      prevInfo.map((i) => (i.id === id ? { ...i, [key]: value } : i))
+      prevInfo.map((i) => (i.id === id ? { ...i, value: value } : i))
     );
   }
 
@@ -91,8 +91,6 @@ export default function CreateProduct({ isShown, hide }) {
   async function addProductHandler(e) {
     e.preventDefault();
     const formData = new FormData();
-    console.log(`brands from createproduct: ${JSON.stringify(product.brands)}`)
-    console.log(`brandex from createproduct: ${inputValues.brand}`);
     formData.append("name", inputValues.name);
     formData.append("price", inputValues.price);
     for (let i = 0; i < inputValues.files.length; i++) {
@@ -106,7 +104,6 @@ export default function CreateProduct({ isShown, hide }) {
       "typeId",
       product.types.find((type) => type.name === inputValues.type).id
     );
-    console.log(`info from createProduct: ${JSON.stringify([...defaultInfo, info])}`);
     formData.append("info", JSON.stringify([...defaultInfo, ...info]));
     await createProduct(formData);
     await setInputValues({
@@ -208,7 +205,6 @@ export default function CreateProduct({ isShown, hide }) {
                         value={elem.value}
                         onChange={(e) =>
                           changeDefaultStatHandler(
-                            "value",
                             e.target.value,
                             elem.id
                           )

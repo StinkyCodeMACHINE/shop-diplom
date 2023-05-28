@@ -8,16 +8,33 @@ export default function Pagination() {
 
   const pageCount = Math.ceil(product.totalCount / product.limit);
   const pages = [];
-  if (product.page >= 4) {
-    pages.push(product.page - 3);
-    pages.push(product.page - 2);
-    pages.push(product.page - 1);
-    for (let i = product.page - 1; i < pageCount && i < product.page + 4; i++) {
-      pages.push(i + 1);
+  const pageLimit = 7;
+  let pagesLeft = pageLimit - 1;
+  for (let i = 1; i <= pageLimit / 2 && product.page - i > 0; i++) {
+    pages.unshift(product.page - i);
+    pagesLeft = pagesLeft - 1;
+  }
+  pages.push(product.page);
+  for (let i = 1; i <= pageLimit / 2 && product.page + i <= pageCount; i++) {
+    pages.push(product.page + i);
+    pagesLeft = pagesLeft - 1;
+  }
+  if (pagesLeft > 0) {
+    for (
+      let i = Math.ceil(pageLimit / 2);
+      product.page - i > 0 && pagesLeft > 0;
+      i++
+    ) {
+      pages.unshift(product.page - i);
+      pagesLeft = pagesLeft - 1;
     }
-  } else {
-    for (let i = 0; i < pageCount && i < 8; i++) {
-      pages.push(i + 1);
+    for (
+      let i = Math.ceil(pageLimit / 2);
+      product.page + i <= pageCount && pagesLeft > 0;
+      i++
+    ) {
+      pages.push(product.page + i);
+      pagesLeft = pagesLeft - 1;
     }
   }
 

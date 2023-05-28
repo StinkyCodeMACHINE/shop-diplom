@@ -40,14 +40,32 @@ export async function createProduct(device) {
   return data;
 }
 
-export async function getProducts({typeId, brandId, page, limit, name, sorting}) {
+export async function getProducts({
+  typeId,
+  brandId,
+  page,
+  limit,
+  name,
+  sorting,
+  priceRange,
+  selectedInfoInstance,
+}) {
   const { data } = await axiosReq.get("/api/product", {
-    params: { typeId, brandId, page, limit, name, sorting },
+    params: {
+      typeId,
+      brandId,
+      page,
+      limit,
+      name,
+      sorting,
+      priceRange,
+      selectedInfoInstance,
+    },
   });
   return data;
 }
 
-export async function getProductsSearch({limit, name, typeId}) {
+export async function getProductsSearch({ limit, name, typeId }) {
   const { data } = await axiosReq.get("/api/product", {
     params: { limit, name, typeId },
   });
@@ -90,5 +108,10 @@ export async function getFavouriteProducts(page, limit, userId) {
       page,
     },
   });
+  return data;
+}
+
+export async function getInstances(keyId) {
+  const { data } = await axiosReq.get(`/api/info/${keyId}/`);
   return data;
 }

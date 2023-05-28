@@ -24,11 +24,12 @@ export default function Navbar() {
   useEffect(() => {
     async function apiCalls() {
       const types = product.types.length > 0 ? product.types : await getTypes();
-      const groups = product.groups.length > 0 ? product.groups : await getGroups();
+      const groups =
+        product.groups.length > 0 ? product.groups : await getGroups();
       await setProduct((oldProduct) => ({
         ...oldProduct,
         types,
-        groups
+        groups,
       }));
       console.log(`Navbar shit 1 types${JSON.stringify(product.types)}`);
     }
@@ -54,6 +55,7 @@ export default function Navbar() {
               (group) => group.id === searchValues.type.groupId
             )
           : {},
+      selectedBrand: {},
       sortingValue: {
         value: { byWhat: "", order: "DESC" },
         text: "Отсутствует",
@@ -98,9 +100,11 @@ export default function Navbar() {
 
       await setWhatIsShown("results");
 
-      const data = await getProductsSearch(
-        {limit: 10, name: e.target.value, typeId: searchValues.type.id}
-      );
+      const data = await getProductsSearch({
+        limit: 10,
+        name: e.target.value,
+        typeId: searchValues.type.id,
+      });
 
       setSearchValues((oldSearchValues) => ({
         ...oldSearchValues,
@@ -182,8 +186,8 @@ export default function Navbar() {
                       }));
                       await setWhatIsShown("");
                       navigate(PRODUCT_ROUTE + `/${searchResult.id}`, {
-                        state: nanoid(),
-                      }); //для ререндера той же страницы
+                        state: nanoid(), //для ререндера той же страницы
+                      }); 
                     }}
                     key={searchResult.name}
                     className="navbar-search-bar-search-result"
@@ -216,7 +220,7 @@ export default function Navbar() {
 
         {whatIsShown === "types" && (
           <div className="navbar-search-bar-types">
-            {product.types.map((type) => {
+            {/* {product.types.map((type) => {
               return (
                 <div
                   onClick={async () => {
@@ -232,7 +236,37 @@ export default function Navbar() {
                   {type.name}
                 </div>
               );
-            })}
+            })} */}
+            {product.groups.map((group) => 
+              product.types.find(type => type.groupId === group.id) 
+              ? (
+                <div key={group.name} className="navbar-search-bar-group">
+                  <h2>{group.name}</h2>
+                  <div>
+                    {product.types.map((type) =>
+                      type.groupId === group.id ? (
+                        <div
+                          onClick={async () => {
+                            await setSearchValues((oldSearchValues) => ({
+                              ...oldSearchValues,
+                              type: type,
+                            }));
+                            await setWhatIsShown("");
+                          }}
+                          key={type.name}
+                          className="navbar-search-bar-type"
+                        >
+                          {type.name}
+                        </div>
+                      ) : (
+                        ""
+                      )
+                    )}
+                  </div>
+                </div>
+              )
+              : ""
+            )}
           </div>
         )}
       </div>

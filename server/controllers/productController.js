@@ -47,7 +47,9 @@ async function create(req, res, next) {
 
     console.log(info);
     JSON.parse(info).forEach((element) => {
-      console.log(`key: ${element.key}, value: ${element.value}`);
+      console.log(
+        `id: ${element.id} key: ${element.key}, value: ${element.value}`
+      );
     });
 
     if (info) {
@@ -57,6 +59,7 @@ async function create(req, res, next) {
           key: element.key,
           value: element.value,
           productId: productElem.id,
+          typeDefaultInfoId: element.id,
         });
       });
     }
@@ -69,69 +72,154 @@ async function create(req, res, next) {
 
 async function getAll(req, res, next) {
   try {
-    let { brandId, typeId, limit, page, name, sorting } = req.query;
+    let {
+      brandId,
+      typeId,
+      limit,
+      page,
+      name,
+      sorting,
+      priceRange,
+      selectedInfoInstance,
+    } = req.query;
     page = page || 1;
     name = name || "";
     limit = Number(limit) || 9;
+    priceRange = !priceRange
+      ? {
+          priceLowerLimit: 1,
+          priceUpperLimit: 999999999,
+        }
+      : {
+          priceLowerLimit: !priceRange.priceLowerLimit
+            ? 1
+            : priceRange.priceLowerLimit,
+          priceUpperLimit: !priceRange.priceUpperLimit
+            ? 999999999
+            : priceRange.priceUpperLimit,
+        };
     const order = sorting &&
       sorting.byWhat && [[sorting.byWhat, sorting.order]];
     let offset = page * limit - limit;
     let products;
+    let options;
+    const whereInfo =
+      selectedInfoInstance && Object.keys(selectedInfoInstance).length > 0
+        ? {
+            value: selectedInfoInstance.value,
+            typeDefaultInfoId: selectedInfoInstance.typeDefaultInfoId,
+          }
+        : {};
+
+    const include =
+      selectedInfoInstance && Object.keys(selectedInfoInstance).length > 0
+        ? {
+            include: {
+              model: productInfo,
+              as: "info",
+              where: whereInfo,
+            },
+          }
+        : {};
 
     if (!brandId && !typeId) {
-      products = await product.findAndCountAll({
-        where: { name: { [Op.like]: `%${name}%` } },
-        limit,
-        offset,
-        // attributes: [
-        //   'id', 'name', 'price', 'newPrice', 'rating', 'img', 'brandId', 'typeId', [Sequelize.literal('price/"newPrice"'), 'discount']
-        // ],
+      options = {
+        where: {
+          name: { [Op.like]: `%${name}%` },
+          price: {
+            [Op.between]: [
+              priceRange.priceLowerLimit,
+              priceRange.priceUpperLimit,
+            ],
+          },
+        },
         attributes: {
-          include: [[Sequelize.literal('price/"newPrice"'), 'discount']],
+          include: [[Sequelize.literal('price/"newPrice"'), "discount"]],
         },
         order,
+        ...include
+      };
+      // count = await product.findAll(options);
+      products = await product.findAndCountAll({
+        ...options,
+        limit,
+        offset,
       });
     } else if (brandId && !typeId) {
-      products = await product.findAndCountAll({
-        where: { brandId, name: { [Op.like]: `%${name}%` } },
-        limit,
-        offset,
-        // attributes: [
-        //   'id', 'name', 'price', 'newPrice', 'rating', 'img', 'brandId', 'typeId', [Sequelize.literal('price/"newPrice"'), 'discount']
-        // ],
+      options = {
+        where: {
+          brandId,
+          name: { [Op.like]: `%${name}%` },
+          price: {
+            [Op.between]: [
+              priceRange.priceLowerLimit,
+              priceRange.priceUpperLimit,
+            ],
+          },
+        },
         attributes: {
-          include: [[Sequelize.literal('price/"newPrice"'), 'discount']],
+          include: [[Sequelize.literal('price/"newPrice"'), "discount"]],
         },
         order,
+        ...include
+      };
+      // count = await product.findAll(options);
+      products = await product.findAndCountAll({
+        ...options,
+        limit,
+        offset,
       });
     } else if (!brandId && typeId) {
-      products = await product.findAndCountAll({
-        where: { typeId, name: { [Op.like]: `%${name}%` } },
-        limit,
-        offset,
-        // attributes: [
-        //   'id', 'name', 'price', 'newPrice', 'rating', 'img', 'brandId', 'typeId', [Sequelize.literal('price/"newPrice"'), 'discount']
-        // ],
+      options = {
+        where: {
+          typeId,
+          name: { [Op.like]: `%${name}%` },
+          price: {
+            [Op.between]: [
+              priceRange.priceLowerLimit,
+              priceRange.priceUpperLimit,
+            ],
+          },
+        },
         attributes: {
-          include: [[Sequelize.literal('price/"newPrice"'), 'discount']],
+          include: [[Sequelize.literal('price/"newPrice"'), "discount"]],
         },
         order,
+        ...include
+      };
+      // count = await product.findAll(options);
+      products = await product.findAndCountAll({
+        ...options,
+        limit,
+        offset,
       });
     } else {
-      products = await product.findAndCountAll({
-        where: { typeId, brandId, name: { [Op.like]: `%${name}%` } },
-        limit,
-        offset,
-        // attributes: [
-        //   'id', 'name', 'price', 'newPrice', 'rating', 'img', 'brandId', 'typeId', [Sequelize.literal('price/"newPrice"'), 'discount']
-        // ],
+      options = {
+        where: {
+          typeId,
+          brandId,
+          name: { [Op.like]: `%${name}%` },
+          price: {
+            [Op.between]: [
+              priceRange.priceLowerLimit,
+              priceRange.priceUpperLimit,
+            ],
+          },
+        },
         attributes: {
-          include: [[Sequelize.literal('price/"newPrice"'), 'discount']],
+          include: [[Sequelize.literal('price/"newPrice"'), "discount"]],
         },
         order,
+        ...include
+      };
+      // count = await product.findAll(options);
+      products = await product.findAndCountAll({
+        ...options,
+        limit,
+        offset,
       });
     }
-    res.json(products);
+    res.json({ rows: products.rows, count: products.count });
   } catch (err) {
     next(new Error(err.message));
   }

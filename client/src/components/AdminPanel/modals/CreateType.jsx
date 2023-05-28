@@ -1,5 +1,5 @@
 import react, { useState, useEffect, useContext } from "react";
-import { createType, getGroups } from "../../../API/productAPI";
+import { createType, getGroups, getTypes } from "../../../API/productAPI";
 import { Context } from "../../../App";
 import { nanoid } from "nanoid"
 
@@ -44,7 +44,11 @@ export default function CreateType({ isShown, hide }) {
       product.groups.find((group) => group.name === inputValues.group).id
     );
     formData.append("info", JSON.stringify(info));
-    await createType(formData);
+    const type = await createType(formData);
+    await setProduct((oldProduct) => ({
+      ...oldProduct,
+      types: [...oldProduct.types, type],
+    }));
     await setInputValues({ name: "", file: null, group: "" });
     await setInfo([]);
   }

@@ -1,5 +1,5 @@
 import react, { useState, useContext } from "react";
-import { createGroup } from "../../../API/productAPI";
+import { createGroup, getGroups } from "../../../API/productAPI";
 import { Context } from "../../../App";
 
 export default function CreateGroup({ isShown, hide }) {
@@ -8,7 +8,7 @@ export default function CreateGroup({ isShown, hide }) {
     file: null,
   });
   
-  const { whatIsShown } = useContext(Context);
+  const { whatIsShown, setProduct } = useContext(Context);
 
   async function addHandler(e) {
     e.preventDefault();
@@ -17,7 +17,8 @@ export default function CreateGroup({ isShown, hide }) {
     formData.append("name", inputValues.name);
     formData.append("img", inputValues.file);
 
-    await createGroup(formData);
+    const group = await createGroup(formData);
+    await setProduct((oldProduct) => ({ ...oldProduct, groups: [...oldProduct.groups, group] }));
     await setInputValues({ name: "", file: null });
   }
 

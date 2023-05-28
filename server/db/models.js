@@ -126,6 +126,9 @@ product.belongsTo(type);
 type.hasMany(defaultTypeInfo);
 defaultTypeInfo.belongsTo(type)
 
+defaultTypeInfo.hasMany(productInfo);
+productInfo.belongsTo(defaultTypeInfo);
+
 module.exports = {
   user,
   basket,

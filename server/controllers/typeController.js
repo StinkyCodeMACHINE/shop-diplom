@@ -8,7 +8,7 @@ async function create(req, res, next) {
     const { img } = req.files;
     let fileName = uuid.v4() + ".jpg";
     img.mv(path.resolve(__dirname, "..", "static", "type-images", fileName));
-    
+
     const typeElem = await type.create({ name, img: fileName, groupId });
 
     if (info) {
@@ -28,16 +28,18 @@ async function create(req, res, next) {
 }
 
 async function getAll(req, res) {
-  const types = await type.findAll();
+  const types = await type.findAll({
+    order: [["name", "DESC"]],
+  });
   res.json(types);
 }
 
 async function getInfo(req, res) {
-  const {id} = req.params
+  const { id } = req.params;
   const info = await defaultTypeInfo.findAll({
     where: {
-      typeId: id
-    }
+      typeId: id,
+    },
   });
   res.json(info);
 }

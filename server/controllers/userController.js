@@ -42,7 +42,7 @@ async function registration(req, res, next) {
     password: encryptedPassword,
     activationLink,
   });
-  res.json(userElem);
+  res.json(userElem[0]);
   // const basketElem = await basket.create({ userId: userElem.id });
   // const token = generateJWT(userElem.name, userElem.id, userElem.email, userElem.role);
 
@@ -65,7 +65,7 @@ async function login(req, res, next) {
     userElem.email,
     userElem.role
   );
-  console.log(`token from shit ${token}`)
+  console.log(`token from shit ${token}`);
   res.json({ token });
 }
 
@@ -74,9 +74,9 @@ async function activateAccount(req, res, next) {
     const { link } = req.params;
     const userElem = await user.update(
       { isActivated: true },
-      { where: { activationLink: link } }
+      { where: { activationLink: link }, returning: true }
     );
-    await basket.create({ userId: userElem.id });
+    await basket.create({ userId: userElem[1][0].id });
     res.redirect(process.env.CLIENT_URL);
   } catch (err) {
     next(new Error(err.message));

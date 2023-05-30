@@ -27,7 +27,7 @@ export default function Favourite() {
       result.types = await getTypes();
       result.brands = await getBrands();
       result.favourite = user.user.id
-        ? await getFavouriteIds(user.user.id)
+        ? await getFavouriteIds()
         : [];
       await setProduct((oldProduct) => ({
         ...oldProduct,
@@ -66,7 +66,7 @@ export default function Favourite() {
 
   useEffect(() => {
     async function apiCalls() {
-      let data = await getFavouriteProducts(1, product.limit, user.user.id);
+      let data = await getFavouriteProducts(1, product.limit);
       await setProduct((oldProduct) => ({
         ...oldProduct,
         products: data.rows,

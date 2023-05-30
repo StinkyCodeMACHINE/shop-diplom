@@ -43,7 +43,7 @@ export default function Shop() {
       result.brands = await getBrands();
       result.groups = await getGroups();
       result.favourite = user.user.id
-        ? await getFavouriteIds(user.user.id)
+        ? await getFavouriteIds()
         : [];
       await setProduct((oldProduct) => ({
         ...oldProduct,
@@ -521,7 +521,7 @@ export default function Shop() {
             <div className="shop-main-container-top-options">
               <h2>
                 {product.name
-                  ? "Результаты поиска по запросу: " + product.name
+                  ? `${product.totalCount} результат${product.totalCount===1 ? "" : "ов"} по запросу: ${product.name}`
                   : Object.keys(product.selectedType).length > 0
                   ? product.selectedType.name
                   : "Каталог"}

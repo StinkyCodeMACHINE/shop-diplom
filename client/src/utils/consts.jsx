@@ -5,16 +5,17 @@ export const SHOP_ROUTE = "/shop";
 export const BASKET_ROUTE = "/basket";
 export const PRODUCT_ROUTE = "/product-page";
 export const FAVOURITE_ROUTE = "/favourite-page";
+export const COMPARE_ROUTE = "/compare";
 
 export const API_URL = "http://localhost:7000/";
 export const PRODUCT_IMAGE_URL = "product-images/";
 export const PROFILE_IMAGE_URL = "profile-images/";
 
 export const productSortingValues = [
-  { value: { byWhat: "", order: "DESC" }, text: "Отсутствует" },
+  { value: { byWhat: ""}, text: "Отсутствует" },
   { value: { byWhat: "price", order: "ASC" }, text: "Сначала недорогие" },
   { value: { byWhat: "price", order: "DESC" }, text: "Сначала дорогие" },
-  // { value: {byWhat: "", order: "DESC"}, text: "Сначала популярные" },
+  // { value: {byWhat: "", order: "DESC"}, text: "Сначала самые популярные" }, //указываются админом
   { value: { byWhat: "discount", order: "DESC" }, text: "По скидке" },
   // { value: {byWhat: "", order: "DESC"}, text: "Сначала обсуждаемые" },
   {
@@ -23,9 +24,23 @@ export const productSortingValues = [
   },
 ];
 
+export const reviewSortingValues = [
+  { value: { byWhat: ""}, text: "Отсутствует" },
+  { value: { byWhat: "diff", order: "DESC" }, text: "Сначала самые полезные" },
+  { value: { byWhat: "diff", order: "ASC" }, text: "Сначала самые плохие" },
+];
+
+export const reviewLimitValues = [
+  { value: 5 },
+  { value: 10 },
+  { value: 15 },
+  { value: 20 },
+];
+
 export const productLimitValues = [
   { value: 5 },
   { value: 10 },
   { value: 15 },
   { value: 20 },
 ];
+

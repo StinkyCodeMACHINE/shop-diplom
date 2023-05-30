@@ -4,6 +4,7 @@ import Basket from "../pages/Basket";
 import ProductPage from "../pages/ProductPage";
 import Shop from "../pages/Shop";
 import Favourite from "../pages/Favourite"
+import Compare from "../pages/Compare";
 import {
   ADMIN_ROUTE,
   BASKET_ROUTE,
@@ -12,7 +13,9 @@ import {
   REGISTRATION_ROUTE,
   SHOP_ROUTE,
   FAVOURITE_ROUTE,
+  COMPARE_ROUTE,
 } from "./consts";
+
 
 
 export const adminRoutes = [
@@ -29,6 +32,10 @@ export const authRoutes = [
   {
     path: FAVOURITE_ROUTE,
     element: <Favourite />
+  },
+  {
+    path: COMPARE_ROUTE,
+    element: <Compare />
   }
 ];
 

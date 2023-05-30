@@ -6,7 +6,7 @@ async function create(req, res, next) {
   try {
     let { name, groupId, info } = req.body;
     const { img } = req.files;
-    let fileName = uuid.v4() + ".jpg";
+    let fileName = uuid.v4() + ".png";
     img.mv(path.resolve(__dirname, "..", "static", "type-images", fileName));
 
     const typeElem = await type.create({ name, img: fileName, groupId });

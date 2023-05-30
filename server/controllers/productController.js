@@ -1,6 +1,13 @@
 const uuid = require("uuid"); // генерирует случайные id
 const path = require("path");
-const { product, productInfo, favourite } = require("../db/models");
+const {
+  product,
+  productInfo,
+  favourite,
+  review,
+  user,
+  reviewRating,
+} = require("../db/models");
 const { Op } = require("sequelize");
 const { Sequelize } = require("sequelize");
 
@@ -17,7 +24,7 @@ async function create(req, res, next) {
     const fileNames = [];
     if (Array.isArray(img)) {
       for (let i = 0; i < img.length; i++) {
-        fileNames.push(uuid.v4() + ".jpg");
+        fileNames.push(uuid.v4() + ".png");
         img[i].mv(
           path.resolve(
             __dirname,
@@ -29,7 +36,7 @@ async function create(req, res, next) {
         );
       }
     } else {
-      fileNames.push(uuid.v4() + ".jpg");
+      fileNames.push(uuid.v4() + ".png");
       img.mv(
         path.resolve(__dirname, "..", "static", "product-images", fileNames[0])
       );
@@ -84,7 +91,7 @@ async function getAll(req, res, next) {
     } = req.query;
     page = page || 1;
     name = name || "";
-    limit = Number(limit) || 9;
+    limit = Number(limit) || 5;
     priceRange = !priceRange
       ? {
           priceLowerLimit: 1,
@@ -98,8 +105,8 @@ async function getAll(req, res, next) {
             ? 999999999
             : priceRange.priceUpperLimit,
         };
-    const order = sorting &&
-      sorting.byWhat && [[sorting.byWhat, sorting.order]];
+    const order =
+      sorting && sorting.byWhat ? [[sorting.byWhat, sorting.order]] : [];
     let offset = page * limit - limit;
     let products;
     let options;
@@ -133,11 +140,8 @@ async function getAll(req, res, next) {
             ],
           },
         },
-        attributes: {
-          include: [[Sequelize.literal('price/"newPrice"'), "discount"]],
-        },
         order,
-        ...include
+        ...include,
       };
       // count = await product.findAll(options);
       products = await product.findAndCountAll({
@@ -157,11 +161,8 @@ async function getAll(req, res, next) {
             ],
           },
         },
-        attributes: {
-          include: [[Sequelize.literal('price/"newPrice"'), "discount"]],
-        },
         order,
-        ...include
+        ...include,
       };
       // count = await product.findAll(options);
       products = await product.findAndCountAll({
@@ -181,11 +182,8 @@ async function getAll(req, res, next) {
             ],
           },
         },
-        attributes: {
-          include: [[Sequelize.literal('price/"newPrice"'), "discount"]],
-        },
         order,
-        ...include
+        ...include,
       };
       // count = await product.findAll(options);
       products = await product.findAndCountAll({
@@ -206,11 +204,8 @@ async function getAll(req, res, next) {
             ],
           },
         },
-        attributes: {
-          include: [[Sequelize.literal('price/"newPrice"'), "discount"]],
-        },
         order,
-        ...include
+        ...include,
       };
       // count = await product.findAll(options);
       products = await product.findAndCountAll({
@@ -219,26 +214,230 @@ async function getAll(req, res, next) {
         offset,
       });
     }
-    res.json({ rows: products.rows, count: products.count });
+    res.json(products);
   } catch (err) {
     next(new Error(err.message));
   }
 }
 
-async function getOne(req, res) {
-  const { id } = req.params;
-  const productElem = await product.findOne({
-    where: { id },
-    include: {
-      model: productInfo,
-      as: "info",
-    },
-  });
-  res.json(productElem);
+async function getOne(req, res, next) {
+  try {
+    const { id } = req.params;
+    const productElem = await product.findOne({
+      where: { id },
+      include: {
+        model: productInfo,
+        as: "info",
+      },
+    });
+    res.json(productElem);
+  } catch (err) {
+    next(new Error(err.message));
+  }
+}
+
+async function leaveReview(req, res, next) {
+  try {
+    const { id } = req.params;
+    const { advantages, disadvantages, text, rating, reviewCount } = req.body;
+    const reviewElem = await review.upsert({
+      advantages,
+      disadvantages,
+      text,
+      rating: rating,
+      userId: req.user.id,
+      productId: id,
+    });
+    let newRating = 0;
+    reviewCount.reviews.forEach(
+      (elem) => (newRating = newRating + elem.rating * elem.count)
+    );
+    newRating = parseFloat(
+      (newRating + rating) / (reviewCount.totalCount + 1)
+    ).toFixed(2);
+    const productElem = await product.update(
+      {
+        rating: newRating,
+      },
+      {
+        where: {
+          id,
+        },
+        returning: true,
+      }
+    );
+    res.json({ review: reviewElem[0], product: productElem[1][0] });
+  } catch (err) {
+    next(new Error(err.message));
+  }
+}
+
+async function getReviews(req, res, next) {
+  try {
+    const { id } = req.params;
+    let { limit, sorting, page } = req.query;
+    limit = limit || 5;
+    page = page || 1;
+    const offset = page * limit - limit;
+    const order =
+      sorting && sorting.byWhat ? [[sorting.byWhat, sorting.order]] : [];
+    const reviews = await review.findAndCountAll({
+      where: {
+        productId: id,
+      },
+      attributes: {
+        include: [[Sequelize.literal('"thumbsUp"-"thumbsDown"'), "diff"]],
+      },
+      include: {
+        model: user,
+        as: "user",
+      },
+      order,
+      limit,
+      offset,
+    });
+
+    res.json(reviews);
+  } catch (err) {
+    next(new Error(err.message));
+  }
+}
+
+async function getReview(req, res, next) {
+  try {
+    const { id } = req.params;
+    const reviewElem = await review.findOne({
+      where: {
+        productId: id,
+        userId: req.user.id,
+      },
+      include: {
+        model: user,
+        as: "user",
+      },
+    });
+
+    res.json(reviewElem);
+  } catch (err) {
+    next(new Error(err.message));
+  }
+}
+
+async function countReviews(req, res, next) {
+  try {
+    const { id } = req.params;
+    const reviews = await review.findAll({
+      attributes: [
+        "rating",
+        [Sequelize.fn("COUNT", Sequelize.col("rating")), "count"],
+      ],
+      where: {
+        productId: id,
+      },
+      group: ["rating"],
+      order: [["rating", "ASC"]],
+    });
+    let totalCount = 0;
+    reviews.forEach(
+      (elem) => (totalCount = totalCount + Number(elem.dataValues.count))
+    );
+    res.json({ totalCount, reviews });
+  } catch (err) {
+    next(new Error(err.message));
+  }
+}
+
+async function rateReview(req, res, next) {
+  try {
+    const { reviewId } = req.params;
+    const { liked } = req.body;
+    const foundRating = await reviewRating.findOne({
+      where: { userId: req.user.id, reviewId },
+    });
+    const notChanged = foundRating && foundRating.liked === liked;
+    const reviewRatingElem = await reviewRating.upsert({
+      liked,
+      userId: req.user.id,
+      reviewId,
+    });
+    const what = liked
+      ? {
+          thumbsUp: notChanged
+            ? Sequelize.literal('"thumbsUp"')
+            : Sequelize.literal('"thumbsUp" + 1'),
+          thumbsDown: notChanged
+            ? Sequelize.literal('"thumbsDown"')
+            : Sequelize.literal('"thumbsDown"-1'),
+        }
+      : {
+          thumbsUp: notChanged
+            ? Sequelize.literal('"thumbsUp"')
+            : Sequelize.literal('"thumbsUp" - 1'),
+          thumbsDown: notChanged
+            ? Sequelize.literal('"thumbsDown"')
+            : Sequelize.literal('"thumbsDown"+1'),
+        };
+
+    const reviewElem = await review.update(what, {
+      where: {
+        id: reviewId,
+      },
+      returning: true,
+    });
+    res.json({
+      reviewRating: reviewRatingElem[0],
+      review: reviewElem[1][0],
+    });
+  } catch (err) {
+    next(new Error(err.message));
+  }
+}
+
+async function deleteReviewRating(req, res, next) {
+  try {
+    const { reviewId } = req.params;
+    await reviewRating.destroy({
+      where: {
+        reviewId,
+        userId: req.user.id,
+      },
+    });
+  } catch (err) {
+    next(new Error(err.message));
+  }
+}
+
+async function getReviewRatings(req, res, next) {
+  try {
+    const { id } = req.params;
+    const reviewRatings = await reviewRating.findAll({
+      where: {
+        userId: req.user.id,
+      },
+      include: {
+        model: review,
+        as: "review",
+        where: {
+          productId: id,
+        },
+      },
+    });
+
+    res.json(reviewRatings);
+  } catch (err) {
+    next(new Error(err.message));
+  }
 }
 
 module.exports = {
   create,
   getAll,
   getOne,
+  leaveReview,
+  getReviews,
+  getReview,
+  countReviews,
+  rateReview,
+  deleteReviewRating,
+  getReviewRatings,
 };

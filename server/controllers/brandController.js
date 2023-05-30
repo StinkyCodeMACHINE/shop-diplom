@@ -6,7 +6,7 @@ async function create(req, res, next) {
   try {
     const { name} = req.body;
     const { img } = req.files;
-    let fileName = uuid.v4() + ".jpg";
+    let fileName = uuid.v4() + ".png";
     img.mv(path.resolve(__dirname, "..", "static", "brand-images", fileName));
     const brandElem = await brand.create({ name, img: fileName });
     res.json(brandElem);

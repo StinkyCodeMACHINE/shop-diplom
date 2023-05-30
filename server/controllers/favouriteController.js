@@ -2,11 +2,11 @@ const { product, favourite } = require("../db/models");
 
 async function addToFavourite(req, res, next) {
   try {
-    const { productId, userId } = req.body;
+    const { productId} = req.body;
 
     const favouriteElem = await favourite.create({
       productId,
-      userId,
+      userId: req.user.id,
     });
 
     res.json(favouriteElem);
@@ -32,7 +32,7 @@ async function removeFromFavourite(req, res, next) {
 
 async function getFavouriteProducts(req, res, next) {
   try {
-    let { limit, page, userId } = req.query;
+    let { limit, page} = req.query;
     page = page || 1;
     limit = Number(limit) || 9;
     let offset = page * limit - limit;
@@ -44,7 +44,7 @@ async function getFavouriteProducts(req, res, next) {
         model: favourite,
         required: true,
         where: {
-          userId
+          userId: req.user.id
         },
       },
     });
@@ -57,10 +57,9 @@ async function getFavouriteProducts(req, res, next) {
 
 async function getFavouriteIds(req, res, next) {
   try {
-    let { userId } = req.query;
     const favouriteIds = await favourite.findAll({
       where: {
-        userId,
+        userId: req.user.id,
       },
     });
 

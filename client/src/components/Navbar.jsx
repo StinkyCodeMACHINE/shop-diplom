@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { nanoid } from "nanoid";
 import {
   ADMIN_ROUTE,
+  COMPARE_ROUTE,
   FAVOURITE_ROUTE,
   LOGIN_ROUTE,
   PRODUCT_ROUTE,
@@ -187,7 +188,7 @@ export default function Navbar() {
                       await setWhatIsShown("");
                       navigate(PRODUCT_ROUTE + `/${searchResult.id}`, {
                         state: nanoid(), //для ререндера той же страницы
-                      }); 
+                      });
                     }}
                     key={searchResult.name}
                     className="navbar-search-bar-search-result"
@@ -237,9 +238,8 @@ export default function Navbar() {
                 </div>
               );
             })} */}
-            {product.groups.map((group) => 
-              product.types.find(type => type.groupId === group.id) 
-              ? (
+            {product.groups.map((group) =>
+              product.types.find((type) => type.groupId === group.id) ? (
                 <div key={group.name} className="navbar-search-bar-group">
                   <h2>{group.name}</h2>
                   <div>
@@ -264,8 +264,9 @@ export default function Navbar() {
                     )}
                   </div>
                 </div>
+              ) : (
+                ""
               )
-              : ""
             )}
           </div>
         )}
@@ -273,11 +274,18 @@ export default function Navbar() {
       {user.isAuth ? (
         <div className="navbar-options">
           {user.user.role === "ADMIN" && (
-            <div onClick={() => navigate(ADMIN_ROUTE)}>Админ</div>
+            <div onClick={() => navigate(ADMIN_ROUTE)}>АдминПанель</div>
           )}
+
           <div className="navbar-cart-container">
             <div className="navbar-cart-text">Корзина</div>
             <img className="navbar-cart-icon" src="/assets/cart.svg" />
+          </div>
+          <div onClick={() => navigate(COMPARE_ROUTE)} className="navbar-compare-container">
+            <div className="navbar-cart-text">Сравнение</div>
+            <div className="navbar-favourite-count-container">
+              {product.toCompare.length}
+            </div>
           </div>
           <div>{user.email}</div>
 

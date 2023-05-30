@@ -179,6 +179,10 @@ body {
   padding: 0.5rem 0.5rem;
 }
 
+.navbar-compare-container {
+  position: relative;
+}
+
 a {
   text-decoration: none;
 }
@@ -293,7 +297,7 @@ a:visited {
 
 .product-cards {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   row-gap: 20px;
 }
 
@@ -376,6 +380,7 @@ a:visited {
   display: flex;
   cursor: pointer;
   position: relative;
+  align-items: center;
 }
 
 .shop-main-container-top-sorting-options {
@@ -422,6 +427,19 @@ a:visited {
   place-items: center;
   background-position: center;
   background-size: contain;
+}
+
+.product-page-rating-stars-and-stuff {
+  display: flex;
+  border-bottom: 1px solid var(--navbar-background-color);
+}
+
+.product-page-stars-and-count {
+  display: flex;
+}
+
+.product-page-rating-options-container {
+  display: flex;
 }
 
 .product-page-add-to-card-container {
@@ -531,8 +549,6 @@ a:visited {
   margin-right: 1rem;
 }
 .product-rating-rating-and-stuff-inner-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
   flex-grow: 1;
 }
 
@@ -559,37 +575,15 @@ a:visited {
   margin-right: 1rem;
 }
 
-.product-rating-thumbsup-thumbsdown-container img {
+.product-rating-thumb-container {
+  display: flex;
+}
+
+.product-rating-thumb-icon {
   width: 18px;
-}
-
-.product-rating-thumbsup-thumbsdown-container {
-  display: flex;
-  align-items: center;
-}
-
-.product-rating-thumbsup-thumbsdown-inner-container {
-  display: flex;
-  align-items: center;
   cursor: pointer;
-  border: 1px solid black;
-  border-radius: 1rem;
-  user-select: none;
-  padding: 0.3rem;
-}
-
-.product-rating-thumb-counter {
-  background-color: var(--navbar-background-color);
-  width: 16px;
-  height: 16px;
-  place-items: center;
-  border-radius: 50%;
   font-size: 0.8rem;
   display: grid;
-}
-
-.product-rating-thumb-icon-container {
-  display: flex;
 }
 
 .favourite-container {
@@ -599,4 +593,19 @@ a:visited {
 .favourite-inner-container {
   display: grid;
   place-items: center;
+}
+
+.compare-page-main-container {
+  width: 800px;
+  margin: auto;
+}
+
+.compare-page-products-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.compare-page-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 }

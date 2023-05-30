@@ -1,4 +1,5 @@
 const db = require("./db");
+const moment = require("moment");
 const { DataTypes } = require("sequelize");
 
 const user = db.define("user", {
@@ -8,7 +9,8 @@ const user = db.define("user", {
   password: { type: DataTypes.STRING, allowNull: false },
   role: { type: DataTypes.STRING, defaultValue: "USER" },
   isActivated: { type: DataTypes.BOOLEAN, defaultValue: false },
-  activationLink: { type: DataTypes.TEXT },
+  activationLink: { type: DataTypes.STRING },
+  img: { type: DataTypes.STRING },
 });
 
 const basket = db.define("basket", {
@@ -23,9 +25,10 @@ const product = db.define("product", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   name: { type: DataTypes.STRING, unique: true, allowNull: false },
   price: { type: DataTypes.INTEGER, allowNull: false },
-  newPrice: { type: DataTypes.INTEGER },
-  rating: { type: DataTypes.INTEGER, defaultValue: 0 },
+  discount: { type: DataTypes.FLOAT },
+  rating: { type: DataTypes.FLOAT, defaultValue: 0, validate: { max: 5 } },
   img: { type: DataTypes.JSON, allowNull: false },
+  description: { type: DataTypes.STRING },
 });
 
 const favourite = db.define(
@@ -71,14 +74,42 @@ const brand = db.define("brand", {
   img: { type: DataTypes.STRING }, // заменить allowNull: false
 });
 
-const review = db.define("review", {
-  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  thumbsUp: { type: DataTypes.INTEGER },
-  thumbsDown: { type: DataTypes.INTEGER },
-  text: { type: DataTypes.STRING },
-  date: { type: DataTypes.DATE },
-  rating: { type: DataTypes.INTEGER },
-});
+const review = db.define(
+  "review",
+  {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    thumbsUp: { type: DataTypes.INTEGER, defaultValue: 0 },
+    thumbsDown: { type: DataTypes.INTEGER, defaultValue: 0 },
+    advantages: { type: DataTypes.TEXT },
+    disadvantages: { type: DataTypes.TEXT },
+    text: { type: DataTypes.TEXT, allowNull: false },
+    rating: { type: DataTypes.INTEGER, validate: { max: 5 } },
+  },
+  {
+    indexes: [
+      {
+        unique: true,
+        fields: ["userId"],
+      },
+    ],
+  }
+);
+
+const reviewRating = db.define(
+  "reviewRating",
+  {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    liked: { type: DataTypes.BOOLEAN},
+  },
+  {
+    indexes: [
+      {
+        unique: true,
+        fields: ["reviewId"],
+      },
+    ],
+  }
+);
 
 const productInfo = db.define(
   "productInfo",
@@ -99,6 +130,9 @@ review.belongsTo(user);
 user.hasMany(favourite);
 favourite.belongsTo(user);
 
+user.hasMany(reviewRating)
+reviewRating.belongsTo(user)
+
 basket.hasMany(basketProduct);
 basketProduct.belongsTo(basket);
 
@@ -107,6 +141,9 @@ basketProduct.belongsTo(product);
 
 product.hasMany(productInfo, { as: "info" });
 productInfo.belongsTo(product);
+
+review.hasMany(reviewRating)
+reviewRating.belongsTo(review)
 
 product.hasMany(review);
 review.belongsTo(product);
@@ -124,7 +161,7 @@ type.hasMany(product);
 product.belongsTo(type);
 
 type.hasMany(defaultTypeInfo);
-defaultTypeInfo.belongsTo(type)
+defaultTypeInfo.belongsTo(type);
 
 defaultTypeInfo.hasMany(productInfo);
 productInfo.belongsTo(defaultTypeInfo);
@@ -139,6 +176,7 @@ module.exports = {
   defaultTypeInfo,
   brand,
   review,
+  reviewRating,
   productInfo,
   favourite,
 };

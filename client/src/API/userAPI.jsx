@@ -25,3 +25,14 @@ export async function check() {
   localStorage.setItem("token", data.token);
   return jwtDecode(data.token);
 }
+
+export async function changeProfile(profile) {
+  const { data } = await axiosAuthReq.put("/api/user/", profile);
+  return data;
+}
+
+
+export async function getUserInfo() {
+  const { data } = await axiosAuthReq.get("/api/user/one");
+  return data;
+}

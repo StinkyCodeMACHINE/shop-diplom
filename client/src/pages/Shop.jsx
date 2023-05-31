@@ -143,6 +143,7 @@ export default function Shop() {
     product.selectedType,
     product.name,
     product.sortingValue,
+    product.limit,
     selectedInfoInstance,
   ]);
 

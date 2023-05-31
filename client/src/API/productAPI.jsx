@@ -172,3 +172,19 @@ export async function getInstances(keyId) {
   const { data } = await axiosReq.get(`/api/info/${keyId}/`);
   return data;
 }
+
+export async function createOrder({cart, phone, email, name, address}) {
+  const { data } = await axiosAuthReq.post(`/api/order/`, {
+    cart,
+    phone,
+    email,
+    name,
+    address,
+  });
+  return data;
+}
+
+export async function getOrders() {
+  const { data } = await axiosAuthReq.get(`/api/order/`);
+  return data;
+}

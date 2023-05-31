@@ -354,7 +354,6 @@ async function rateReview(req, res, next) {
     const foundRating = await reviewRating.findOne({
       where: { userId: req.user.id, reviewId },
     });
-    const notChanged = foundRating && foundRating.liked === liked;
     const reviewRatingElem = await reviewRating.upsert({
       liked,
       userId: req.user.id,
@@ -362,20 +361,16 @@ async function rateReview(req, res, next) {
     });
     const what = liked
       ? {
-          thumbsUp: notChanged
-            ? Sequelize.literal('"thumbsUp"')
-            : Sequelize.literal('"thumbsUp" + 1'),
-          thumbsDown: notChanged
-            ? Sequelize.literal('"thumbsDown"')
-            : Sequelize.literal('"thumbsDown"-1'),
+          thumbsUp: Sequelize.literal('"thumbsUp" + 1'),
+          thumbsDown: foundRating
+            ? Sequelize.literal('"thumbsDown"-1')
+            : Sequelize.literal('"thumbsDown"'),
         }
       : {
-          thumbsUp: notChanged
-            ? Sequelize.literal('"thumbsUp"')
-            : Sequelize.literal('"thumbsUp" - 1'),
-          thumbsDown: notChanged
-            ? Sequelize.literal('"thumbsDown"')
-            : Sequelize.literal('"thumbsDown"+1'),
+          thumbsUp: foundRating
+            ? Sequelize.literal('"thumbsUp" - 1')
+            : Sequelize.literal('"thumbsUp"'),
+          thumbsDown: Sequelize.literal('"thumbsDown" + 1'),
         };
 
     const reviewElem = await review.update(what, {
@@ -396,12 +391,33 @@ async function rateReview(req, res, next) {
 async function deleteReviewRating(req, res, next) {
   try {
     const { reviewId } = req.params;
-    await reviewRating.destroy({
+    const foundReviewRating = await reviewRating.findOne({
       where: {
         reviewId,
         userId: req.user.id,
       },
     });
+    const deletedReviewRating = await reviewRating.destroy({
+      where: {
+        reviewId,
+        userId: req.user.id,
+      },
+    });
+    const what = foundReviewRating.liked
+      ? {
+          thumbsUp: Sequelize.literal('"thumbsUp" - 1'),
+        }
+      : {
+          thumbsDown: Sequelize.literal('"thumbsDown" - 1'),
+        };
+
+    const reviewElem = await review.update(what, {
+      where: {
+        id: reviewId,
+      },
+      returning: true,
+    });
+    res.json(deletedReviewRating);
   } catch (err) {
     next(new Error(err.message));
   }

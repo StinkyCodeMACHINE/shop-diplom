@@ -11,6 +11,7 @@ const user = db.define("user", {
   isActivated: { type: DataTypes.BOOLEAN, defaultValue: false },
   activationLink: { type: DataTypes.STRING },
   img: { type: DataTypes.STRING },
+  phone: { type: DataTypes.STRING, }
 });
 
 const order = db.define("order", {
@@ -19,6 +20,8 @@ const order = db.define("order", {
   money: { type: DataTypes.INTEGER, allowNull: false, validate: { min: 1 } },
   phone: { type: DataTypes.STRING, allowNull: false },
   address: { type: DataTypes.STRING, allowNull: false },
+  email: { type: DataTypes.STRING },
+  name: { type: DataTypes.STRING, allowNull: false},
 });
 
 const orderProduct = db.define("orderProduct", {
@@ -45,6 +48,7 @@ const product = db.define("product", {
   rating: { type: DataTypes.FLOAT, defaultValue: 0, validate: { max: 5 } },
   img: { type: DataTypes.JSON, allowNull: false },
   description: { type: DataTypes.STRING },
+  left: {type: DataTypes.INTEGER, validate: { min: 0 }}
 });
 
 const favourite = db.define(

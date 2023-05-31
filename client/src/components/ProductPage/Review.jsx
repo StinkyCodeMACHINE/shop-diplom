@@ -83,8 +83,8 @@ export default function Rating({
             <img
               onClick={async () => {
                 if (reviewRating && reviewRating.liked) {
-                  deleteReviewRating({ id: productElem.id, reviewId: id });
-                  setDiffValue((oldDiffValue) => oldDiffValue - 1);
+                  await deleteReviewRating({ id: productElem.id, reviewId: id });
+                  await setDiffValue((oldDiffValue) => oldDiffValue - 1);
                   const reviewRatings = await getReviewRatings({
                     id: productElem.id,
                   });
@@ -131,14 +131,14 @@ export default function Rating({
             <img
               onClick={async () => {
                 if (reviewRating && !reviewRating.liked) {
-                  deleteReviewRating({ id: productElem.id, reviewId: id });
-                  setDiffValue((oldDiffValue) => oldDiffValue + 1);
+                  await deleteReviewRating({ id: productElem.id, reviewId: id });
+                  await setDiffValue((oldDiffValue) => oldDiffValue + 1);
                   const reviewRatings = await getReviewRatings({
                     id: productElem.id,
                   });
                   await setReviewRatings(reviewRatings);
                 } else if (reviewRating && reviewRating.liked) {
-                  setDiffValue((oldDiffValue) => oldDiffValue - 2);
+                  await setDiffValue((oldDiffValue) => oldDiffValue - 2);
                   await rateReview({
                     id: productElem.id,
                     reviewId: id,

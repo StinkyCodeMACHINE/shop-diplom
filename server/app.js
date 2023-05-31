@@ -18,6 +18,7 @@ const typeRouter = require("./routes/typeRouter");
 const userRouter = require("./routes/userRouter");
 const favouriteRouter = require("./routes/favouriteRouter");
 const infoRouter = require("./routes/infoRouter");
+const orderRouter = require("./routes/orderRouter")
 const { reviewRating, order } = require("./db/models");
 
 // разрешение обращения от других источников
@@ -38,6 +39,7 @@ app.use("/api/brand", brandRouter);
 app.use("/api/product", productRouter);
 app.use("/api/favourite", favouriteRouter);
 app.use("/api/info", infoRouter);
+app.use("/api/order", orderRouter);
 
 // Обработка ошибок, последний middleware
 app.use(errorHandler)

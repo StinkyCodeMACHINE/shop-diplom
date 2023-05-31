@@ -5,6 +5,8 @@ import ProductPage from "../pages/ProductPage";
 import Shop from "../pages/Shop";
 import Favourite from "../pages/Favourite"
 import Compare from "../pages/Compare";
+import Orders from "../pages/Orders"
+import Profile from "../pages/Profile"
 import {
   ADMIN_ROUTE,
   BASKET_ROUTE,
@@ -14,6 +16,8 @@ import {
   SHOP_ROUTE,
   FAVOURITE_ROUTE,
   COMPARE_ROUTE,
+  ORDERS_ROUTE,
+  PROFILE_ROUTE,
 } from "./consts";
 
 
@@ -31,12 +35,20 @@ export const authRoutes = [
   },
   {
     path: FAVOURITE_ROUTE,
-    element: <Favourite />
+    element: <Favourite />,
   },
   {
     path: COMPARE_ROUTE,
-    element: <Compare />
-  }
+    element: <Compare />,
+  },
+  {
+    path: ORDERS_ROUTE,
+    element: <Orders />,
+  },
+  {
+    path: PROFILE_ROUTE,
+    element: <Profile />,
+  },
 ];
 
 export const publicRoutes = [

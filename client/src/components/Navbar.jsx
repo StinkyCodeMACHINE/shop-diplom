@@ -6,7 +6,9 @@ import {
   COMPARE_ROUTE,
   FAVOURITE_ROUTE,
   LOGIN_ROUTE,
+  ORDERS_ROUTE,
   PRODUCT_ROUTE,
+  PROFILE_ROUTE,
   SHOP_ROUTE,
 } from "../utils/consts";
 import { Context } from "../App";
@@ -22,6 +24,9 @@ export default function Navbar() {
     type: {},
     searchResults: [],
   });
+  const [isHoveredOver, setIsHoveredOver] = useState(false)
+
+  const [profileModalShown, setProfileModalShown] = useState(false);
 
   useEffect(() => {
     async function apiCalls() {
@@ -38,6 +43,17 @@ export default function Navbar() {
 
     apiCalls();
   }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => !isHoveredOver && setProfileModalShown(false), 1500)
+    if (isHoveredOver) {
+      setProfileModalShown(true)
+    }
+    return () => {
+      clearTimeout(timer);
+    };
+    
+  }, [isHoveredOver])
 
   function logOutHandler() {
     setUser({ user: {}, isAuth: false });
@@ -261,7 +277,12 @@ export default function Navbar() {
             <div onClick={() => navigate(ADMIN_ROUTE)}>АдминПанель</div>
           )}
           <div className="navbar-option-container">
-            <div className="navbar-orders-text">Заказы</div>
+            <div
+              onClick={() => navigate(ORDERS_ROUTE)}
+              className="navbar-orders-text"
+            >
+              Заказы
+            </div>
             <img className="navbar-orders-icon" src="/assets/cart.svg" />
           </div>
           <div
@@ -300,10 +321,25 @@ export default function Navbar() {
             </div>
           </div>
 
-          <div className="navbar-name">
-            {!user.user.name ? "Без имени" : user.user.name}
+          <div
+            onMouseLeave={() => setIsHoveredOver(false)}
+            onMouseOver={() => setIsHoveredOver(true)}
+            className="navbar-profile-container"
+          >
+            <div>{!user.user.name ? "Без имени" : user.user.name}</div>
+            <div
+              style={
+                !profileModalShown
+                  ? { transform: "scaleY(0)" }
+                  : { transform: "scaleY(1)" }
+              }
+              className="navbar-profile-modal-menu"
+            >
+              <div className="navbar-profile-modal-menu-triangle"></div>
+              <div onClick={() => navigate(PROFILE_ROUTE)}>Настройки</div>
+              <div onClick={logOutHandler}>Выйти</div>
+            </div>
           </div>
-          <div onClick={logOutHandler}>Выйти</div>
         </div>
       ) : (
         <div className="navbar-options">
@@ -317,14 +353,15 @@ export default function Navbar() {
           whatIsShown === "results" ||
           whatIsShown === "cart") && (
           <div
-            onClick={() =>
-              setWhatIsShown("")
-            }
+            onClick={() => {
+              setWhatIsShown("");
+            }}
             className="navbar-modal-opacity"
-          ></div>
+          >
+            {whatIsShown === "cart" && <Cart />}
+          </div>
         )
       }
-      {whatIsShown === "cart" && <Cart />}
     </header>
   );
 }

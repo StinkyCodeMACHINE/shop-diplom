@@ -5,15 +5,20 @@ const {
   login,
   activateAccount,
   check,
-  test,
+  changeProfile,
+  getUserInfo,
 } = require("../controllers/userController");
 const checkAuth = require("../middleware/checkAuth");
 
-router.get("/auth", checkAuth, check);
-// router.get("/activation/:link", activateAccount);
-router.get("/activation/:link", activateAccount);
-
 router.post("/registration", registration);
 router.post("/login", login);
+
+router.get("/auth", checkAuth, check);
+router.get("/one", checkAuth, getUserInfo);
+// router.get("/activation/:link", activateAccount);
+router.get("/activation/:link", activateAccount);
+router.put("/", checkAuth, changeProfile)
+
+
 
 module.exports = router;

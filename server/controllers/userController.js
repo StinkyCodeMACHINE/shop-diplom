@@ -3,14 +3,19 @@ const { user, basket } = require("../db/models");
 const jwt = require("jsonwebtoken");
 const sendMail = require("../service/mail");
 const uuid = require("uuid"); // генерирует случайный текст
+const { where } = require("sequelize");
+const path = require("path");
+const { Sequelize } = require("../db/db");
 
-function generateJWT(name, id, email, role) {
+function generateJWT(name, id, email, role, phone, img) {
   return jwt.sign(
     {
       id,
       name,
       email,
       role,
+      phone,
+      img
     },
     process.env.SECRET_KEY,
     {
@@ -63,7 +68,9 @@ async function login(req, res, next) {
     userElem.name,
     userElem.id,
     userElem.email,
-    userElem.role
+    userElem.role,
+    userElem.phone,
+    userElem.img
   );
   console.log(`token from shit ${token}`);
   res.json({ token });
@@ -87,10 +94,75 @@ async function check(req, res, next) {
   const token = generateJWT(
     req.user.name,
     req.user.id,
-    req.user,
-    req.user.role
+    req.user.email,
+    req.user.role,
+    req.user.phone,
+    req.user.img
   );
   res.json({ token });
+}
+
+async function changeProfile(req, res, next) {
+  try {
+    // let { name, price, brandId, typeId, info } = req.body;
+    // const { img } = req.files;
+    // let fileName = uuid.v4() + ".jpg";
+    // img.mv(path.resolve(__dirname, "..", "static", "product-images", fileName)); было
+    let fileName = ""
+    let { name, oldPassword, newPassword, phone } = req.body;
+    const img = req.files && req.files.img
+    if (img) {
+      fileName = uuid.v4() + ".png";
+      img.mv(
+        path.resolve(__dirname, "..", "static", "profile-images", fileName)
+      );
+    }
+    let comparePassword
+    let userElem
+    let encryptedPassword
+    if (oldPassword && newPassword) {
+      userElem = await user.findOne({ where: { id: req.user.id } });
+      comparePassword = bcrypt.compareSync(oldPassword, userElem.password);
+      encryptedPassword = await bcrypt.hash(newPassword, 5);
+    }
+    
+    const productElem = await user.update(
+      {
+        img: img ? fileName : Sequelize.literal('"img"'),
+        name: name ? name : Sequelize.literal('"name"'),
+        phone: phone ? phone : Sequelize.literal('"phone"'),
+        password: comparePassword
+          ? encryptedPassword
+          : Sequelize.literal('"password"'),
+      },
+      {
+        where: {
+          id: req.user.id,
+        },
+        returning: true,
+      }
+    );
+
+    res.json(productElem[1][0]);
+  } catch (err) {
+    next(new Error(err.message));
+  }
+  
+  
+}
+
+async function getUserInfo(req, res, next) {
+  try {
+    const userElem = await user.findOne({
+      where: {
+        id: req.user.id,
+      },
+    });
+
+    res.json(userElem);
+  } catch (err) {
+    next(new Error(err.message));
+  }
 }
 
 module.exports = {
@@ -98,4 +170,6 @@ module.exports = {
   login,
   activateAccount,
   check,
+  changeProfile,
+  getUserInfo,
 };

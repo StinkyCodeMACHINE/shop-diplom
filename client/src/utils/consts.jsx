@@ -6,6 +6,8 @@ export const BASKET_ROUTE = "/basket";
 export const PRODUCT_ROUTE = "/product-page";
 export const FAVOURITE_ROUTE = "/favourite-page";
 export const COMPARE_ROUTE = "/compare";
+export const ORDERS_ROUTE = "/orders"
+export const PROFILE_ROUTE = "/profile"
 
 export const API_URL = "http://localhost:7000/";
 export const PRODUCT_IMAGE_URL = "product-images/";

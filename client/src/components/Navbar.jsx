@@ -11,6 +11,7 @@ import {
 } from "../utils/consts";
 import { Context } from "../App";
 import { getGroups, getProductsSearch, getTypes } from "../API/productAPI";
+import Cart from "./Navbar/Cart";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -221,23 +222,6 @@ export default function Navbar() {
 
         {whatIsShown === "types" && (
           <div className="navbar-search-bar-types">
-            {/* {product.types.map((type) => {
-              return (
-                <div
-                  onClick={async () => {
-                    await setSearchValues((oldSearchValues) => ({
-                      ...oldSearchValues,
-                      type: type,
-                    }));
-                    await setWhatIsShown("");
-                  }}
-                  key={type.name}
-                  className="navbar-search-bar-type"
-                >
-                  {type.name}
-                </div>
-              );
-            })} */}
             {product.groups.map((group) =>
               product.types.find((type) => type.groupId === group.id) ? (
                 <div key={group.name} className="navbar-search-bar-group">
@@ -276,12 +260,26 @@ export default function Navbar() {
           {user.user.role === "ADMIN" && (
             <div onClick={() => navigate(ADMIN_ROUTE)}>АдминПанель</div>
           )}
-
-          <div className="navbar-cart-container">
-            <div className="navbar-cart-text">Корзина</div>
-            <img className="navbar-cart-icon" src="/assets/cart.svg" />
+          <div className="navbar-option-container">
+            <div className="navbar-orders-text">Заказы</div>
+            <img className="navbar-orders-icon" src="/assets/cart.svg" />
           </div>
-          <div onClick={() => navigate(COMPARE_ROUTE)} className="navbar-compare-container">
+          <div
+            onClick={async () => await setWhatIsShown("cart")}
+            className="navbar-option-container"
+          >
+            <div className="navbar-cart-text">Корзина</div>
+            <div className="navbar-icon-counter-container">
+              <img className="navbar-cart-icon" src="/assets/cart.svg" />
+              <div className="navbar-favourite-count-container">
+                {product.cart.length}
+              </div>
+            </div>
+          </div>
+          <div
+            onClick={() => navigate(COMPARE_ROUTE)}
+            className="navbar-compare-container"
+          >
             <div className="navbar-cart-text">Сравнение</div>
             <div className="navbar-favourite-count-container">
               {product.toCompare.length}
@@ -291,10 +289,10 @@ export default function Navbar() {
 
           <div
             onClick={() => navigate(FAVOURITE_ROUTE)}
-            className="navbar-favourite-container"
+            className="navbar-option-container"
           >
             <div className="navbar-favourite-text">Избранное</div>
-            <div className="navbar-favourite-icon-container">
+            <div className="navbar-icon-counter-container">
               <img className="navbar-favourite-icon" src="/assets/fheart.svg" />
               <div className="navbar-favourite-count-container">
                 {product.favourite.length}
@@ -315,13 +313,18 @@ export default function Navbar() {
 
       {
         //тёмная штука
-        (whatIsShown === "types" || whatIsShown === "results") && (
+        (whatIsShown === "types" ||
+          whatIsShown === "results" ||
+          whatIsShown === "cart") && (
           <div
-            onClick={async () => setWhatIsShown("")}
+            onClick={() =>
+              setWhatIsShown("")
+            }
             className="navbar-modal-opacity"
           ></div>
         )
       }
+      {whatIsShown === "cart" && <Cart />}
     </header>
   );
 }

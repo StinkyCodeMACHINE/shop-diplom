@@ -18,7 +18,7 @@ const typeRouter = require("./routes/typeRouter");
 const userRouter = require("./routes/userRouter");
 const favouriteRouter = require("./routes/favouriteRouter");
 const infoRouter = require("./routes/infoRouter");
-const { reviewRating } = require("./db/models");
+const { reviewRating, order } = require("./db/models");
 
 // разрешение обращения от других источников
 // app.use((req, res, next) => {

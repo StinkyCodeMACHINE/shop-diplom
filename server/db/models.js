@@ -13,19 +13,35 @@ const user = db.define("user", {
   img: { type: DataTypes.STRING },
 });
 
-const basket = db.define("basket", {
+const order = db.define("order", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  status: { type: DataTypes.STRING, allowNull: false },
+  money: { type: DataTypes.INTEGER, allowNull: false, validate: { min: 1 } },
+  phone: { type: DataTypes.STRING, allowNull: false },
+  address: { type: DataTypes.STRING, allowNull: false },
 });
 
-const basketProduct = db.define("basketProduct", {
+const orderProduct = db.define("orderProduct", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  amount: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 1,
+    validate: { min: 1 },
+  },
+  price: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 1,
+    validate: { min: 1 },
+  },
 });
 
 const product = db.define("product", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   name: { type: DataTypes.STRING, unique: true, allowNull: false },
   price: { type: DataTypes.INTEGER, allowNull: false },
-  discount: { type: DataTypes.FLOAT },
+  discount: { type: DataTypes.FLOAT, defaultValue: 1, validate: { min: 1 } },
   rating: { type: DataTypes.FLOAT, defaultValue: 0, validate: { max: 5 } },
   img: { type: DataTypes.JSON, allowNull: false },
   description: { type: DataTypes.STRING },
@@ -99,7 +115,7 @@ const reviewRating = db.define(
   "reviewRating",
   {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    liked: { type: DataTypes.BOOLEAN},
+    liked: { type: DataTypes.BOOLEAN },
   },
   {
     indexes: [
@@ -121,8 +137,8 @@ const productInfo = db.define(
   { freezeTableName: true }
 );
 
-user.hasOne(basket);
-basket.belongsTo(user);
+user.hasOne(order);
+order.belongsTo(user);
 
 user.hasMany(review);
 review.belongsTo(user);
@@ -130,20 +146,20 @@ review.belongsTo(user);
 user.hasMany(favourite);
 favourite.belongsTo(user);
 
-user.hasMany(reviewRating)
-reviewRating.belongsTo(user)
+user.hasMany(reviewRating);
+reviewRating.belongsTo(user);
 
-basket.hasMany(basketProduct);
-basketProduct.belongsTo(basket);
+order.hasMany(orderProduct);
+orderProduct.belongsTo(order);
 
-product.hasMany(basketProduct);
-basketProduct.belongsTo(product);
+product.hasMany(orderProduct);
+orderProduct.belongsTo(product);
 
 product.hasMany(productInfo, { as: "info" });
 productInfo.belongsTo(product);
 
-review.hasMany(reviewRating)
-reviewRating.belongsTo(review)
+review.hasMany(reviewRating);
+reviewRating.belongsTo(review);
 
 product.hasMany(review);
 review.belongsTo(product);
@@ -168,8 +184,8 @@ productInfo.belongsTo(defaultTypeInfo);
 
 module.exports = {
   user,
-  basket,
-  basketProduct,
+  order,
+  orderProduct,
   product,
   group,
   type,

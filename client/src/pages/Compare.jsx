@@ -144,7 +144,10 @@ export default function Compare() {
                   onClick={() => navigate(PRODUCT_ROUTE + "/" + productElem.id)}
                   className="product-name"
                 >
-                  {productElem.price}&#x20BD;
+                  {productElem.price
+                    .toString()
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, " ")}
+                  &#x20BD;
                 </div>
                 {user.isAuth && (
                   <div
@@ -224,7 +227,9 @@ export default function Compare() {
             ))}
           </div>
           <h2>Характеристики</h2>
-          {statsInCommon.length === 0 && <h3>У товаров нет общих характеристик</h3>}
+          {statsInCommon.length === 0 && (
+            <h3>У товаров нет общих характеристик</h3>
+          )}
 
           <div className="compare-page-stats-container">
             {products.length === 1

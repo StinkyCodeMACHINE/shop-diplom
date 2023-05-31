@@ -23,7 +23,8 @@ export default function App() {
     page: 1,
     totalCount: 0,
     limit: 5,
-    toCompare: []
+    toCompare: [],
+    cart: []
   });
   const [whatIsShown, setWhatIsShown] = useState("");
   const [authChecked, setAuthChecked] = useState(false);

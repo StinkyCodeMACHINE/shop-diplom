@@ -60,7 +60,7 @@ export default function ProductCard({
         onClick={() => navigate(PRODUCT_ROUTE + "/" + id)}
         className="product-name"
       >
-        {price}&#x20BD;
+        {price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}&#x20BD;
       </div>
       {user.isAuth && (
         <>
@@ -146,6 +146,34 @@ export default function ProductCard({
               {product.toCompare.find((elem) => elem === id)
                 ? "Добавлено в сравнение"
                 : "Сравнить"}
+            </div>
+          </div>
+
+          {/* добавить в корзину */}
+          <div
+            onClick={async () => {
+              if (product.cart.find((elem) => elem === id)) {
+                await setProduct((oldProduct) => ({
+                  ...oldProduct,
+                  cart: oldProduct.cart.filter((elem) => elem !== id),
+                }));
+              } else {
+                await setProduct((oldProduct) => ({
+                  ...oldProduct,
+                  cart: [...oldProduct.cart, id]
+                }));
+              }
+            }}
+            className="product-heart-container"
+          >
+            <img
+              className="product-heart product-heart-empty"
+              src="/assets/cart.svg"
+            />
+            <div>
+              {product.cart.find((elem) => elem === id)
+                ? "Убрать из корзины"
+                : "Добавить в корзину"}
             </div>
           </div>
         </>

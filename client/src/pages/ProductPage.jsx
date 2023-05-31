@@ -273,7 +273,13 @@ export default function ProductPage() {
             </div>
           </div>
           <div className="productElem-page-add-to-card-container">
-            <div>От {productElem.price} руб.</div>
+            <div>
+              От{" "}
+              {productElem.price
+                .toString()
+                .replace(/\B(?=(\d{3})+(?!\d))/g, " ")}{" "}
+              &#x20BD;
+            </div>
 
             {user.isAuth && (
               <div

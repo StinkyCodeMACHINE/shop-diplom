@@ -3,17 +3,19 @@ import { createType, getGroups, getTypes } from "../../../API/productAPI";
 import { Context } from "../../../App";
 import { nanoid } from "nanoid"
 
-export default function CreateType({ isShown, hide }) {
+export default function CreateType() {
   const [inputValues, setInputValues] = useState({
     name: "",
     file: null,
     group: "",
   });
   const [info, setInfo] = useState([]);
+  const [newSrc, setNewSrc] = useState("");
 
   const [renderedOnce, setRenderedOnce] = useState(false);
 
-  const { whatIsShown, product, setProduct } = useContext(Context);
+  const { whatIsShown, product, setProduct, setWhatIsShown } =
+    useContext(Context);
 
   useEffect(() => {
     async function apiCalls() {
@@ -34,6 +36,19 @@ export default function CreateType({ isShown, hide }) {
     setRenderedOnce(true);
   }, []);
 
+  useEffect(() => {
+    async function apiCalls() {
+      const reader = new FileReader();
+
+      reader.onload = (event) => {
+        setNewSrc(event.target.result);
+      };
+
+      reader.readAsDataURL(inputValues.file);
+    }
+    inputValues.file && apiCalls();
+  }, [inputValues.file]);
+
   async function addHandler(e) {
     e.preventDefault();
     const formData = new FormData();
@@ -51,6 +66,8 @@ export default function CreateType({ isShown, hide }) {
     }));
     await setInputValues({ name: "", file: null, group: "" });
     await setInfo([]);
+    await setNewSrc("");
+
   }
 
   function addStatHandler(e) {
@@ -68,90 +85,78 @@ export default function CreateType({ isShown, hide }) {
   return (
     renderedOnce && (
       <>
-        {whatIsShown === "type" && (
-          <div
-            className="admin-page-modal-opacity"
-            onClick={(e) =>
-              e.target.classList.contains("admin-page-modal-opacity") && hide()
-            }
-          >
-            <div className="modal-inner-container">
-              <form>
-                <input
-                  value={inputValues.name}
-                  onChange={(e) => {
-                    setInputValues((oldInputValues) => ({
-                      ...oldInputValues,
-                      name: e.target.value,
-                    }));
-                  }}
-                  type="text"
-                  placeholder="Введите название типа"
-                />
-                <select
-                  name="group"
-                  value={inputValues.group}
-                  onChange={(e) => {
-                    setInputValues((oldInputValues) => ({
-                      ...oldInputValues,
-                      group: e.target.value,
-                    }));
-                  }}
-                >
-                  {product.groups.map((group) => {
-                    return (
-                      <option key={group.id} value={group.name}>
-                        {group.name}
-                      </option>
-                    );
-                  })}
-                </select>
-                <input
-                  onChange={(e) => {
-                    setInputValues((prevInputValues) => ({
-                      ...prevInputValues,
-                      file: e.target.files[0],
-                    }));
-                  }}
-                  type="file"
-                />
-                {info.map((elem) => {
-                  return (
-                    <div className="modal-stats" key={elem.number}>
-                      <input
-                        className="modal-stat-name"
-                        type="text"
-                        placeholder="Введите название свойства"
-                        value={elem.key}
-                        onChange={(e) =>
-                          {
-                            setInfo((prevInfo) =>
-                              prevInfo.map((i) =>
-                                i.number === elem.number
-                                  ? { ...i, key: e.target.value }
-                                  : i
-                              )
-                            );
-                          }
-                        }
-                      />
-                      <button onClick={() => removeStatHandler(elem.number)}>
-                        Удалить
-                      </button>
-                    </div>
-                  );
-                })}
-                <button onClick={addStatHandler}>
-                  Добавить новое свойство
-                </button>
-                <div>
-                  <button onClick={() => hide()}>Закрыть</button>
-                  <button onClick={addHandler}>Добавить</button>
+        <div className="modal-inner-container">
+          <form>
+            <input
+              value={inputValues.name}
+              onChange={(e) => {
+                setInputValues((oldInputValues) => ({
+                  ...oldInputValues,
+                  name: e.target.value,
+                }));
+              }}
+              type="text"
+              placeholder="Введите название типа"
+            />
+            <select
+              name="group"
+              value={inputValues.group}
+              onChange={(e) => {
+                setInputValues((oldInputValues) => ({
+                  ...oldInputValues,
+                  group: e.target.value,
+                }));
+              }}
+            >
+              {product.groups.map((group) => {
+                return (
+                  <option key={group.id} value={group.name}>
+                    {group.name}
+                  </option>
+                );
+              })}
+            </select>
+            <img src={newSrc ? newSrc : "/assets/default-img.png"} />
+            <input
+              onChange={(e) => {
+                setInputValues((prevInputValues) => ({
+                  ...prevInputValues,
+                  file: e.target.files[0],
+                }));
+              }}
+              type="file"
+            />
+            {info.map((elem) => {
+              return (
+                <div className="modal-stats" key={elem.number}>
+                  <input
+                    className="modal-stat-name"
+                    type="text"
+                    placeholder="Введите название свойства"
+                    value={elem.key}
+                    onChange={(e) => {
+                      setInfo((prevInfo) =>
+                        prevInfo.map((i) =>
+                          i.number === elem.number
+                            ? { ...i, key: e.target.value }
+                            : i
+                        )
+                      );
+                    }}
+                  />
+                  <button onClick={() => removeStatHandler(elem.number)}>
+                    Удалить
+                  </button>
                 </div>
-              </form>
+              );
+            })}
+            <button onClick={addStatHandler}>Добавить новое свойство</button>
+            <div>
+              <button onClick={() => setWhatIsShown("")}>Закрыть</button>
+              <button onClick={addHandler}>Добавить</button>
             </div>
-          </div>
-        )}
+          </form>
+        </div>
       </>
     )
   );

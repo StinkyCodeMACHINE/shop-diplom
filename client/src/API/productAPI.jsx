@@ -35,8 +35,8 @@ export async function getBrands() {
   return data;
 }
 
-export async function createProduct(device) {
-  const { data } = await axiosAuthReq.post("/api/product", device);
+export async function createProduct(product) {
+  const { data } = await axiosAuthReq.post("/api/product", product);
   return data;
 }
 
@@ -49,6 +49,7 @@ export async function getProducts({
   sorting,
   priceRange,
   selectedInfoInstance,
+  inStock,
 }) {
   const { data } = await axiosReq.get("/api/product", {
     params: {
@@ -60,6 +61,7 @@ export async function getProducts({
       sorting,
       priceRange,
       selectedInfoInstance,
+      inStock,
     },
   });
   return data;

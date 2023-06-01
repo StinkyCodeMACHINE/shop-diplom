@@ -333,7 +333,33 @@ export default function ProductPage() {
               </div>
             )}
 
-            <button>Добавить в корзину</button>
+            <div
+              onClick={async () => {
+                if (product.cart.find((elem) => elem === Number(id))) {
+                  await setProduct((oldProduct) => ({
+                    ...oldProduct,
+                    cart: oldProduct.cart.filter((elem) => elem !== Number(id)),
+                  }));
+                } else {
+                  await setProduct((oldProduct) => ({
+                    ...oldProduct,
+                    cart: [...oldProduct.cart, Number(id)],
+                  }));
+                }
+              }}
+              className="product-heart-container"
+            >
+              <img
+                className="product-heart product-heart-empty"
+                src="/assets/cart.svg"
+              />
+              <div>
+                {product.cart.find((elem) => elem === Number(id))
+                  ? "Убрать из корзины"
+                  : "Добавить в корзину"}
+              </div>
+            </div>
+            {/* <button>Добавить в корзину</button> */}
 
             <div
               onClick={async () => {

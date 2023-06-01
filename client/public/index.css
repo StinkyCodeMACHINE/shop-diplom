@@ -591,12 +591,16 @@ a:visited {
 
 .modal-inner-container {
   width: 500px;
-  height: 300px;
   background-color: #f3f3f3;
   display: grid;
   place-items: center;
   z-index: 999;
   position: absolute;
+}
+
+.modal-inner-container img {
+  width: 300px;
+  height: 300px;
 }
 
 .modal-inner-container select,
@@ -613,6 +617,11 @@ a:visited {
 .modal-stats > input::placeholder {
   text-overflow: ellipsis;
   overflow: hidden;
+}
+
+.modal-product-description {
+  resize: none;
+  width: 100%;
 }
 
 .pagination {
@@ -657,6 +666,11 @@ a:visited {
   white-space: pre-line;
 }
 
+.product-page-description {
+  overflow-wrap: break-word;
+  white-space: pre-line;
+}
+
 .product-rating-star-icon {
   width: 15px;
 }
@@ -665,6 +679,8 @@ a:visited {
   resize: none;
   width: 100%;
 }
+
+
 
 .product-rating-profile-image-and-name-container {
   display: flex;

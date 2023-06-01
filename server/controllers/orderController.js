@@ -52,6 +52,13 @@ async function createOrder(req, res, next) {
 
 async function getOrders(req, res, next) {
   try {
+    // let {
+    //   limit,
+    //   page,
+    // } = req.query;
+    // page = page || 1;
+    // limit = Number(limit) || 2;
+    // let offset = page * limit - limit;
     const orders = await order.findAll({
       where: {
         userId: req.user.id,

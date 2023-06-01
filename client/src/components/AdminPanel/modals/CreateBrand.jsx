@@ -1,13 +1,27 @@
-import react, { useState, useContext } from "react";
+import react, { useState, useContext, useEffect } from "react";
 import { createBrand } from "../../../API/productAPI";
 import { Context } from "../../../App";
 
-export default function CreateBrand({ isShown, hide }) {
+export default function CreateBrand() {
   const [inputValues, setInputValues] = useState({
-    name:"",
-    file: null
+    name: "",
+    file: null,
   });
-  const { whatIsShown} = useContext(Context);
+  const [newSrc, setNewSrc] = useState("");
+  const { whatIsShown, setWhatIsShown } = useContext(Context);
+
+  useEffect(() => {
+    async function apiCalls() {
+      const reader = new FileReader();
+
+      reader.onload = (event) => {
+        setNewSrc(event.target.result);
+      };
+
+      reader.readAsDataURL(inputValues.file);
+    }
+    inputValues.file && apiCalls();
+  }, [inputValues.file]);
 
   async function addHandler(e) {
     e.preventDefault();
@@ -17,45 +31,46 @@ export default function CreateBrand({ isShown, hide }) {
     formData.append("img", inputValues.file);
 
     // await createBrand({ name: inputValues })
-    await createBrand(formData)
-    await setInputValues({name: "", file: null});
+    await createBrand(formData);
+    await setInputValues({ name: "", file: null });
+    await setNewSrc("");
   }
 
   return (
     <>
-      {whatIsShown==="brand" && (
-        <div
-          className="admin-page-modal-opacity"
-          onClick={(e) =>
-            e.target.classList.contains("admin-page-modal-opacity") && hide()
-          }
-        >
-          <div className="modal-inner-container">
-            <form>
-              <input
-                onChange={(e) => {setInputValues((oldInputValues) => ({
+      
+      
+        <div className="modal-inner-container">
+          <form>
+            <input
+              onChange={(e) => {
+                setInputValues((oldInputValues) => ({
                   ...oldInputValues,
                   name: e.target.value,
-                }))}}
-                value={inputValues.name}
-                type="text"
-                placeholder="Введите название бренда"
-              />
-              <input onChange={(e) => {
-                  setInputValues((prevInputValues) => ({
-                    ...prevInputValues,
-                    file: e.target.files[0],
-                  }));
-                }} type="file"/>
-              <div>
-                <button onClick={() => hide()}>Закрыть</button>
-                <button onClick={addHandler}>Добавить</button>
-              </div>
-            </form>
-          </div>
+                }));
+              }}
+              value={inputValues.name}
+              type="text"
+              placeholder="Введите название бренда"
+            />
+            <img src={newSrc ? newSrc : "/assets/default-img.png"} />
+            <input
+              onChange={(e) => {
+                setInputValues((prevInputValues) => ({
+                  ...prevInputValues,
+                  file: e.target.files[0],
+                }));
+              }}
+              type="file"
+            />
+            <div>
+              <button onClick={() => setWhatIsShown("")}>Закрыть</button>
+              <button onClick={addHandler}>Добавить</button>
+            </div>
+          </form>
         </div>
-      )}
+      
+      
     </>
-    
   );
 }

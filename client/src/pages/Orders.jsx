@@ -5,6 +5,7 @@ import { Context } from "../App";
 import { API_URL, PRODUCT_IMAGE_URL, PRODUCT_ROUTE } from "../utils/consts";
 import { nanoid } from "nanoid";
 import { getOrders } from "../API/productAPI";
+import Pagination from "../components/Orders/Pagination";
 
 export default function Cart() {
   const { product, setProduct, user, whatIsShown, setWhatIsShown } =
@@ -22,18 +23,46 @@ export default function Cart() {
 
   //     apiCalls();
   //   }, []);
+  const [dbResults, setDbResults] = useState([])
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(2)
+  const [totalCount, setTotalCount] = useState(0)
 
   useEffect(() => {
     async function apiCalls() {
       let orders = await getOrders();
       orders = orders.flatMap((elem) =>
-        elem.orderProducts.length === 0 ? [] : elem
+      elem.orderProducts.length === 0 ? [] : elem
       );
-      setOrders(orders);
+      await setDbResults(orders)
+      await setTotalCount(orders.length)
+      let limitedOrders = []
+      
+      //
+      let offset = page * limit - limit
+      for (let i=offset;i<offset+limit && i<orders.length; i++) {
+        limitedOrders.push(orders[i])
+      }
+      await setOrders(limitedOrders);
     }
 
     apiCalls();
   }, [product.cart]);
+
+  useEffect(() => {
+    async function apiCalls() {
+      let limitedOrders = [];
+
+      //
+      let offset = page * limit - limit;
+      for (let i = offset; i < offset + limit && i < dbResults.length; i++) {
+        limitedOrders.push(dbResults[i]);
+      }
+      await setOrders(limitedOrders);
+    }
+
+    dbResults.length>0 && apiCalls();
+  }, [page]);
 
   return (
     <div className="orders-page-main-container">
@@ -117,6 +146,9 @@ export default function Cart() {
             </div>
           </div>
         ))}
+      {orders.length > 0 &&
+        <Pagination page={page} setPage={setPage} limit={limit} totalCount={totalCount}/>
+      }
     </div>
   );
 }

@@ -42,13 +42,19 @@ const orderProduct = db.define("orderProduct", {
 
 const product = db.define("product", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  name: { type: DataTypes.STRING, unique: true, allowNull: false },
+  name: {
+    type: DataTypes.STRING,
+    notEmpty: true,
+    unique: true,
+    allowNull: false,
+  },
   price: { type: DataTypes.INTEGER, allowNull: false },
   discount: { type: DataTypes.FLOAT, defaultValue: 1, validate: { min: 1 } },
   rating: { type: DataTypes.FLOAT, defaultValue: 0, validate: { max: 5 } },
+  isHyped: { type: DataTypes.BOOLEAN, defaultValue: false},
   img: { type: DataTypes.JSON, allowNull: false },
-  description: { type: DataTypes.STRING },
-  left: {type: DataTypes.INTEGER, validate: { min: 0 }}
+  description: { type: DataTypes.TEXT, notEmpty: true }, //заменить allowNull:false
+  left: { type: DataTypes.INTEGER, validate: { min: 0 } },
 });
 
 const favourite = db.define(
@@ -69,13 +75,23 @@ const favourite = db.define(
 
 const group = db.define("group", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  name: { type: DataTypes.STRING, unique: true, allowNull: false },
+  name: {
+    type: DataTypes.STRING,
+    notEmpty: true,
+    unique: true,
+    allowNull: false,
+  },
   img: { type: DataTypes.STRING }, // заменить allowNull: false
 });
 
 const type = db.define("type", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  name: { type: DataTypes.STRING, unique: true, allowNull: false },
+  name: {
+    type: DataTypes.STRING,
+    notEmpty: true,
+    unique: true,
+    allowNull: false,
+  },
   img: { type: DataTypes.STRING }, // заменить allowNull: false
 });
 
@@ -90,7 +106,7 @@ const defaultTypeInfo = db.define(
 
 const brand = db.define("brand", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  name: { type: DataTypes.STRING, unique: true, allowNull: false },
+  name: { type: DataTypes.STRING, notEmpty: true, unique: true, allowNull: false },
   img: { type: DataTypes.STRING }, // заменить allowNull: false
 });
 

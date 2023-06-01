@@ -27,6 +27,7 @@ export default function Shop() {
   const [inputValues, setInputValues] = useState({
     priceLowerLimit: "",
     priceUpperLimit: "",
+    inStock: false,
   });
   const [applyShown, setApplyShown] = useState(false);
   const [defaultInfo, setDefaultInfo] = useState([]);
@@ -42,9 +43,7 @@ export default function Shop() {
       result.types = await getTypes();
       result.brands = await getBrands();
       result.groups = await getGroups();
-      result.favourite = user.user.id
-        ? await getFavouriteIds()
-        : [];
+      result.favourite = user.user.id ? await getFavouriteIds() : [];
       await setProduct((oldProduct) => ({
         ...oldProduct,
         types: result.types,
@@ -77,6 +76,7 @@ export default function Shop() {
         limit: product.limit,
         name: product.name,
         sorting: product.sortingValue.value,
+        inStock: inputValues.inStock,
         priceRange: {
           priceLowerLimit: inputValues.priceLowerLimit,
           priceUpperLimit: inputValues.priceUpperLimit,
@@ -111,6 +111,7 @@ export default function Shop() {
         limit: product.limit,
         name: product.name,
         sorting: product.sortingValue.value,
+        inStock: inputValues.inStock,
         priceRange: {
           priceLowerLimit: inputValues.priceLowerLimit,
           priceUpperLimit: inputValues.priceUpperLimit,
@@ -145,6 +146,7 @@ export default function Shop() {
     product.sortingValue,
     product.limit,
     selectedInfoInstance,
+    inputValues.inStock,
   ]);
 
   // обновление списка дефолт инфы
@@ -196,6 +198,7 @@ export default function Shop() {
         limit: product.limit,
         name: product.name,
         sorting: product.sortingValue.value,
+        inStock: inputValues.inStock,
         priceRange: {
           priceLowerLimit: inputValues.priceUpperLimit,
           priceUpperLimit: inputValues.priceLowerLimit,
@@ -216,6 +219,7 @@ export default function Shop() {
         limit: product.limit,
         name: product.name,
         sorting: product.sortingValue.value,
+        inStock: inputValues.inStock,
         priceRange: {
           priceLowerLimit: inputValues.priceLowerLimit,
           priceUpperLimit: inputValues.priceUpperLimit,
@@ -250,6 +254,7 @@ export default function Shop() {
       limit: product.limit,
       name: product.name,
       sorting: product.sortingValue.value,
+      inStock: inputValues.inStock,
       priceRange: {
         priceLowerLimit: "",
         priceUpperLimit: "",
@@ -366,6 +371,19 @@ export default function Shop() {
                   </div>
                 ))}
               </div>
+              <h2>Наличие</h2>
+              <input
+                onChange={() =>
+                  setInputValues((oldInputValues) => ({
+                    ...oldInputValues,
+                    inStock: !oldInputValues.inStock,
+                  }))
+                }
+                checked={inputValues.inStock}
+                id="inStock"
+                type="checkbox"
+              />
+              <label htmlFor="inStock">В наличие?</label>
               <h2>Цена</h2>
               <div className="shop-side-options-price">
                 <div className="shop-side-options-price-fields">
@@ -522,7 +540,9 @@ export default function Shop() {
             <div className="shop-main-container-top-options">
               <h2>
                 {product.name
-                  ? `${product.totalCount} результат${product.totalCount===1 ? "" : "ов"} по запросу: ${product.name}`
+                  ? `${product.totalCount} результат${
+                      product.totalCount === 1 ? "" : "ов"
+                    } по запросу: ${product.name}`
                   : Object.keys(product.selectedType).length > 0
                   ? product.selectedType.name
                   : "Каталог"}

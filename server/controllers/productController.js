@@ -18,7 +18,7 @@ async function create(req, res, next) {
     // let fileName = uuid.v4() + ".jpg";
     // img.mv(path.resolve(__dirname, "..", "static", "product-images", fileName)); было
 
-    let { name, price, brandId, typeId, info } = req.body;
+    let { name, price, brandId, typeId, info, description, left } = req.body;
     const { img } = req.files;
     console.log(img);
     const fileNames = [];
@@ -50,6 +50,8 @@ async function create(req, res, next) {
       brandId,
       typeId,
       img: fileNames,
+      description,
+      left,
     });
 
     console.log(info);
@@ -88,10 +90,22 @@ async function getAll(req, res, next) {
       sorting,
       priceRange,
       selectedInfoInstance,
+      inStock
     } = req.query;
     page = page || 1;
     name = name || "";
     limit = Number(limit) || 5;
+    inStock = inStock && JSON.parse(inStock);
+    const leftCondition = inStock
+      ? {
+          left: {
+            [Op.or]: {
+              [Op.gt]: 0,
+              [Op.eq]: null,
+            },
+          },
+        }
+      : {};
     priceRange = !priceRange
       ? {
           priceLowerLimit: 1,
@@ -139,6 +153,7 @@ async function getAll(req, res, next) {
               priceRange.priceUpperLimit,
             ],
           },
+          ...leftCondition
         },
         order,
         ...include,
@@ -160,6 +175,7 @@ async function getAll(req, res, next) {
               priceRange.priceUpperLimit,
             ],
           },
+          ...leftCondition
         },
         order,
         ...include,
@@ -181,6 +197,7 @@ async function getAll(req, res, next) {
               priceRange.priceUpperLimit,
             ],
           },
+          ...leftCondition
         },
         order,
         ...include,
@@ -203,6 +220,7 @@ async function getAll(req, res, next) {
               priceRange.priceUpperLimit,
             ],
           },
+          ...leftCondition
         },
         order,
         ...include,

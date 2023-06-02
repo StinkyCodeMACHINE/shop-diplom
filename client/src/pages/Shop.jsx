@@ -278,23 +278,27 @@ export default function Shop() {
               <div className="shop-side-options-types">
                 {Object.keys(product.selectedGroup).length === 0 ? (
                   <>
-                    {product.groups.map((group) =>
-                      product.types.find((type) => type.groupId == group.id) ? (
-                        <div
-                          key={group.id}
-                          onClick={() =>
-                            setProduct((oldProduct) => ({
-                              ...oldProduct,
-                              selectedGroup: group,
-                            }))
-                          }
-                        >
-                          {group.name}
-                        </div>
-                      ) : (
-                        ""
-                      )
-                    )}
+                    {product.groups.length > 0 &&
+                      product.types.length > 0 &&
+                      product.groups.map((group) =>
+                        product.types.find(
+                          (type) => type.groupId == group.id
+                        ) ? (
+                          <div
+                            key={group.id}
+                            onClick={() =>
+                              setProduct((oldProduct) => ({
+                                ...oldProduct,
+                                selectedGroup: group,
+                              }))
+                            }
+                          >
+                            {group.name}
+                          </div>
+                        ) : (
+                          ""
+                        )
+                      )}
                   </>
                 ) : (
                   <>

@@ -566,11 +566,21 @@ a:visited {
   color: #000000;
 }
 
-.admin-page-container {
-  padding: 69px 196px;
+.admin-page-main-container {
+  text-align: center;
 }
 
-.admin-page-container > button {
+.admin-page-rating-stars-and-stuff {
+  display: flex;
+}
+
+.admin-page-inner-container {
+  display: grid;
+  place-items: center;
+  /* height: calc(100vh - var(--navbar-height)); */
+}
+
+.admin-page-main-container > button {
   display: block;
   height: 64px;
   background: #c4c4c4;
@@ -587,6 +597,26 @@ a:visited {
   top: var(--navbar-height);
   display: grid;
   place-items: center;
+  z-index: 998;
+}
+
+.admin-page-options {
+  display: flex;
+}
+
+.admin-page-option {
+  cursor: pointer;
+  user-select: none;
+  border-right: 1px solid var(--navbar-background-color);
+}
+
+.admin-page-option:nth-last-child(1) {
+  border-right: none;
+}
+
+.admin-page-elem-img {
+  width: 150px;
+  height: 150px;
 }
 
 .modal-inner-container {
@@ -601,6 +631,16 @@ a:visited {
 .modal-inner-container img {
   width: 300px;
   height: 300px;
+}
+
+.input-icon {
+  position: relative;
+  width: fit-content;
+}
+.input-icon i {
+  position: absolute;
+  top: 8%;
+  left: 15%;
 }
 
 .modal-inner-container select,
@@ -646,7 +686,7 @@ a:visited {
   align-items: center;
   background-color: white;
   margin-bottom: 1rem;
-  border-radius: 20px;
+  border-radius: 20pфx;
 }
 
 .product-rating-profile-image {
@@ -679,8 +719,6 @@ a:visited {
   resize: none;
   width: 100%;
 }
-
-
 
 .product-rating-profile-image-and-name-container {
   display: flex;

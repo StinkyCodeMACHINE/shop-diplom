@@ -1,5 +1,6 @@
 const { productInfo } = require("../db/models");
 const { Sequelize } = require("sequelize");
+const { Op } = require("sequelize");
 
 async function getInstances(req, res) {
   const { keyId } = req.params;

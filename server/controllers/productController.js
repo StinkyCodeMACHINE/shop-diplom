@@ -18,7 +18,7 @@ async function create(req, res, next) {
     // let fileName = uuid.v4() + ".jpg";
     // img.mv(path.resolve(__dirname, "..", "static", "product-images", fileName)); было
 
-    let { name, price, brandId, typeId, info, description, left } = req.body;
+    let { name, price, brandId, typeId, info, discount, isHyped, description, left } = req.body;
     const { img } = req.files;
     console.log(img);
     const fileNames = [];
@@ -52,6 +52,8 @@ async function create(req, res, next) {
       img: fileNames,
       description,
       left,
+      isHyped,
+      discount,
     });
 
     console.log(info);
@@ -90,7 +92,7 @@ async function getAll(req, res, next) {
       sorting,
       priceRange,
       selectedInfoInstance,
-      inStock
+      inStock,
     } = req.query;
     page = page || 1;
     name = name || "";
@@ -120,7 +122,7 @@ async function getAll(req, res, next) {
             : priceRange.priceUpperLimit,
         };
     const order =
-      sorting && sorting.byWhat ? [[sorting.byWhat, sorting.order]] : [];
+      sorting && sorting.byWhat ? [[sorting.byWhat, sorting.order]] : [['id', 'ASC']];
     let offset = page * limit - limit;
     let products;
     let options;
@@ -146,14 +148,14 @@ async function getAll(req, res, next) {
     if (!brandId && !typeId) {
       options = {
         where: {
-          name: { [Op.like]: `%${name}%` },
+          name: { [Op.iLike]: `%${name}%` },
           price: {
             [Op.between]: [
               priceRange.priceLowerLimit,
               priceRange.priceUpperLimit,
             ],
           },
-          ...leftCondition
+          ...leftCondition,
         },
         order,
         ...include,
@@ -168,14 +170,14 @@ async function getAll(req, res, next) {
       options = {
         where: {
           brandId,
-          name: { [Op.like]: `%${name}%` },
+          name: { [Op.iLike]: `%${name}%` },
           price: {
             [Op.between]: [
               priceRange.priceLowerLimit,
               priceRange.priceUpperLimit,
             ],
           },
-          ...leftCondition
+          ...leftCondition,
         },
         order,
         ...include,
@@ -190,14 +192,14 @@ async function getAll(req, res, next) {
       options = {
         where: {
           typeId,
-          name: { [Op.like]: `%${name}%` },
+          name: { [Op.iLike]: `%${name}%` },
           price: {
             [Op.between]: [
               priceRange.priceLowerLimit,
               priceRange.priceUpperLimit,
             ],
           },
-          ...leftCondition
+          ...leftCondition,
         },
         order,
         ...include,
@@ -213,14 +215,14 @@ async function getAll(req, res, next) {
         where: {
           typeId,
           brandId,
-          name: { [Op.like]: `%${name}%` },
+          name: { [Op.iLike]: `%${name}%` },
           price: {
             [Op.between]: [
               priceRange.priceLowerLimit,
               priceRange.priceUpperLimit,
             ],
           },
-          ...leftCondition
+          ...leftCondition,
         },
         order,
         ...include,
@@ -258,7 +260,16 @@ async function leaveReview(req, res, next) {
   try {
     const { id } = req.params;
     const { advantages, disadvantages, text, rating, reviewCount } = req.body;
-    const reviewElem = await review.upsert({
+    const foundReview = await review.findOne({
+      where: {
+        productId: id,
+        userId: req.user.id,
+      },
+    });
+    if (foundReview) {
+      return next(new Error("Такой отзыв уже существует!"))
+    }
+    const reviewElem = await review.create({
       advantages,
       disadvantages,
       text,
@@ -267,12 +278,20 @@ async function leaveReview(req, res, next) {
       productId: id,
     });
     let newRating = 0;
-    reviewCount.reviews.forEach(
-      (elem) => (newRating = newRating + elem.rating * elem.count)
-    );
-    newRating = parseFloat(
-      (newRating + rating) / (reviewCount.totalCount + 1)
-    ).toFixed(2);
+    if (reviewCount.length>0) {
+        reviewCount.reviews.forEach(
+          (elem) => (newRating = newRating + elem.rating * elem.count)
+        );
+        newRating = parseFloat(
+          (newRating + rating) / (reviewCount.totalCount + 1)
+        ).toFixed(2);
+    }
+    else {
+      newRating = rating;
+    }
+    
+
+    
     const productElem = await product.update(
       {
         rating: newRating,
@@ -284,7 +303,7 @@ async function leaveReview(req, res, next) {
         returning: true,
       }
     );
-    res.json({ review: reviewElem[0], product: productElem[1][0] });
+    res.json({ review: reviewElem, product: productElem[1][0] });
   } catch (err) {
     next(new Error(err.message));
   }
@@ -293,7 +312,7 @@ async function leaveReview(req, res, next) {
 async function getReviews(req, res, next) {
   try {
     const { id } = req.params;
-    let { limit, sorting, page } = req.query;
+    let { limit, sorting, page} = req.query;
     limit = limit || 5;
     page = page || 1;
     const offset = page * limit - limit;
@@ -321,6 +340,40 @@ async function getReviews(req, res, next) {
   }
 }
 
+async function getAllReviews(req, res, next) {
+  try {
+    let { page, limit, searchValue } = req.query;
+    const condition = searchValue
+      ? {
+          where: {
+            id: Number(searchValue),
+          },
+        }
+      : {};
+    limit = limit || 5;
+    page = page || 1;
+    const offset = page * limit - limit;
+    const reviews = await review.findAndCountAll({
+      attributes: {
+        include: [[Sequelize.literal('"thumbsUp"-"thumbsDown"'), "diff"]],
+      },
+      include: {
+        model: user,
+        as: "user",
+      },
+      limit,
+      offset,
+      ...condition
+    })
+
+    res.json(reviews);
+  } catch (err) {
+    next(new Error(err.message));
+  }
+}
+
+
+
 async function getReview(req, res, next) {
   try {
     const { id } = req.params;
@@ -336,6 +389,46 @@ async function getReview(req, res, next) {
     });
 
     res.json(reviewElem);
+  } catch (err) {
+    next(new Error(err.message));
+  }
+}
+
+async function deleteReview(req, res, next) {
+  try {
+    const { id } = req.params;
+    const { reviewCount, rating } = req.body;
+
+    const deletedReviewRating = await review.destroy({
+      where: {
+        id: id,
+      },
+    });
+
+    let newRating = 0;
+    if (reviewCount && reviewCount.length > 0) {
+      reviewCount.reviews.forEach(
+        (elem) => (newRating = newRating + elem.rating * elem.count)
+      );
+      newRating = parseFloat(
+        (newRating - rating) / (reviewCount.totalCount - 1)
+      ).toFixed(2);
+    } 
+
+
+    const productElem = await product.update(
+      {
+        rating: newRating,
+      },
+      {
+        where: {
+          id,
+        },
+        returning: true,
+      }
+    );
+
+    res.json(deletedReviewRating);
   } catch (err) {
     next(new Error(err.message));
   }
@@ -463,6 +556,124 @@ async function getReviewRatings(req, res, next) {
   }
 }
 
+async function getReviewRatings(req, res, next) {
+  try {
+    const { id } = req.params;
+    const reviewRatings = await reviewRating.findAll({
+      where: {
+        userId: req.user.id,
+      },
+      include: {
+        model: review,
+        as: "review",
+        where: {
+          productId: id,
+        },
+      },
+    });
+
+    res.json(reviewRatings);
+  } catch (err) {
+    next(new Error(err.message));
+  }
+}
+
+async function changeProduct(req, res, next) {
+  try {
+    const { id } = req.params;
+    let { name, price, brandId, typeId, isHyped, info, discount, description, left } = req.body
+    const img = req.files && req.files.img;
+    const fileNames = [];
+    if (img && Array.isArray(img)) {
+      for (let i = 0; i < img.length; i++) {
+        fileNames.push(uuid.v4() + ".png");
+        img[i].mv(
+          path.resolve(
+            __dirname,
+            "..",
+            "static",
+            "product-images",
+            fileNames[i]
+          )
+        );
+      }
+    } else if(img) {
+      fileNames.push(uuid.v4() + ".png");
+      img.mv(
+        path.resolve(__dirname, "..", "static", "product-images", fileNames[0])
+      );
+    }
+
+
+    const productElem = await product.update({
+      name,
+      price,
+      brandId,
+      typeId,
+      img: img ? fileNames : Sequelize.literal('"img"'),
+      description,
+      left,
+      isHyped,
+      discount,
+    },
+    {
+      where: {
+          id,
+        },
+    });
+
+    const prevInfo = await productInfo.findAll({
+      where: {
+        productId: id,
+      },
+    });
+
+    if (info) {
+      info = JSON.parse(info);
+      prevInfo.forEach((prevInfoElem) => {
+        if (!info.find((infoElem) => infoElem.key === prevInfoElem.key)) {
+          productInfo.destroy({
+            where: {
+              id: prevInfoElem.id,
+            },
+          });
+        } else {
+          info = info.filter((elem) => elem.key !== prevInfoElem.key);
+        }
+      });
+
+      info.forEach((element) => {
+        productInfo.create({
+          key: element.key,
+          value: element.value,
+          productId: id,
+          typeDefaultInfoId: element.id,
+        });
+      });
+    }
+
+    res.json(productElem);
+  } catch (err) {
+    next(new Error(err.message));
+  }
+}
+
+async function deleteProduct(req, res, next) {
+  try {
+    const { id } = req.params;
+    const result = await product.destroy({
+      where: {
+        id,
+      },
+    });
+    res.json(result);
+  } catch (err) {
+    next(new Error(err.message));
+  }
+  
+}
+
+
 module.exports = {
   create,
   getAll,
@@ -474,4 +685,8 @@ module.exports = {
   rateReview,
   deleteReviewRating,
   getReviewRatings,
+  deleteProduct,
+  changeProduct,
+  getAllReviews,
+  deleteReview,
 };

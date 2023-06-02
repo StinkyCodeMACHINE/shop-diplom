@@ -1,4 +1,6 @@
 const { product, favourite } = require("../db/models");
+const { Sequelize } = require("sequelize");
+const { Op } = require("sequelize");
 
 async function addToFavourite(req, res, next) {
   try {

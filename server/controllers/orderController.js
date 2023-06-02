@@ -1,11 +1,12 @@
 const { order, orderProduct, product } = require("../db/models");
 const { Sequelize } = require("sequelize");
+const { Op } = require("sequelize");
 
 async function createOrder(req, res, next) {
   try {
     const { cart, phone, email, name, address } = req.body;
     const orderElem = await order.create({
-      status: "В доставке",
+      status: "Придёт в течение недели",
       money: cart.reduce((money, elem) => money + elem.finalPrice, 0),
       phone,
       address,
@@ -52,13 +53,6 @@ async function createOrder(req, res, next) {
 
 async function getOrders(req, res, next) {
   try {
-    // let {
-    //   limit,
-    //   page,
-    // } = req.query;
-    // page = page || 1;
-    // limit = Number(limit) || 2;
-    // let offset = page * limit - limit;
     const orders = await order.findAll({
       where: {
         userId: req.user.id,
@@ -71,7 +65,7 @@ async function getOrders(req, res, next) {
           as: "product",
         },
       },
-      order: [['id','ASC']]
+      order: [["id", "ASC"]],
     });
 
     res.json(orders);
@@ -80,7 +74,99 @@ async function getOrders(req, res, next) {
   }
 }
 
+async function getAllOrders(req, res, next) {
+  try {
+    const {searchValue} = req.query
+    const condition = searchValue ? {
+      where: {
+        id: Number(searchValue)
+      } 
+    }
+      : {}
+    
+    const orders = await order.findAll({
+      include: {
+        model: orderProduct,
+        as: "orderProducts",
+        include: {
+          model: product,
+          as: "product",
+        },
+      },
+      ...condition,
+      order: [["id", "ASC"]],
+    });
+
+    res.json(orders);
+  } catch (err) {
+    next(new Error(err.message));
+  }
+}
+
+async function changeStatus(req, res, next) {
+  try {
+    const { id } = req.params;
+    const result = await order.update(
+      {
+        status: "Доставлено"
+      },
+      {
+        where: {
+          id,
+        },
+      }
+    );
+    res.json(result);
+  } catch (err) {
+    next(new Error(err.message));
+  }
+}
+
+async function deleteOrder(req, res, next) {
+  try {
+    const { id } = req.params;
+    const orders = await order.findOne({
+      include: {
+        model: orderProduct,
+        as: "orderProducts",
+        include: {
+          model: product,
+          as: "product",
+        },
+      },
+      where: {
+        id,
+      },
+    });
+
+    for (let i = 0; i<orders.orderProducts.length; i++) {
+      const result = await product.update(
+        {
+          left: Sequelize.literal(`"left" + ${orders.orderProducts[i].amount}`),
+        },
+        {
+          where: {
+            id: orders.orderProducts[i].product.id,
+          },
+        }
+      );
+    }
+
+    const result = await order.destroy({
+      where: {
+        id,
+      },
+    });
+    res.json(result);
+  } catch (err) {
+    next(new Error(err.message));
+  }
+}
+
 module.exports = {
   createOrder,
   getOrders,
+  getAllOrders,
+  changeStatus,
+  deleteOrder,
 };

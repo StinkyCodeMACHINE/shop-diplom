@@ -6,6 +6,7 @@ const uuid = require("uuid"); // генерирует случайный тек�
 const { where } = require("sequelize");
 const path = require("path");
 const { Sequelize } = require("../db/db");
+const { Op } = require("sequelize");
 
 function generateJWT(name, id, email, role, phone, img) {
   return jwt.sign(

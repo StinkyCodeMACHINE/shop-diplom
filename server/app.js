@@ -19,7 +19,8 @@ const userRouter = require("./routes/userRouter");
 const favouriteRouter = require("./routes/favouriteRouter");
 const infoRouter = require("./routes/infoRouter");
 const orderRouter = require("./routes/orderRouter")
-const { reviewRating, order } = require("./db/models");
+const bannerRouter = require("./routes/bannerRouter")
+const { reviewRating, order, review } = require("./db/models");
 
 // разрешение обращения от других источников
 // app.use((req, res, next) => {
@@ -40,6 +41,7 @@ app.use("/api/product", productRouter);
 app.use("/api/favourite", favouriteRouter);
 app.use("/api/info", infoRouter);
 app.use("/api/order", orderRouter);
+app.use("/api/banner", bannerRouter);
 
 // Обработка ошибок, последний middleware
 app.use(errorHandler)
@@ -48,8 +50,8 @@ async function start() {
   try {
     await db.authenticate();
     await db.sync({ alter: true });
-    // await db.sync({ force: true });
-
+    // await reviewRating.sync({force: true})
+    // await review.sync({ force: true });
     app.listen(port, () => {
       console.log(`Server listening on port ${port}...`);
     });

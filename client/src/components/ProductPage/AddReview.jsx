@@ -114,7 +114,7 @@ export default function AddReview({ productElem, setProductElem, displayOptions 
 
   return (
     <>
-      {Object.keys(existingReview).length > 0 ? (
+      {existingReview && Object.keys(existingReview).length > 0 ? (
         <div>
           {starsArr.map((star) => (
             <img

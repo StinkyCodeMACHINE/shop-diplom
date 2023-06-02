@@ -5,7 +5,7 @@ import { Context } from "../App";
 import { API_URL, PRODUCT_IMAGE_URL, PRODUCT_ROUTE } from "../utils/consts";
 import { nanoid } from "nanoid";
 import { getOrders } from "../API/productAPI";
-import Pagination from "../components/Orders/Pagination";
+import DefaultPagination from "../components/DefaultPagination";
 
 export default function Cart() {
   const { product, setProduct, user, whatIsShown, setWhatIsShown } =
@@ -147,7 +147,7 @@ export default function Cart() {
           </div>
         ))}
       {orders.length > 0 &&
-        <Pagination page={page} setPage={setPage} limit={limit} totalCount={totalCount}/>
+        <DefaultPagination page={page} setPage={setPage} limit={limit} totalCount={totalCount}/>
       }
     </div>
   );

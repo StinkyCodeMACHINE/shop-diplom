@@ -1,11 +1,12 @@
 import react, { useState, useEffect, useContext } from "react";
-import { createType, getGroups, getTypes } from "../../../API/productAPI";
+import { changeType, createType, getDefaultTypeInfo, getGroups, getTypes, getTypesWithLimit } from "../../../API/productAPI";
 import { Context } from "../../../App";
 import { nanoid } from "nanoid"
+import { API_URL, TYPE_IMAGE_URL } from "../../../utils/consts";
 
-export default function CreateType({ setDisplayed, page, limit}) {
+export default function ChangeType({ setDisplayed, page, limit, prevThing }) {
   const [inputValues, setInputValues] = useState({
-    name: "",
+    name: Object.keys(prevThing).length > 0 ? prevThing.name : "",
     file: null,
     group: "",
   });
@@ -15,27 +16,8 @@ export default function CreateType({ setDisplayed, page, limit}) {
   const [renderedOnce, setRenderedOnce] = useState(false);
 
   const { whatIsShown, product, setProduct, setWhatIsShown } =
-    useContext(Context);
-
-  useEffect(() => {
-    async function apiCalls() {
-      const groups = await getGroups();
-      await setProduct((oldProduct) => ({
-        ...oldProduct,
-        groups,
-      }));
-
-      await setInputValues((oldInputValues) => ({
-        ...oldInputValues,
-        group: product.groups.length > 0 ? product.groups[0].name : "",
-      }));
-    }
-
-    apiCalls();
-
-    setRenderedOnce(true);
-  }, []);
-
+  useContext(Context);
+  
   useEffect(() => {
     async function apiCalls() {
       const reader = new FileReader();
@@ -48,34 +30,55 @@ export default function CreateType({ setDisplayed, page, limit}) {
     }
     inputValues.file && apiCalls();
   }, [inputValues.file]);
+  
+  useEffect(() => {
+    async function apiCalls() {
+      
+      const groups = await getGroups();
+      const foundGroup = groups.find((groupElem) => groupElem.id === prevThing.groupId);
+      await setInputValues(prevInputValues => ({...prevInputValues, group: foundGroup.name}))
+      let typeInfo = await getDefaultTypeInfo(prevThing.id)
+      typeInfo = typeInfo.map((elem) => ({ ...elem, number: nanoid() }));
+      await setInfo(typeInfo)
+      await setProduct((oldProduct) => ({
+        ...oldProduct,
+        groups,
+      }));
+    }
+
+    apiCalls();
+
+    setRenderedOnce(true);
+  }, []);
+
 
   async function addHandler(e) {
     e.preventDefault();
     const formData = new FormData();
     formData.append("name", inputValues.name);
-    formData.append("img", inputValues.file);
+    newSrc && formData.append("img", inputValues.file);
     formData.append(
       "groupId",
       product.groups.find((group) => group.name === inputValues.group).id
     );
     formData.append("info", JSON.stringify(info));
-    const type = await createType(formData);
-    await setProduct((oldProduct) => ({
-      ...oldProduct,
-      types: [...oldProduct.types, type],
-    }));
+    const type = await changeType({type: formData, id: prevThing.id});
+    
     await setInputValues({ name: "", file: null, group: "" });
     await setInfo([]);
     await setNewSrc("");
-
+    const dataArray = await getTypesWithLimit({ limit, page: page });
+    await setDisplayed({
+      what: "types",
+      data: dataArray.rows,
+      totalCount: dataArray.count,
+    });
+    setWhatIsShown("");
   }
 
   function addStatHandler(e) {
     e.preventDefault();
-    setInfo((prevInfo) => [
-      ...prevInfo,
-      { key: "", number: nanoid() },
-    ]);
+    setInfo((prevInfo) => [...prevInfo, { key: "", number: nanoid() }]);
   }
 
   function removeStatHandler(number) {
@@ -116,7 +119,15 @@ export default function CreateType({ setDisplayed, page, limit}) {
                 );
               })}
             </select>
-            <img src={newSrc ? newSrc : "/assets/default-img.png"} />
+            <img
+              src={
+                newSrc
+                  ? newSrc
+                  : prevThing.img
+                  ? API_URL + TYPE_IMAGE_URL + prevThing.img
+                  : "/assets/default-img.png"
+              }
+            />
             <input
               onChange={(e) => {
                 setInputValues((prevInputValues) => ({
@@ -153,7 +164,7 @@ export default function CreateType({ setDisplayed, page, limit}) {
             <button onClick={addStatHandler}>Добавить новое свойство</button>
             <div>
               <button onClick={() => setWhatIsShown("")}>Закрыть</button>
-              <button onClick={addHandler}>Добавить</button>
+              <button onClick={addHandler}>Изменить</button>
             </div>
           </form>
         </div>

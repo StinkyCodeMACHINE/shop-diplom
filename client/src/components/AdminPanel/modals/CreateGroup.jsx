@@ -1,8 +1,8 @@
 import react, { useState, useContext, useEffect } from "react";
-import { createGroup, getGroups } from "../../../API/productAPI";
+import { createGroup, getGroups, getGroupsWithLimit } from "../../../API/productAPI";
 import { Context } from "../../../App";
 
-export default function CreateGroup() {
+export default function CreateGroup({setDisplayed, page, limit}) {
   const [inputValues, setInputValues] = useState({
     name: "",
     file: null,
@@ -38,6 +38,12 @@ export default function CreateGroup() {
     }));
     await setInputValues({ name: "", file: null });
     await setNewSrc("");
+    dataArray = await getGroupsWithLimit({ limit, page: page });
+    await setDisplayed({
+      what: "groups",
+      data: dataArray.rows,
+      totalCount: dataArray.count,
+    });
   }
 
   return (

@@ -4,25 +4,39 @@ import {
   getTypes,
   getBrands,
   getDefaultTypeInfo,
+  getOneProduct,
+  changeProduct,
+  getProducts,
 } from "../../../API/productAPI";
 import { Context } from "../../../App";
 import { nanoid } from "nanoid";
+import { API_URL, PRODUCT_IMAGE_URL } from "../../../utils/consts";
 
-export default function CreateProduct({ setDisplayed, page, limit }) {
+export default function ChangeProduct({
+  setDisplayed,
+  page,
+  limit,
+  prevThing,
+}) {
   const { product, setProduct, whatIsShown, setWhatIsShown } =
     useContext(Context);
   const [newSrc, setNewSrc] = useState("");
+  const [usedPrevInfo, setUsedPrevInfo] = useState(false);
 
   const [inputValues, setInputValues] = useState({
-    name: "",
-    price: 1,
+    name: Object.keys(prevThing).length > 0 ? prevThing.name : "",
+    price: Object.keys(prevThing).length > 0 ? prevThing.price : "",
     files: null,
     brand: "",
     type: "",
-    description: "",
-    left: 0,
-    discount: 0,
-    isHyped: false,
+    description: Object.keys(prevThing).length > 0 ? prevThing.description : "",
+    left:
+      Object.keys(prevThing).length > 0 && prevThing.left ? prevThing.left : 0,
+    discount:
+      Object.keys(prevThing).length > 0 && prevThing.discount
+        ? Math.ceil((1 - prevThing.discount) * 100)
+        : 0,
+    isHyped: Object.keys(prevThing).length > 0 && prevThing.isHyped ? prevThing.isHyped : false,
   });
 
   useEffect(() => {
@@ -47,16 +61,21 @@ export default function CreateProduct({ setDisplayed, page, limit }) {
       const result = {};
       result.types = await getTypes();
       result.brands = await getBrands();
+      const foundType = result.types.find(
+        (typeElem) => typeElem.id === prevThing.typeId
+      );
+      const foundBrand = result.brands.find(
+        (brandElem) => brandElem.id === prevThing.brandId
+      );
+      await setInputValues((prevInputValues) => ({
+        ...prevInputValues,
+        brand: foundBrand.name,
+        type: foundType.name,
+      }));
       await setProduct((oldProduct) => ({
         ...oldProduct,
         types: result.types,
         brands: result.brands,
-      }));
-
-      await setInputValues((oldInputValues) => ({
-        ...oldInputValues,
-        brand: result.brands.length > 0 ? result.brands[0].name : "",
-        type: result.types.length > 0 ? result.types[0].name : "",
       }));
     }
 
@@ -73,8 +92,45 @@ export default function CreateProduct({ setDisplayed, page, limit }) {
       await setDeafultInfo(
         typeInfo.map((elem) => ({ id: elem.id, key: elem.key, value: "" }))
       );
+
+      await setInfo([]);
     }
-    renderedOnce && apiCalls();
+    renderedOnce && usedPrevInfo && apiCalls();
+  }, [inputValues.type]);
+
+  useEffect(() => {
+    async function apiCalls() {
+      const typeInfo = await getDefaultTypeInfo(
+        product.types.find((type) => type.name === inputValues.type).id
+      );
+      const productElem = await getOneProduct(prevThing.id);
+
+      // setInfo(product.info);
+      const defaultInfoArray = typeInfo.map((elem) => ({
+        id: elem.id,
+        key: elem.key,
+        value:
+          productElem.info.find((infoElem) => infoElem.key === elem.key)
+            .value || "",
+      }));
+      await setDeafultInfo(defaultInfoArray);
+
+      let remainingInfo = [];
+      if (defaultInfoArray) {
+        remainingInfo = productElem.info.flatMap((elem) =>
+          defaultInfoArray.find(
+            (defaultInfoElem) => defaultInfoElem.key === elem.key
+          )
+            ? []
+            : elem
+        );
+        await setInfo(remainingInfo);
+      } else {
+        await setInfo(productElem.info)
+      }
+      await setUsedPrevInfo(true);
+    }
+    renderedOnce && !usedPrevInfo && apiCalls();
   }, [inputValues.type]);
 
   function changeDefaultStatHandler(value, id) {
@@ -112,10 +168,18 @@ export default function CreateProduct({ setDisplayed, page, limit }) {
     e.preventDefault();
     const formData = new FormData();
     formData.append("name", inputValues.name);
+    newSrc && formData.append("img", inputValues.file);
     formData.append("price", inputValues.price);
-    for (let i = 0; i < inputValues.files.length; i++) {
-      formData.append("img", inputValues.files[i]);
+    if (newSrc) {
+      for (let i = 0; i < inputValues.files.length; i++) {
+        formData.append("img", inputValues.files[i]);
+      }
     }
+    
+    formData.append("isHyped", inputValues.isHyped);
+
+    formData.append("discount", 1 - inputValues.discount * 0.01);
+
     formData.append(
       "brandId",
       product.brands.find((brand) => brand.name === inputValues.brand).id
@@ -124,13 +188,10 @@ export default function CreateProduct({ setDisplayed, page, limit }) {
       "typeId",
       product.types.find((type) => type.name === inputValues.type).id
     );
-    formData.append("discount", 1 - discount * 0.01);
-
     formData.append("description", inputValues.description);
     formData.append("left", inputValues.left);
-    formData.append("isHyped", inputValues.isHyped);
     formData.append("info", JSON.stringify([...defaultInfo, ...info]));
-    await createProduct(formData);
+    await changeProduct({ product: formData, id: prevThing.id });
     await setInputValues({
       name: "",
       price: 0,
@@ -144,6 +205,14 @@ export default function CreateProduct({ setDisplayed, page, limit }) {
 
     setInfo([]);
     await setNewSrc("");
+
+    const dataArray = await getProducts({ limit, page: page });
+    await setDisplayed({
+      what: "products",
+      data: dataArray.rows,
+      totalCount: dataArray.count,
+    });
+    setWhatIsShown("");
   }
 
   return (
@@ -243,7 +312,6 @@ export default function CreateProduct({ setDisplayed, page, limit }) {
               />
               <i>%</i>
             </div>
-
             <input
               onChange={(e) =>
                 setInputValues((prevInputValues) => ({
@@ -256,7 +324,15 @@ export default function CreateProduct({ setDisplayed, page, limit }) {
               placeholder="Введите количество товара"
               min={0}
             />
-            <img src={newSrc ? newSrc : "/assets/default-img.png"} />
+            <img
+              src={
+                newSrc
+                  ? newSrc
+                  : prevThing.img
+                  ? API_URL + PRODUCT_IMAGE_URL + prevThing.img[0]
+                  : "/assets/default-img.png"
+              }
+            />
             <input
               onChange={(e) => {
                 setInputValues((prevInputValues) => ({
@@ -332,7 +408,7 @@ export default function CreateProduct({ setDisplayed, page, limit }) {
 
             <div>
               <button onClick={() => setWhatIsShown("")}>Закрыть</button>
-              <button onClick={addProductHandler}>Добавить</button>
+              <button onClick={addProductHandler}>Изменить</button>
             </div>
           </form>
         </div>

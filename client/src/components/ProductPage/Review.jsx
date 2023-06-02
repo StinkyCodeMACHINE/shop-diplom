@@ -64,7 +64,7 @@ export default function Rating({
         </div>
         <div className="product-rating-date">
           Дата:{" "}
-          {`${date.getHours()}:${date.getMinutes()} ${date.getDate()}.${date.getMonth()}.${date.getFullYear()}`}
+          {`${Math.floor((Date.now() - date) / 86400000)} дней назад`}
         </div>
         <div>
           <h2>Преимущества</h2>
@@ -79,100 +79,97 @@ export default function Rating({
           <p className="product-rating-text">{text}</p>
         </div>
         <div className="product-rating-thumb-container">
-          
-            <img
-              onClick={async () => {
-                if (reviewRating && reviewRating.liked) {
-                  await deleteReviewRating({ id: productElem.id, reviewId: id });
-                  await setDiffValue((oldDiffValue) => oldDiffValue - 1);
-                  const reviewRatings = await getReviewRatings({
-                    id: productElem.id,
-                  });
-                  await setReviewRatings(reviewRatings);
-                } else if (reviewRating && !reviewRating.liked) {
-                  setDiffValue((oldDiffValue) => oldDiffValue + 2);
-                  await rateReview({
-                    id: productElem.id,
-                    reviewId: id,
-                    liked: true,
-                  });
-                  const reviewRatings = await getReviewRatings({
-                    id: productElem.id,
-                  });
-                  await setReviewRatings(reviewRatings);
-                } else {
-                  setDiffValue((oldDiffValue) => oldDiffValue + 1);
-                  await rateReview({
-                    id: productElem.id,
-                    reviewId: id,
-                    liked: true,
-                  });
-                  const reviewRatings = await getReviewRatings({
-                    id: productElem.id,
-                  });
-                  await setReviewRatings(reviewRatings);
-                }
-              }}
-              style={
-                reviewRating && reviewRating.liked
-                  ? {
-                      filter:
-                        "invert(57%) sepia(42%) saturate(5570%) hue-rotate(180deg) brightness(104%) contrast(86%)",
-                    }
-                  : {}
+          <img
+            onClick={async () => {
+              if (reviewRating && reviewRating.liked) {
+                await deleteReviewRating({ id: productElem.id, reviewId: id });
+                await setDiffValue((oldDiffValue) => oldDiffValue - 1);
+                const reviewRatings = await getReviewRatings({
+                  id: productElem.id,
+                });
+                await setReviewRatings(reviewRatings);
+              } else if (reviewRating && !reviewRating.liked) {
+                setDiffValue((oldDiffValue) => oldDiffValue + 2);
+                await rateReview({
+                  id: productElem.id,
+                  reviewId: id,
+                  liked: true,
+                });
+                const reviewRatings = await getReviewRatings({
+                  id: productElem.id,
+                });
+                await setReviewRatings(reviewRatings);
+              } else {
+                setDiffValue((oldDiffValue) => oldDiffValue + 1);
+                await rateReview({
+                  id: productElem.id,
+                  reviewId: id,
+                  liked: true,
+                });
+                const reviewRatings = await getReviewRatings({
+                  id: productElem.id,
+                });
+                await setReviewRatings(reviewRatings);
               }
-              className="product-rating-thumb-icon"
-              src={"/assets/like.png"}
-            />
-          
+            }}
+            style={
+              reviewRating && reviewRating.liked
+                ? {
+                    filter:
+                      "invert(57%) sepia(42%) saturate(5570%) hue-rotate(180deg) brightness(104%) contrast(86%)",
+                  }
+                : {}
+            }
+            className="product-rating-thumb-icon"
+            src={"/assets/like.png"}
+          />
 
           <div className="product-rating-thumb-counter">{diffValue}</div>
-          
-            <img
-              onClick={async () => {
-                if (reviewRating && !reviewRating.liked) {
-                  await deleteReviewRating({ id: productElem.id, reviewId: id });
-                  await setDiffValue((oldDiffValue) => oldDiffValue + 1);
-                  const reviewRatings = await getReviewRatings({
-                    id: productElem.id,
-                  });
-                  await setReviewRatings(reviewRatings);
-                } else if (reviewRating && reviewRating.liked) {
-                  await setDiffValue((oldDiffValue) => oldDiffValue - 2);
-                  await rateReview({
-                    id: productElem.id,
-                    reviewId: id,
-                    liked: false,
-                  });
-                  const reviewRatings = await getReviewRatings({
-                    id: productElem.id,
-                  });
-                  await setReviewRatings(reviewRatings);
-                } else {
-                  setDiffValue((oldDiffValue) => oldDiffValue - 1);
-                  await rateReview({
-                    id: productElem.id,
-                    reviewId: id,
-                    liked: false,
-                  });
-                  const reviewRatings = await getReviewRatings({
-                    id: productElem.id,
-                  });
-                  await setReviewRatings(reviewRatings);
-                }
-              }}
-              style={
-                reviewRating && !reviewRating.liked
-                  ? {
-                      filter:
-                        "invert(57%) sepia(42%) saturate(5570%) hue-rotate(180deg) brightness(104%) contrast(86%)",
-                    }
-                  : {}
+
+          <img
+            onClick={async () => {
+              if (reviewRating && !reviewRating.liked) {
+                await deleteReviewRating({ id: productElem.id, reviewId: id });
+                await setDiffValue((oldDiffValue) => oldDiffValue + 1);
+                const reviewRatings = await getReviewRatings({
+                  id: productElem.id,
+                });
+                await setReviewRatings(reviewRatings);
+              } else if (reviewRating && reviewRating.liked) {
+                await setDiffValue((oldDiffValue) => oldDiffValue - 2);
+                await rateReview({
+                  id: productElem.id,
+                  reviewId: id,
+                  liked: false,
+                });
+                const reviewRatings = await getReviewRatings({
+                  id: productElem.id,
+                });
+                await setReviewRatings(reviewRatings);
+              } else {
+                setDiffValue((oldDiffValue) => oldDiffValue - 1);
+                await rateReview({
+                  id: productElem.id,
+                  reviewId: id,
+                  liked: false,
+                });
+                const reviewRatings = await getReviewRatings({
+                  id: productElem.id,
+                });
+                await setReviewRatings(reviewRatings);
               }
-              className="product-rating-thumb-icon"
-              src={"/assets/dislike.png"}
-            />
-          
+            }}
+            style={
+              reviewRating && !reviewRating.liked
+                ? {
+                    filter:
+                      "invert(57%) sepia(42%) saturate(5570%) hue-rotate(180deg) brightness(104%) contrast(86%)",
+                  }
+                : {}
+            }
+            className="product-rating-thumb-icon"
+            src={"/assets/dislike.png"}
+          />
         </div>
       </div>
     </div>

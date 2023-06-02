@@ -11,13 +11,18 @@ export const PROFILE_ROUTE = "/profile"
 
 export const API_URL = "http://localhost:7000/";
 export const PRODUCT_IMAGE_URL = "product-images/";
+export const BRAND_IMAGE_URL = "brand-images/";
+export const GROUP_IMAGE_URL = "group-images/";
+export const TYPE_IMAGE_URL = "type-images/";
 export const PROFILE_IMAGE_URL = "profile-images/";
+export const BANNER_IMAGE_URL = "banner-images/";
+
 
 export const productSortingValues = [
   { value: { byWhat: ""}, text: "Отсутствует" },
   { value: { byWhat: "price", order: "ASC" }, text: "Сначала недорогие" },
   { value: { byWhat: "price", order: "DESC" }, text: "Сначала дорогие" },
-  // { value: {byWhat: "", order: "DESC"}, text: "Сначала самые популярные" }, //указываются админом
+  { value: {byWhat: "isHyped", order: "DESC"}, text: "Сначала самые популярные" }, //указываются админом
   { value: { byWhat: "discount", order: "DESC" }, text: "По скидке" },
   // { value: {byWhat: "", order: "DESC"}, text: "Сначала обсуждаемые" },
   {

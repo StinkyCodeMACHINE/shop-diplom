@@ -1,14 +1,16 @@
 import react, { useState, useContext, useEffect } from "react";
-import { createBrand } from "../../../API/productAPI";
+import { changeGroup, createGroup, getGroups, getGroupsWithLimit } from "../../../API/productAPI";
 import { Context } from "../../../App";
+import { API_URL, GROUP_IMAGE_URL } from "../../../utils/consts";
 
-export default function CreateBrand({ setDisplayed, page, limit}) {
+export default function ChangeGroup({ setDisplayed, page, limit, prevThing }) {
   const [inputValues, setInputValues] = useState({
-    name: "",
+    name: Object.keys(prevThing).length>0 ? prevThing.name : "",
     file: null,
   });
   const [newSrc, setNewSrc] = useState("");
-  const { whatIsShown, setWhatIsShown } = useContext(Context);
+
+  const { whatIsShown, setProduct, setWhatIsShown } = useContext(Context);
 
   useEffect(() => {
     async function apiCalls() {
@@ -28,12 +30,18 @@ export default function CreateBrand({ setDisplayed, page, limit}) {
 
     const formData = new FormData();
     formData.append("name", inputValues.name);
-    formData.append("img", inputValues.file);
+    newSrc && formData.append("img", inputValues.file);
 
-    // await createBrand({ name: inputValues })
-    await createBrand(formData);
+    const group = await changeGroup({group: formData, id: prevThing.id});
     await setInputValues({ name: "", file: null });
     await setNewSrc("");
+    const dataArray = await getGroupsWithLimit({ limit, page: page });
+    await setDisplayed({
+      what: "groups",
+      data: dataArray.rows,
+      totalCount: dataArray.count,
+    });
+    setWhatIsShown("")
   }
 
   return (
@@ -49,9 +57,10 @@ export default function CreateBrand({ setDisplayed, page, limit}) {
             }}
             value={inputValues.name}
             type="text"
-            placeholder="Введите название бренда"
+            placeholder="Введите название группы"
           />
-          <img src={newSrc ? newSrc : "/assets/default-img.png"} />
+          <img src={newSrc ? newSrc : prevThing.img ? API_URL + GROUP_IMAGE_URL + prevThing.img : "/assets/default-img.png"} />
+
           <input
             onChange={(e) => {
               setInputValues((prevInputValues) => ({
@@ -63,7 +72,7 @@ export default function CreateBrand({ setDisplayed, page, limit}) {
           />
           <div>
             <button onClick={() => setWhatIsShown("")}>Закрыть</button>
-            <button onClick={addHandler}>Добавить</button>
+            <button onClick={addHandler}>Изменить</button>
           </div>
         </form>
       </div>

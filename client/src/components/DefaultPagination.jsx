@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
-import { Context } from "../../App";
+import { Context } from "../App";
 
-export default function Pagination({ page, setPage, limit, totalCount }) {
+export default function DefaultPagination({ page, setPage, limit, totalCount }) {
   const { product, setProduct } = useContext(Context);
 
   // const [ pages, setPages] = useState([])

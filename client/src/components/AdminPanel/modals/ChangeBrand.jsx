@@ -1,10 +1,11 @@
 import react, { useState, useContext, useEffect } from "react";
-import { createBrand } from "../../../API/productAPI";
+import { changeBrand, createBrand, getBrandsWithLimit } from "../../../API/productAPI";
 import { Context } from "../../../App";
+import { API_URL, BRAND_IMAGE_URL } from "../../../utils/consts";
 
-export default function CreateBrand({ setDisplayed, page, limit}) {
+export default function ChangeBrand({ setDisplayed, page, limit, prevThing }) {
   const [inputValues, setInputValues] = useState({
-    name: "",
+    name: Object.keys(prevThing).length > 0 ? prevThing.name : "",
     file: null,
   });
   const [newSrc, setNewSrc] = useState("");
@@ -28,12 +29,21 @@ export default function CreateBrand({ setDisplayed, page, limit}) {
 
     const formData = new FormData();
     formData.append("name", inputValues.name);
-    formData.append("img", inputValues.file);
+    newSrc && formData.append("img", inputValues.file);
 
     // await createBrand({ name: inputValues })
-    await createBrand(formData);
+    const brand = await changeBrand({ brand: formData, id: prevThing.id });
+
     await setInputValues({ name: "", file: null });
     await setNewSrc("");
+
+    const dataArray = await getBrandsWithLimit({ limit, page: page });
+    await setDisplayed({
+      what: "brands",
+      data: dataArray.rows,
+      totalCount: dataArray.count,
+    });
+    setWhatIsShown("");
   }
 
   return (
@@ -51,7 +61,15 @@ export default function CreateBrand({ setDisplayed, page, limit}) {
             type="text"
             placeholder="Введите название бренда"
           />
-          <img src={newSrc ? newSrc : "/assets/default-img.png"} />
+          <img
+            src={
+              newSrc
+                ? newSrc
+                : prevThing.img
+                ? API_URL + BRAND_IMAGE_URL + prevThing.img
+                : "/assets/default-img.png"
+            }
+          />
           <input
             onChange={(e) => {
               setInputValues((prevInputValues) => ({
@@ -63,7 +81,7 @@ export default function CreateBrand({ setDisplayed, page, limit}) {
           />
           <div>
             <button onClick={() => setWhatIsShown("")}>Закрыть</button>
-            <button onClick={addHandler}>Добавить</button>
+            <button onClick={addHandler}>Изменить</button>
           </div>
         </form>
       </div>

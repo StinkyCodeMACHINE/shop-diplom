@@ -13,7 +13,6 @@ import {
 } from "../API/productAPI";
 import Review from "../components/ProductPage/Review";
 import AddReview from "../components/ProductPage/AddReview";
-import Pagination from "../components/ProductPage/Pagination";
 import {
   API_URL,
   PRODUCT_IMAGE_URL,
@@ -22,6 +21,7 @@ import {
   reviewSortingValues,
 } from "../utils/consts";
 import { Context } from "../App";
+import DefaultPagination from "../components/DefaultPagination";
 
 export default function ProductPage() {
   const [productElem, setProductElem] = useState({
@@ -536,7 +536,7 @@ export default function ProductPage() {
                   />
                 );
               })}
-              <Pagination
+              <DefaultPagination
                 page={page}
                 setPage={setPage}
                 limit={displayOptions.limit.value}

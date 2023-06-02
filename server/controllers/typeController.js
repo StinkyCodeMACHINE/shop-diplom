@@ -46,7 +46,7 @@ async function getAll(req, res) {
       : {};
 
   const types = await type.findAndCountAll({
-    order: [["name", "DESC"]],
+    order: [["name", "ASC"]],
     ...additionalConditions,
   });
   res.json(types);

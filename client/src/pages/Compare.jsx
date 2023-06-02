@@ -106,8 +106,9 @@ export default function Compare() {
                 className="compare-page-product-card-container"
               >
                 <img
+                  style={{  height: "300px",
+  width: '100%'}}
                   onClick={() => navigate(PRODUCT_ROUTE + "/" + productElem.id)}
-                  className="product-image"
                   src={API_URL + PRODUCT_IMAGE_URL + productElem.img[0]}
                 />
                 <div className="type-and-rating">
@@ -150,81 +151,98 @@ export default function Compare() {
                   &#x20BD;
                 </div>
                 {user.isAuth && (
-                  <div
-                    onClick={async () => {
-                      if (
-                        product.favourite.find(
-                          (elem) => elem.productId === productElem.id
-                        )
-                      ) {
-                        await removeFromFavourite(productElem.id);
-                      } else {
-                        await addToFavourite(productElem.id);
-                      }
-                      let favourite = await getFavouriteIds();
-                      await setProduct((oldProduct) => ({
-                        ...oldProduct,
-                        favourite: [...favourite],
-                      }));
-                    }}
-                    onMouseOver={async () => {
-                      setProducts((oldProducts) =>
-                        oldProducts.map((oldProductElem) =>
-                          oldProductElem.id === productElem.id
-                            ? { ...oldProductElem, isHoveredOver: true }
-                            : oldProductElem
-                        )
-                      );
-                    }}
-                    onMouseLeave={async () => {
-                      setProducts((oldProducts) =>
-                        oldProducts.map((oldProductElem) =>
-                          oldProductElem.id === productElem.id
-                            ? {
-                                ...oldProductElem,
-                                isHoveredOver: false,
-                              }
-                            : oldProductElem
-                        )
-                      );
-                    }}
-                    className="product-heart-container"
-                  >
-                    <div className="product-heart-icon-container">
-                      <img
-                        className="product-heart product-heart-empty"
-                        src="/assets/eheart.svg"
-                      />
-                      <img
-                        className="product-heart product-heart-full"
-                        style={
+                  <>
+                    <div
+                      onClick={async () => {
+                        if (
                           product.favourite.find(
                             (elem) => elem.productId === productElem.id
                           )
-                            ? productElem.isHoveredOver
+                        ) {
+                          await removeFromFavourite(productElem.id);
+                        } else {
+                          await addToFavourite(productElem.id);
+                        }
+                        let favourite = await getFavouriteIds();
+                        await setProduct((oldProduct) => ({
+                          ...oldProduct,
+                          favourite: [...favourite],
+                        }));
+                      }}
+                      onMouseOver={async () => {
+                        setProducts((oldProducts) =>
+                          oldProducts.map((oldProductElem) =>
+                            oldProductElem.id === productElem.id
+                              ? { ...oldProductElem, isHoveredOver: true }
+                              : oldProductElem
+                          )
+                        );
+                      }}
+                      onMouseLeave={async () => {
+                        setProducts((oldProducts) =>
+                          oldProducts.map((oldProductElem) =>
+                            oldProductElem.id === productElem.id
                               ? {
-                                  opacity: 0,
+                                  ...oldProductElem,
+                                  isHoveredOver: false,
+                                }
+                              : oldProductElem
+                          )
+                        );
+                      }}
+                      className="product-heart-container"
+                    >
+                      <div className="product-heart-icon-container">
+                        <img
+                          className="product-heart product-heart-empty"
+                          src="/assets/eheart.svg"
+                        />
+                        <img
+                          className="product-heart product-heart-full"
+                          style={
+                            product.favourite.find(
+                              (elem) => elem.productId === productElem.id
+                            )
+                              ? productElem.isHoveredOver
+                                ? {
+                                    opacity: 0,
+                                    transition: "600ms opacity ease-in",
+                                  }
+                                : { opacity: 1 }
+                              : productElem.isHoveredOver
+                              ? {
+                                  opacity: 1,
                                   transition: "600ms opacity ease-in",
                                 }
-                              : { opacity: 1 }
-                            : productElem.isHoveredOver
-                            ? {
-                                opacity: 1,
-                                transition: "600ms opacity ease-in",
-                              }
-                            : {}
-                        }
-                        src="/assets/fheart.svg"
-                      />
-                    </div>
+                              : {}
+                          }
+                          src="/assets/fheart.svg"
+                        />
+                      </div>
 
-                    <div className="product-heart-text">
-                      Добавить в избранное
+                      <div className="product-heart-text">
+                        Добавить в избранное
+                      </div>
                     </div>
-                  </div>
+                    <div></div>
+                  </>
                 )}
               </div>
             ))}
+          </div>
+          <h2>Описание</h2>
+          <div className="compare-page-description-container">
+            {products.length === 1 ? (
+              <p className="product-page-description">
+                {products[0].description}
+              </p>
+            ) : (
+              products.map((product) => (
+                <p className="product-page-description">
+                  {product.description}
+                </p>
+              ))
+            )}
           </div>
           <h2>Характеристики</h2>
           {statsInCommon.length === 0 && (
@@ -271,7 +289,7 @@ export default function Compare() {
                             ? { backgroundColor: "white" }
                             : {}
                         }
-                        className="product-page-stat"
+                        className="compare-page-stat"
                       >
                         {statElem.key}: {statElem.value2}
                       </div>

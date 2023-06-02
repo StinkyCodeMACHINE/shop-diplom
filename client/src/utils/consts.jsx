@@ -8,6 +8,8 @@ export const FAVOURITE_ROUTE = "/favourite-page";
 export const COMPARE_ROUTE = "/compare";
 export const ORDERS_ROUTE = "/orders"
 export const PROFILE_ROUTE = "/profile"
+export const GROUP_TYPES_ROUTE = "/group-types"
+export const MAIN_PAGE_ROUTE = "/main-page"
 
 export const API_URL = "http://localhost:7000/";
 export const PRODUCT_IMAGE_URL = "product-images/";
@@ -23,7 +25,7 @@ export const productSortingValues = [
   { value: { byWhat: "price", order: "ASC" }, text: "Сначала недорогие" },
   { value: { byWhat: "price", order: "DESC" }, text: "Сначала дорогие" },
   { value: {byWhat: "isHyped", order: "DESC"}, text: "Сначала самые популярные" }, //указываются админом
-  { value: { byWhat: "discount", order: "DESC" }, text: "По скидке" },
+  { value: { byWhat: "discount", order: "ASC" }, text: "По скидке" },
   // { value: {byWhat: "", order: "DESC"}, text: "Сначала обсуждаемые" },
   {
     value: { byWhat: "rating", order: "DESC" },

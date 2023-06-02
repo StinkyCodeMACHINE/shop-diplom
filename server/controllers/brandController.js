@@ -34,7 +34,7 @@ async function getAll(req, res) {
       : {};
 
   const brands = await brand.findAndCountAll({
-    order: [["name", "DESC"]],
+    order: [["name", "ASC"]],
     ...additionalConditions,
   });
 

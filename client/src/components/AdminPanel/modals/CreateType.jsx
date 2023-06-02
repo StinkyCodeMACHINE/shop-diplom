@@ -1,9 +1,9 @@
 import react, { useState, useEffect, useContext } from "react";
-import { createType, getGroups, getTypes } from "../../../API/productAPI";
+import { createType, getGroups, getTypes, getTypesWithLimit } from "../../../API/productAPI";
 import { Context } from "../../../App";
-import { nanoid } from "nanoid"
+import { nanoid } from "nanoid";
 
-export default function CreateType({ setDisplayed, page, limit}) {
+export default function CreateType({ setDisplayed, page, limit }) {
   const [inputValues, setInputValues] = useState({
     name: "",
     file: null,
@@ -67,15 +67,17 @@ export default function CreateType({ setDisplayed, page, limit}) {
     await setInputValues({ name: "", file: null, group: "" });
     await setInfo([]);
     await setNewSrc("");
-
+    const dataArray = await getTypesWithLimit({ limit, page: page });
+    await setDisplayed({
+      what: "types",
+      data: dataArray.rows,
+      totalCount: dataArray.count,
+    });
   }
 
   function addStatHandler(e) {
     e.preventDefault();
-    setInfo((prevInfo) => [
-      ...prevInfo,
-      { key: "", number: nanoid() },
-    ]);
+    setInfo((prevInfo) => [...prevInfo, { key: "", number: nanoid() }]);
   }
 
   function removeStatHandler(number) {

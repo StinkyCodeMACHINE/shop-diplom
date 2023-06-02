@@ -91,6 +91,16 @@ const group = db.define("group", {
 
 const type = db.define("type", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  groupId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: "groups",
+      key: "id",
+    },
+    onUpdate: "cascade",
+    onDelete: "cascade",
+  },
   name: {
     type: DataTypes.STRING,
     notEmpty: true,

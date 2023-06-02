@@ -15,7 +15,10 @@ export default function ProductCard({
   img,
   rating,
   name,
-  price
+  price,
+  discount,
+  isHyped,
+  left
 }) {
   const { product, setProduct, user } = useContext(Context);
 
@@ -32,9 +35,8 @@ export default function ProductCard({
       />
       <div className="type-and-rating">
         <div className="type-brand">
-          {product.types.find((type) => type.id === typeId).name +
-            " " +
-            product.brands.find((brand) => brand.id === brandId).name}
+          <div>{product.types.find((type) => type.id === typeId).name}</div>
+          <div>{product.brands.find((brand) => brand.id === brandId).name}</div>
         </div>
         <div className="rating">
           {rating > 0 ? (
@@ -56,128 +58,171 @@ export default function ProductCard({
       >
         {name}
       </div>
+
       <div
         onClick={() => navigate(PRODUCT_ROUTE + "/" + id)}
-        className="product-name"
+        className="product-price-and-discount"
       >
-        {price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}&#x20BD;
+        {discount && discount !== 1 && (
+          <div>
+            {Math.ceil(price * discount)
+              .toString()
+              .replace(/\B(?=(\d{3})+(?!\d))/g, " ")}
+            &#x20BD;
+          </div>
+        )}
+        <div
+          className="product-oldPrice"
+          style={
+            discount && discount !== 1
+              ? { textDecoration: "line-through", fontSize: "0.8rem" }
+              : {}
+          }
+        >
+          {price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}&#x20BD;
+        </div>
+        <div className="product-left-container">
+          <img
+            className="product-left-icon"
+            src={
+              left && left > 0 ? "/assets/checkmark.svg" : "/assets/delete.png"
+            }
+          />
+          <div>{left && left > 0 ? "В наличии" : "Не в наличии"}</div>
+        </div>
       </div>
-      {user.isAuth && (
-        <>
-          <div
-            onClick={async () => {
-              if (product.favourite.find((elem) => elem.productId === id)) {
-                await removeFromFavourite(id);
-              } else {
-                await addToFavourite(id);
-              }
-              let favourite = await getFavouriteIds();
-              await setProduct((oldProduct) => ({
-                ...oldProduct,
-                favourite: favourite,
-              }));
-            }}
-            onMouseOver={async () => {
-              setIsHoveredOver(true);
-            }}
-            onMouseLeave={async () => {
-              setIsHoveredOver(false);
-            }}
-            className="product-heart-container"
-          >
-            <div className="product-heart-icon-container">
+      <div>
+        {user.isAuth && (
+          <>
+            <div
+              onClick={async () => {
+                if (product.favourite.find((elem) => elem.productId === id)) {
+                  await removeFromFavourite(id);
+                } else {
+                  await addToFavourite(id);
+                }
+                let favourite = await getFavouriteIds();
+                await setProduct((oldProduct) => ({
+                  ...oldProduct,
+                  favourite: favourite,
+                }));
+              }}
+              onMouseOver={async () => {
+                setIsHoveredOver(true);
+              }}
+              onMouseLeave={async () => {
+                setIsHoveredOver(false);
+              }}
+              className="product-heart-container"
+            >
+              <div className="product-heart-icon-container">
+                <img
+                  style={{
+                    filter:
+                      "invert(30%) sepia(67%) saturate(6061%) hue-rotate(352deg) brightness(96%) contrast(110%)",
+                  }}
+                  className="product-heart product-heart-empty"
+                  src="/assets/eheart.svg"
+                />
+                <img
+                  className="product-heart product-heart-full"
+                  style={
+                    product.favourite.find((elem) => elem.productId === id)
+                      ? isHoveredOver
+                        ? { opacity: 0, transition: "600ms opacity ease-in" }
+                        : { opacity: 1 }
+                      : isHoveredOver
+                      ? { opacity: 1, transition: "600ms opacity ease-in" }
+                      : {}
+                  }
+                  src="/assets/fheart.svg"
+                />
+              </div>
+
+              <div className="product-heart-text">
+                {product.favourite.find((elem) => elem.productId === id)
+                  ? "В избранном"
+                  : "В избранное"}
+              </div>
+            </div>
+            <div
+              onClick={async () => {
+                if (product.cart.find((elem) => elem === id)) {
+                  await setProduct((oldProduct) => ({
+                    ...oldProduct,
+                    cart: oldProduct.cart.filter((elem) => elem !== id),
+                  }));
+                } else {
+                  await setProduct((oldProduct) => ({
+                    ...oldProduct,
+                    cart: [...oldProduct.cart, id],
+                  }));
+                }
+              }}
+              className="product-heart-container"
+            >
               <img
                 className="product-heart product-heart-empty"
-                src="/assets/eheart.svg"
+                src="/assets/cart.svg"
               />
+              <div>
+                {product.cart.find((elem) => elem === id)
+                  ? "Убрать из корзины"
+                  : "В корзину"}
+              </div>
+            </div>
+            <div
+              onClick={async () => {
+                if (product.toCompare.find((elem) => elem === id)) {
+                  await setProduct((oldProduct) => ({
+                    ...oldProduct,
+                    toCompare: oldProduct.toCompare.filter(
+                      (elem) => elem !== id
+                    ),
+                  }));
+                } else {
+                  await setProduct((oldProduct) => ({
+                    ...oldProduct,
+                    toCompare:
+                      oldProduct.toCompare.length < 2
+                        ? [...oldProduct.toCompare, id]
+                        : oldProduct.toCompare.map((element, index) =>
+                            index === 1 ? id : element
+                          ),
+                  }));
+                  if (
+                    product.toCompare.length === 1 ||
+                    product.toCompare.length === 2
+                  ) {
+                    navigate(COMPARE_ROUTE);
+                  }
+                }
+              }}
+              className="product-heart-container"
+            >
               <img
-                className="product-heart product-heart-full"
-                style={
-                  product.favourite.find((elem) => elem.productId === id)
-                    ? isHoveredOver
-                      ? { opacity: 0, transition: "600ms opacity ease-in" }
-                      : { opacity: 1 }
-                    : isHoveredOver
-                    ? { opacity: 1, transition: "600ms opacity ease-in" }
-                    : {}
-                }
-                src="/assets/fheart.svg"
+                style={{
+                  width: "30px",
+                  height: "30px",
+                  filter:
+                    "invert(49%) sepia(85%) saturate(557%) hue-rotate(165deg) brightness(95%) contrast(95%)",
+                }}
+                className="product-heart product-heart-empty"
+                src="/assets/scale.png"
               />
+              <div>
+                {product.toCompare.find((elem) => elem === id)
+                  ? "Добавлено в сравнение"
+                  : "Сравнить"}
+              </div>
             </div>
 
-            <div className="product-heart-text">
-              {product.favourite.find((elem) => elem.productId === id)
-                ? "В избранном"
-                : "Добавить в избранное"}
-            </div>
-          </div>
-          <div
-            onClick={async () => {
-              if (product.toCompare.find((elem) => elem === id)) {
-                await setProduct((oldProduct) => ({
-                  ...oldProduct,
-                  toCompare: oldProduct.toCompare.filter((elem) => elem !== id),
-                }));
-              } else {
-                await setProduct((oldProduct) => ({
-                  ...oldProduct,
-                  toCompare:
-                    oldProduct.toCompare.length < 2
-                      ? [...oldProduct.toCompare, id]
-                      : oldProduct.toCompare.map((element, index) =>
-                          index === 1 ? id : element
-                        ),
-                }));
-                if (
-                  product.toCompare.length === 1 ||
-                  product.toCompare.length === 2
-                ) {
-                  navigate(COMPARE_ROUTE);
-                }
-              }
-            }}
-            className="product-heart-container"
-          >
-            <img
-              className="product-heart product-heart-empty"
-              src="/assets/eheart.svg"
-            />
-            <div>
-              {product.toCompare.find((elem) => elem === id)
-                ? "Добавлено в сравнение"
-                : "Сравнить"}
-            </div>
-          </div>
+            {/* добавить в корзину */}
 
-          {/* добавить в корзину */}
-          <div
-            onClick={async () => {
-              if (product.cart.find((elem) => elem === id)) {
-                await setProduct((oldProduct) => ({
-                  ...oldProduct,
-                  cart: oldProduct.cart.filter((elem) => elem !== id),
-                }));
-              } else {
-                await setProduct((oldProduct) => ({
-                  ...oldProduct,
-                  cart: [...oldProduct.cart, id]
-                }));
-              }
-            }}
-            className="product-heart-container"
-          >
-            <img
-              className="product-heart product-heart-empty"
-              src="/assets/cart.svg"
-            />
-            <div>
-              {product.cart.find((elem) => elem === id)
-                ? "Убрать из корзины"
-                : "Добавить в корзину"}
-            </div>
-          </div>
-        </>
-      )}
+            <div>Доставка: в течение недели</div>
+          </>
+        )}
+      </div>
     </div>
   );
 }

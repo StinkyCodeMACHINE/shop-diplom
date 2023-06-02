@@ -348,7 +348,7 @@ export default function Shop() {
                 )}
               </div>
 
-              {/* заменить на в наличие и галочку */}
+              {/* заменить на в наличии и галочку */}
               <h2>Бренды</h2>
               <div className="shop-side-options-brands">
                 {product.brands.map((eachBrand) => (
@@ -387,7 +387,7 @@ export default function Shop() {
                 id="inStock"
                 type="checkbox"
               />
-              <label htmlFor="inStock">В наличие?</label>
+              <label htmlFor="inStock">В наличии?</label>
               <h2>Цена</h2>
               <div className="shop-side-options-price">
                 <div className="shop-side-options-price-fields">
@@ -541,113 +541,122 @@ export default function Shop() {
           </div>
 
           <div className="main-container">
-            <div className="shop-main-container-top-options">
-              <h2>
-                {product.name
-                  ? `${product.totalCount} результат${
-                      product.totalCount === 1 ? "" : "ов"
-                    } по запросу: ${product.name}`
-                  : Object.keys(product.selectedType).length > 0
-                  ? product.selectedType.name
-                  : "Каталог"}
-              </h2>
-              <div className="shop-main-container-top-option-container">
-                <div
-                  onClick={() =>
-                    whatIsShown !== "sorting"
-                      ? setWhatIsShown("sorting")
-                      : setWhatIsShown("")
-                  }
-                >
-                  Сортировка:{" "}
-                  <span>{product.sortingValue.text.toLowerCase()}</span>
-                </div>
-                <img
-                  style={
-                    whatIsShown !== "sorting"
-                      ? { transform: "rotate(-270deg)" }
-                      : { transform: "rotate(-90deg)" }
-                  }
-                  src="/assets/drop-down-arrow.svg"
-                  className="navbar-types-icon"
-                />
-                {whatIsShown === "sorting" && (
-                  <div className="shop-main-container-top-sorting-options">
-                    {productSortingValues.map((elem) => (
-                      <div
-                        key={elem.value}
-                        onClick={() => {
-                          setWhatIsShown("");
-                          setProduct((oldProduct) => ({
-                            ...oldProduct,
-                            sortingValue: elem,
-                          }));
-                        }}
-                      >
-                        {elem.text}
+            {product.products.length > 0 ? (
+              <>
+                <div className="shop-main-container-top-options">
+                  <h2>
+                    {product.name
+                      ? `${product.totalCount} результат${
+                          product.totalCount === 1 ? "" : "ов"
+                        } по запросу: ${product.name}`
+                      : Object.keys(product.selectedType).length > 0
+                      ? product.selectedType.name
+                      : "Каталог"}
+                  </h2>
+                  <div className="shop-main-container-top-option-container">
+                    <div
+                      onClick={() =>
+                        whatIsShown !== "sorting"
+                          ? setWhatIsShown("sorting")
+                          : setWhatIsShown("")
+                      }
+                    >
+                      Сортировка:{" "}
+                      <span>{product.sortingValue.text.toLowerCase()}</span>
+                    </div>
+                    <img
+                      style={
+                        whatIsShown !== "sorting"
+                          ? { transform: "rotate(-270deg)" }
+                          : { transform: "rotate(-90deg)" }
+                      }
+                      src="/assets/drop-down-arrow.svg"
+                      className="navbar-types-icon"
+                    />
+                    {whatIsShown === "sorting" && (
+                      <div className="shop-main-container-top-sorting-options">
+                        {productSortingValues.map((elem) => (
+                          <div
+                            key={elem.value}
+                            onClick={() => {
+                              setWhatIsShown("");
+                              setProduct((oldProduct) => ({
+                                ...oldProduct,
+                                sortingValue: elem,
+                              }));
+                            }}
+                          >
+                            {elem.text}
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                    )}
                   </div>
-                )}
-              </div>
-              <div className="shop-main-container-top-option-container">
-                <div
-                  onClick={() =>
-                    whatIsShown !== "limit"
-                      ? setWhatIsShown("limit")
-                      : setWhatIsShown("")
-                  }
-                >
-                  Показывать: <span>{product.limit}</span>
-                </div>
-                <img
-                  style={
-                    whatIsShown !== "limit"
-                      ? { transform: "rotate(-270deg)" }
-                      : { transform: "rotate(-90deg)" }
-                  }
-                  src="/assets/drop-down-arrow.svg"
-                  className="navbar-types-icon"
-                />
-                {whatIsShown === "limit" && (
-                  <div className="shop-main-container-top-sorting-options">
-                    {productLimitValues.map((elem) => (
-                      <div
-                        key={elem.value}
-                        onClick={() => {
-                          setWhatIsShown("");
-                          setProduct((oldProduct) => ({
-                            ...oldProduct,
-                            limit: elem.value,
-                          }));
-                        }}
-                      >
-                        {elem.value}
+                  <div className="shop-main-container-top-option-container">
+                    <div
+                      onClick={() =>
+                        whatIsShown !== "limit"
+                          ? setWhatIsShown("limit")
+                          : setWhatIsShown("")
+                      }
+                    >
+                      Показывать: <span>{product.limit}</span>
+                    </div>
+                    <img
+                      style={
+                        whatIsShown !== "limit"
+                          ? { transform: "rotate(-270deg)" }
+                          : { transform: "rotate(-90deg)" }
+                      }
+                      src="/assets/drop-down-arrow.svg"
+                      className="navbar-types-icon"
+                    />
+                    {whatIsShown === "limit" && (
+                      <div className="shop-main-container-top-sorting-options">
+                        {productLimitValues.map((elem) => (
+                          <div
+                            key={elem.value}
+                            onClick={() => {
+                              setWhatIsShown("");
+                              setProduct((oldProduct) => ({
+                                ...oldProduct,
+                                limit: elem.value,
+                              }));
+                            }}
+                          >
+                            {elem.value}
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                    )}
                   </div>
-                )}
-              </div>
-            </div>
+                </div>
 
-            {product.types.length > 0 && product.brands.length > 0 && (
-              <div className="product-cards">
-                {product.products.map((eachProduct) => (
-                  <ProductCard
-                    key={eachProduct.id}
-                    id={eachProduct.id}
-                    typeId={eachProduct.typeId}
-                    brandId={eachProduct.brandId}
-                    img={eachProduct.img}
-                    rating={eachProduct.rating}
-                    name={eachProduct.name}
-                    price={eachProduct.price}
-                  />
-                ))}
-              </div>
+                {product.types.length > 0 && product.brands.length > 0 && (
+                  <div className="product-cards">
+                    {product.products.map((eachProduct) => (
+                      <ProductCard
+                        key={eachProduct.id}
+                        id={eachProduct.id}
+                        typeId={eachProduct.typeId}
+                        brandId={eachProduct.brandId}
+                        img={eachProduct.img}
+                        rating={eachProduct.rating}
+                        name={eachProduct.name}
+                        price={eachProduct.price}
+                        discount={eachProduct.discount}
+                        isHyped={eachProduct.isHyped}
+                        left={eachProduct.left}
+                      />
+                    ))}
+                  </div>
+                )}
+
+                <Pagination />
+              </>
+            ) : (
+              <h2>Ничего не было найдено!</h2>
             )}
-
-            <Pagination />
           </div>
         </>
       )}

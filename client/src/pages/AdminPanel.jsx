@@ -8,6 +8,7 @@ import {
   changeOrderStatus,
   countReviews,
   deleteBanner,
+  deleteBrand,
   deleteGroup,
   deleteOrder,
   deleteProduct,
@@ -48,11 +49,13 @@ export default function AdminPanel() {
   const { product, setProduct, setWhatIsShown, whatIsShown } =
     useContext(Context);
   const [options, setOptions] = useState("");
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValueu] = useState("");
 
   const [page, setPage] = useState(1);
   const [prevThing, setPrevThing] = useState({});
   const [limit, setLimit] = useState(5);
+  const [selectedType, setSelectedType] = useState({})
+  const [selectedBrand, setSelectedBrand] = useState({});
   const [displayed, setDisplayed] = useState({
     what: "",
     data: [],
@@ -201,7 +204,8 @@ export default function AdminPanel() {
     <>
       {whatIsShown !== "" &&
         whatIsShown !== "limit" &&
-        whatIsShown !== "cart" && (
+        whatIsShown !== "cart" &&
+        whatIsShown !== "types" && (
           <div
             className="admin-page-modal-opacity"
             onClick={async (e) => {
@@ -390,7 +394,7 @@ export default function AdminPanel() {
           </div>
           {options !== "" && (
             <div className="admin-page-table">
-              <div className="navbar-search-bar-input-container">
+              <div className="admin-page-search-container">
                 <input
                   onChange={(e) => setSearchValue(e.target.value)}
                   value={searchValue}
@@ -613,8 +617,8 @@ export default function AdminPanel() {
                           <td>
                             <div
                               onClick={async () => {
-                                await deleteGroup({ id: elem.id });
-                                const dataArray = await getGroupsWithLimit({
+                                await deleteBrand({ id: elem.id });
+                                const dataArray = await getBrandsWithLimit({
                                   limit,
                                   page: page,
                                 });
@@ -1025,7 +1029,7 @@ export default function AdminPanel() {
                           <td>{elem.id}</td>
                           <td>
                             <img
-                              className="admin-page-elem-img"
+                              className="banner-img"
                               src={
                                 elem.img
                                   ? API_URL + BANNER_IMAGE_URL + elem.img

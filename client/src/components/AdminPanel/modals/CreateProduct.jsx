@@ -4,6 +4,7 @@ import {
   getTypes,
   getBrands,
   getDefaultTypeInfo,
+  getProducts,
 } from "../../../API/productAPI";
 import { Context } from "../../../App";
 import { nanoid } from "nanoid";
@@ -124,7 +125,7 @@ export default function CreateProduct({ setDisplayed, page, limit }) {
       "typeId",
       product.types.find((type) => type.name === inputValues.type).id
     );
-    formData.append("discount", 1 - discount * 0.01);
+    formData.append("discount", 1 - inputValues.discount * 0.01);
 
     formData.append("description", inputValues.description);
     formData.append("left", inputValues.left);
@@ -140,10 +141,18 @@ export default function CreateProduct({ setDisplayed, page, limit }) {
       description: "",
       left: 0,
       discount: 0,
+      isHyped: false
     });
 
     setInfo([]);
     await setNewSrc("");
+
+    const dataArray = await getProducts({ limit, page: page });
+    await setDisplayed({
+      what: "products",
+      data: dataArray.rows,
+      totalCount: dataArray.count,
+    });
   }
 
   return (

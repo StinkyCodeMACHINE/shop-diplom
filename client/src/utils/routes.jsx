@@ -18,7 +18,11 @@ import {
   COMPARE_ROUTE,
   ORDERS_ROUTE,
   PROFILE_ROUTE,
+  GROUP_TYPES_ROUTE,
+  MAIN_PAGE_ROUTE,
 } from "./consts";
+import GroupTypes from "../pages/GroupTypes";
+import MainPage from "../pages/MainPage";
 
 
 
@@ -49,6 +53,7 @@ export const authRoutes = [
     path: PROFILE_ROUTE,
     element: <Profile />,
   },
+  
 ];
 
 export const publicRoutes = [
@@ -67,5 +72,13 @@ export const publicRoutes = [
   {
     path: PRODUCT_ROUTE + "/:id",
     element: <ProductPage />,
+  },
+  {
+    path: GROUP_TYPES_ROUTE + "/:id",
+    element: <GroupTypes />,
+  },
+  {
+    path: MAIN_PAGE_ROUTE,
+    element: <MainPage />,
   },
 ];

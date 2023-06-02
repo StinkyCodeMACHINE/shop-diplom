@@ -14,7 +14,7 @@ import {
   getFavouriteProducts,
 } from "../API/productAPI";
 import Pagination from "../components/Favourite/Pagination";
-import ProductCard from "../components/Favourite/ProductCard";
+import ProductCard from "../components/Shop/ProductCard";
 
 export default function Favourite() {
   const { product, setProduct, user, whatIsShown, setWhatIsShown } =
@@ -138,6 +138,10 @@ export default function Favourite() {
                   img={eachProduct.img}
                   rating={eachProduct.rating}
                   name={eachProduct.name}
+                  price={eachProduct.price}
+                  discount={eachProduct.discount}
+                  isHyped={eachProduct.isHyped}
+                  left={eachProduct.left}
                 />
               ))}
             </div>

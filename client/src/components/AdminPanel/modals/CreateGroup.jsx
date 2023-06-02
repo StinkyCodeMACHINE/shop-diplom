@@ -38,12 +38,13 @@ export default function CreateGroup({setDisplayed, page, limit}) {
     }));
     await setInputValues({ name: "", file: null });
     await setNewSrc("");
-    dataArray = await getGroupsWithLimit({ limit, page: page });
+    const dataArray = await getGroupsWithLimit({ limit, page: page });
     await setDisplayed({
       what: "groups",
       data: dataArray.rows,
       totalCount: dataArray.count,
     });
+    
   }
 
   return (

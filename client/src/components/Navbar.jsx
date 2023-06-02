@@ -6,6 +6,7 @@ import {
   COMPARE_ROUTE,
   FAVOURITE_ROUTE,
   LOGIN_ROUTE,
+  MAIN_PAGE_ROUTE,
   ORDERS_ROUTE,
   PRODUCT_ROUTE,
   PROFILE_ROUTE,
@@ -144,7 +145,7 @@ export default function Navbar() {
 
   return (
     <header className="navbar">
-      <Link to={SHOP_ROUTE} onClick={(e) => setWhatIsShown("")}>
+      <Link to={MAIN_PAGE_ROUTE} onClick={(e) => setWhatIsShown("")}>
         Шазам
       </Link>
       <div className="navbar-search-bar-container">
@@ -276,15 +277,7 @@ export default function Navbar() {
           {user.user.role === "ADMIN" && (
             <div onClick={() => navigate(ADMIN_ROUTE)}>АдминПанель</div>
           )}
-          <div className="navbar-option-container">
-            <div
-              onClick={() => navigate(ORDERS_ROUTE)}
-              className="navbar-orders-text"
-            >
-              Заказы
-            </div>
-            <img className="navbar-orders-icon" src="/assets/cart.svg" />
-          </div>
+
           <div
             onClick={async () => await setWhatIsShown("cart")}
             className="navbar-option-container"
@@ -302,8 +295,20 @@ export default function Navbar() {
             className="navbar-compare-container"
           >
             <div className="navbar-cart-text">Сравнение</div>
-            <div className="navbar-favourite-count-container">
-              {product.toCompare.length}
+            <div className="navbar-icon-counter-container">
+              <img
+                style={{
+                  width: "30px",
+                  height: "30px",
+                  filter:
+                    "invert(49%) sepia(85%) saturate(557%) hue-rotate(165deg) brightness(95%) contrast(95%)",
+                }}
+                className="navbar-favourite-icon"
+                src="/assets/scale.png"
+              />
+              <div className="navbar-favourite-count-container">
+                {product.toCompare.length}
+              </div>
             </div>
           </div>
           <div>{user.email}</div>
@@ -336,8 +341,24 @@ export default function Navbar() {
               className="navbar-profile-modal-menu"
             >
               <div className="navbar-profile-modal-menu-triangle"></div>
+              <div className="navbar-option-container">
+                <div
+                  onClick={() => navigate(ORDERS_ROUTE)}
+                  className="navbar-orders-text"
+                >
+                  Заказы
+                </div>
+                <img className="navbar-orders-icon" src="/assets/cart.svg" />
+              </div>
               <div onClick={() => navigate(PROFILE_ROUTE)}>Настройки</div>
-              <div onClick={logOutHandler}>Выйти</div>
+              <div
+                style={{
+                  borderTop: "1px solid var(--black-color)",
+                }}
+                onClick={logOutHandler}
+              >
+                Выйти
+              </div>
             </div>
           </div>
         </div>

@@ -166,7 +166,10 @@ export default function CreateBanner({ setDisplayed, page, limit }) {
               </select>
             </div>
 
-            <img src={newSrc ? newSrc : "/assets/default-img.png"} />
+            <img
+              className="banner-img"
+              src={newSrc ? newSrc : "/assets/default-img.png"}
+            />
             <input
               onChange={(e) => {
                 setInputValues((prevInputValues) => ({

@@ -35,7 +35,7 @@ async function getAll(req, res) {
       : {};
 
   const groups = await group.findAndCountAll({
-    order: [["name", "DESC"]],
+    order: [["name", "ASC"]],
     ...additionalConditions,
   });
   res.json(groups);

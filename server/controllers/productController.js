@@ -68,7 +68,7 @@ async function create(req, res, next) {
       info.forEach((element) => {
         productInfo.create({
           key: element.key,
-          value: element.value,
+          value: element.value.toLowerCase(),
           productId: productElem.id,
           typeDefaultInfoId: element.id,
         });
@@ -645,7 +645,7 @@ async function changeProduct(req, res, next) {
       info.forEach((element) => {
         productInfo.create({
           key: element.key,
-          value: element.value,
+          value: element.value.toLowerCase(),
           productId: id,
           typeDefaultInfoId: element.id,
         });

@@ -113,7 +113,7 @@ export default function ChangeBanner({ setDisplayed, page, limit, prevThing, sea
       <>
         <div className="modal-inner-container">
           <form>
-            <h2>Добавить баннер</h2>
+            <h2>Изменить баннер</h2>
             <div>
               <input
                 type="checkbox"
@@ -182,6 +182,7 @@ export default function ChangeBanner({ setDisplayed, page, limit, prevThing, sea
               </select>
             </div>
             <img
+              className="banner-img"
               src={
                 newSrc
                   ? newSrc

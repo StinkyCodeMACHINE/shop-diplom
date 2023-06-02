@@ -19,6 +19,7 @@ import {
   SHOP_ROUTE,
   reviewLimitValues,
   reviewSortingValues,
+  GROUP_TYPES_ROUTE,
 } from "../utils/consts";
 import { Context } from "../App";
 import DefaultPagination from "../components/DefaultPagination";
@@ -160,7 +161,12 @@ export default function ProductPage() {
               Каталог
             </Link>
             <div>{">"}</div>
-            <Link className="product-page-group">{productElem.group.name}</Link>
+            <Link
+              to={GROUP_TYPES_ROUTE + `/${productElem.group.id}`}
+              className="product-page-group"
+            >
+              {productElem.group.name}
+            </Link>
             <div>{">"}</div>
             <Link
               to={SHOP_ROUTE}
@@ -273,12 +279,43 @@ export default function ProductPage() {
             </div>
           </div>
           <div className="productElem-page-add-to-card-container">
-            <div>
-              От{" "}
-              {productElem.price
-                .toString()
-                .replace(/\B(?=(\d{3})+(?!\d))/g, " ")}{" "}
-              &#x20BD;
+            <div className="product-price-and-discount">
+              {productElem.discount && productElem.discount !== 1 && (
+                <div>
+                  {Math.ceil(productElem.price * productElem.discount)
+                    .toString()
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, " ")}
+                  &#x20BD;
+                </div>
+              )}
+              <div
+                className="product-oldPrice"
+                style={
+                  productElem.discount && productElem.discount !== 1
+                    ? { textDecoration: "line-through", fontSize: "0.8rem" }
+                    : {}
+                }
+              >
+                {productElem.price
+                  .toString()
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, " ")}
+                &#x20BD;
+              </div>
+              <div className="product-left-container">
+                <img
+                  className="product-left-icon"
+                  src={
+                    productElem.left && productElem.left > 0
+                      ? "/assets/checkmark.svg"
+                      : "/assets/delete.png"
+                  }
+                />
+                <div>
+                  {productElem.left && productElem.left > 0
+                    ? "В наличии"
+                    : "Не в наличии"}
+                </div>
+              </div>
             </div>
 
             {user.isAuth && (
@@ -391,8 +428,14 @@ export default function ProductPage() {
               className="product-heart-container"
             >
               <img
+                style={{
+                  width: "30px",
+                  height: "30px",
+                  filter:
+                    "invert(49%) sepia(85%) saturate(557%) hue-rotate(165deg) brightness(95%) contrast(95%)",
+                }}
                 className="product-heart product-heart-empty"
-                src="/assets/eheart.svg"
+                src="/assets/scale.png"
               />
               <div>
                 {product.toCompare.find((elem) => elem === Number(id))
@@ -405,11 +448,11 @@ export default function ProductPage() {
         <div className="product-page-bottom-container">
           <h2>Характеристики </h2>
           <div className="product-page-stats">
-            {productElem.info.map((stat) => {
+            {productElem.info.map((stat, index) => {
               return (
                 <div
                   key={stat.id}
-                  style={stat.id % 2 === 1 ? { backgroundColor: "white" } : {}}
+                  style={index % 2 === 1 ? { backgroundColor: "white" } : {}}
                   className="product-page-stat"
                 >
                   {stat.key}: {stat.value}

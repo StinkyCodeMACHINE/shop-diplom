@@ -60,7 +60,7 @@ async function changeBanner(req, res, next) {
       }
     );
     if (img) {
-      img.mv(path.resolve(__dirname, "..", "static", "type-images", fileName));
+      img.mv(path.resolve(__dirname, "..", "static", "banner-images", fileName));
     }
 
     res.json(result);

@@ -285,6 +285,7 @@ export default function Shop() {
                           (type) => type.groupId == group.id
                         ) ? (
                           <div
+                            className="shop-side-option"
                             key={group.id}
                             onClick={() =>
                               setProduct((oldProduct) => ({
@@ -317,10 +318,11 @@ export default function Shop() {
                     {product.types.map((type) =>
                       type.groupId === product.selectedGroup.id ? (
                         <div
+                          className="shop-side-option"
                           key={type.id}
                           style={
                             type.id === product.selectedType.id
-                              ? { color: "blue" }
+                              ? { color: "var(--cool-blue)" }
                               : {}
                           }
                           onClick={async () => {
@@ -353,10 +355,11 @@ export default function Shop() {
               <div className="shop-side-options-brands">
                 {product.brands.map((eachBrand) => (
                   <div
+                    className="shop-side-option"
                     key={eachBrand.id}
                     style={
                       eachBrand.id === product.selectedBrand.id
-                        ? { color: "blue" }
+                        ? { color: "var(--cool-blue)" }
                         : {}
                     }
                     onClick={() =>
@@ -506,13 +509,14 @@ export default function Shop() {
                             >
                               {instanceElem.values.map((value) => (
                                 <div
+                                  className="shop-side-option"
                                   key={value.value}
                                   style={
                                     selectedInfoInstance.value ===
                                       value.value &&
                                     selectedInfoInstance.typeDefaultInfoId ===
                                       value.typeDefaultInfoId
-                                      ? { color: "blue" }
+                                      ? { color: "var(--cool-blue)" }
                                       : {}
                                   }
                                   onClick={() => {
@@ -577,6 +581,7 @@ export default function Shop() {
                       <div className="shop-main-container-top-sorting-options">
                         {productSortingValues.map((elem) => (
                           <div
+                            className="shop-main-container-top-option"
                             key={elem.value}
                             onClick={() => {
                               setWhatIsShown("");
@@ -615,6 +620,7 @@ export default function Shop() {
                       <div className="shop-main-container-top-sorting-options">
                         {productLimitValues.map((elem) => (
                           <div
+                            className="shop-main-container-top-option"
                             key={elem.value}
                             onClick={() => {
                               setWhatIsShown("");

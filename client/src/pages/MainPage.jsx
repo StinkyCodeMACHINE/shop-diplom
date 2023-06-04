@@ -91,7 +91,7 @@ export default function Shop() {
                   }));
                   navigate(SHOP_ROUTE);
                 }}
-                className="banner-img"
+                className="banner-img main-page-slider-img"
                 src={API_URL + BANNER_IMAGE_URL + banner.img}
               />
             ))}
@@ -107,30 +107,31 @@ export default function Shop() {
             centerMode={true}
             centerSlidePercentage={33.3}
           >
-            {displayed.brands.flatMap(
-              (brandElem, index) =>
-                index < 10 ? (
-                  <div
-                    onClick={async (e) => {
-                      await setProduct((oldProduct) => ({
-                        ...oldProduct,
-                        selectedBrand: brandElem,
-                        selectedGroup: {},
-                        selectedType: {},
-                      }));
-                      navigate(SHOP_ROUTE);
-                    }}
-                    className="main-page-slider-things-card"
-                  >
-                    <img
-                      src={
-                        brandElem.img
-                          ? API_URL + BRAND_IMAGE_URL + brandElem.img
-                          : "/assets/default-img.png"
-                      }
-                    />
-                  </div>
-                ) : []
+            {displayed.brands.flatMap((brandElem, index) =>
+              index < 10 ? (
+                <div
+                  onClick={async (e) => {
+                    await setProduct((oldProduct) => ({
+                      ...oldProduct,
+                      selectedBrand: brandElem,
+                      selectedGroup: {},
+                      selectedType: {},
+                    }));
+                    navigate(SHOP_ROUTE);
+                  }}
+                  className="main-page-slider-things-card"
+                >
+                  <img
+                    src={
+                      brandElem.img
+                        ? API_URL + BRAND_IMAGE_URL + brandElem.img
+                        : "/assets/default-img.png"
+                    }
+                  />
+                </div>
+              ) : (
+                []
+              )
             )}
           </Carousel>
         )}
@@ -144,33 +145,34 @@ export default function Shop() {
             centerMode={true}
             centerSlidePercentage={33.3}
           >
-            {displayed.types.flatMap(
-              (typeElem, index) =>
-                index < 10 ? (
-                  <div
-                    onClick={async (e) => {
-                      await setProduct((oldProduct) => ({
-                        ...oldProduct,
-                        selectedBrand: {},
-                        selectedGroup: {},
-                        selectedType: typeElem,
-                      }));
-                      navigate(SHOP_ROUTE);
-                    }}
-                    className="main-page-slider-things-card"
-                  >
-                    <img
-                      style={{height: "200px"}}
-                      src={
-                        typeElem.img
-                          ? API_URL + TYPE_IMAGE_URL + typeElem.img
-                          : "/assets/default-img.png"
-                      }
-                    />
-                    <div>{typeElem.name}</div>
-                  </div>
-                )
-                  : []
+            {displayed.types.flatMap((typeElem, index) =>
+              index < 10 ? (
+                <div
+                  onClick={async (e) => {
+                    await setProduct((oldProduct) => ({
+                      ...oldProduct,
+                      selectedBrand: {},
+                      selectedGroup: {},
+                      selectedType: typeElem,
+                    }));
+                    navigate(SHOP_ROUTE);
+                  }}
+                  className="main-page-slider-things-card"
+                >
+                  <img
+                    className="main-page-slider-img"
+                    style={{ height: "200px" }}
+                    src={
+                      typeElem.img
+                        ? API_URL + TYPE_IMAGE_URL + typeElem.img
+                        : "/assets/default-img.png"
+                    }
+                  />
+                  <div>{typeElem.name}</div>
+                </div>
+              ) : (
+                []
+              )
             )}
           </Carousel>
         )}

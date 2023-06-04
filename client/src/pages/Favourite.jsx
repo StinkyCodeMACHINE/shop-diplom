@@ -88,66 +88,73 @@ export default function Favourite() {
         <div className="favourite-inner-container">
           <div className="shop-main-container-top-options">
             <h2>Избранное</h2>
-            <div className="shop-main-container-top-option-container">
-              <div
-                onClick={() =>
-                  whatIsShown !== "limit"
-                    ? setWhatIsShown("limit")
-                    : setWhatIsShown("")
-                }
-              >
-                Показывать: <span>{product.limit}</span>
-              </div>
-              <img
-                style={
-                  whatIsShown !== "limit"
-                    ? { transform: "rotate(-270deg)" }
-                    : { transform: "rotate(-90deg)" }
-                }
-                src="/assets/drop-down-arrow.svg"
-                className="navbar-types-icon"
-              />
-              {whatIsShown === "limit" && (
-                <div className="shop-main-container-top-sorting-options">
-                  {productLimitValues.map((elem) => (
-                    <div
-                      key={elem.value}
-                      onClick={() => {
-                        setWhatIsShown("");
-                        setProduct((oldProduct) => ({
-                          ...oldProduct,
-                          limit: elem.value,
-                        }));
-                      }}
-                    >
-                      {elem.value}
-                    </div>
-                  ))}
+            {product.products.length > 0 && (
+              <div className="shop-main-container-top-option-container">
+                <div
+                  onClick={() =>
+                    whatIsShown !== "limit"
+                      ? setWhatIsShown("limit")
+                      : setWhatIsShown("")
+                  }
+                >
+                  Показывать: <span>{product.limit}</span>
                 </div>
-              )}
-            </div>
+                <img
+                  style={
+                    whatIsShown !== "limit"
+                      ? { transform: "rotate(-270deg)" }
+                      : { transform: "rotate(-90deg)" }
+                  }
+                  src="/assets/drop-down-arrow.svg"
+                  className="navbar-types-icon"
+                />
+                {whatIsShown === "limit" && (
+                  <div className="shop-main-container-top-sorting-options">
+                    {productLimitValues.map((elem) => (
+                      <div
+                        key={elem.value}
+                        onClick={() => {
+                          setWhatIsShown("");
+                          setProduct((oldProduct) => ({
+                            ...oldProduct,
+                            limit: elem.value,
+                          }));
+                        }}
+                      >
+                        {elem.value}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
           {product.types.length > 0 && (
-            <div className="product-cards">
-              {product.products.map((eachProduct) => (
-                <ProductCard
-                  key={eachProduct.id}
-                  id={eachProduct.id}
-                  typeId={eachProduct.typeId}
-                  brandId={eachProduct.brandId}
-                  img={eachProduct.img}
-                  rating={eachProduct.rating}
-                  name={eachProduct.name}
-                  price={eachProduct.price}
-                  discount={eachProduct.discount}
-                  isHyped={eachProduct.isHyped}
-                  left={eachProduct.left}
-                />
-              ))}
-            </div>
+            <>
+              <div className="product-cards">
+                {product.products.length > 0 &&
+                  product.products.map((eachProduct) => (
+                    <ProductCard
+                      key={eachProduct.id}
+                      id={eachProduct.id}
+                      typeId={eachProduct.typeId}
+                      brandId={eachProduct.brandId}
+                      img={eachProduct.img}
+                      rating={eachProduct.rating}
+                      name={eachProduct.name}
+                      price={eachProduct.price}
+                      discount={eachProduct.discount}
+                      isHyped={eachProduct.isHyped}
+                      left={eachProduct.left}
+                    />
+                  ))}
+              </div>
+              <div className="favourite-nothing-found">
+                <h3>Ничего не было найдено</h3>
+              </div>
+            </>
           )}
-
-          <Pagination />
+          {product.products.length > 0 && <Pagination />}
         </div>
       </div>
     )

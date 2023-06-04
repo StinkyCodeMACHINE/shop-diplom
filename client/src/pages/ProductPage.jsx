@@ -1,5 +1,5 @@
 import react, { useContext, useEffect, useState } from "react";
-import { useParams, useLocation, Link } from "react-router-dom";
+import { useParams, useLocation, Link, useNavigate } from "react-router-dom";
 import {
   getOneProduct,
   getFavouriteIds,
@@ -20,11 +20,13 @@ import {
   reviewLimitValues,
   reviewSortingValues,
   GROUP_TYPES_ROUTE,
+  COMPARE_ROUTE,
 } from "../utils/consts";
 import { Context } from "../App";
 import DefaultPagination from "../components/DefaultPagination";
 
 export default function ProductPage() {
+  const navigate = useNavigate();
   const [productElem, setProductElem] = useState({
     info: [],
     reviews: [],
@@ -197,7 +199,10 @@ export default function ProductPage() {
                       src={API_URL + PRODUCT_IMAGE_URL + imgElem}
                       style={
                         currentSelection === index
-                          ? { border: "1px solid blue" }
+                          ? {
+                              border:
+                                "1px solid var(--navbar-background-color)",
+                            }
                           : { border: "1px solid transparent" }
                       }
                       onClick={() => setCurrentSelection(index)}
@@ -205,16 +210,21 @@ export default function ProductPage() {
                   );
                 })}
               </div>
-              <img
-                src={
-                  productElem.img
-                    ? API_URL +
-                      PRODUCT_IMAGE_URL +
-                      productElem.img[currentSelection]
-                    : ""
-                }
-                className="product-page-img"
-              />
+              <div className="product-page-img-container">
+                <img
+                  src={
+                    productElem.img
+                      ? API_URL +
+                        PRODUCT_IMAGE_URL +
+                        productElem.img[currentSelection]
+                      : ""
+                  }
+                  className="product-page-img"
+                />
+                {productElem.isHyped && (
+                  <img className="product-hit-icon" src="/assets/hit.png" />
+                )}
+              </div>
             </div>
           </div>
 
@@ -281,7 +291,7 @@ export default function ProductPage() {
           <div className="productElem-page-add-to-card-container">
             <div className="product-price-and-discount">
               {productElem.discount && productElem.discount !== 1 && (
-                <div>
+                <div className="discounted-price">
                   {Math.ceil(productElem.price * productElem.discount)
                     .toString()
                     .replace(/\B(?=(\d{3})+(?!\d))/g, " ")}
@@ -342,7 +352,7 @@ export default function ProductPage() {
                 onMouseLeave={async () => {
                   setIsHoveredOver(false);
                 }}
-                className="product-heart-container"
+                className="product-option-container"
               >
                 <div className="product-heart-icon-container">
                   <img
@@ -356,10 +366,10 @@ export default function ProductPage() {
                         (elem) => elem.productId === Number(id)
                       )
                         ? isHoveredOver
-                          ? { opacity: 0, transition: "600ms opacity ease-in" }
+                          ? { opacity: 0, transition: "500ms opacity ease-in" }
                           : { opacity: 1 }
                         : isHoveredOver
-                        ? { opacity: 1, transition: "600ms opacity ease-in" }
+                        ? { opacity: 1, transition: "500ms opacity ease-in" }
                         : {}
                     }
                     src="/assets/fheart.svg"
@@ -384,7 +394,7 @@ export default function ProductPage() {
                   }));
                 }
               }}
-              className="product-heart-container"
+              className="product-option-container"
             >
               <img
                 className="product-heart product-heart-empty"
@@ -396,7 +406,6 @@ export default function ProductPage() {
                   : "Добавить в корзину"}
               </div>
             </div>
-            {/* <button>Добавить в корзину</button> */}
 
             <div
               onClick={async () => {
@@ -425,16 +434,14 @@ export default function ProductPage() {
                   }
                 }
               }}
-              className="product-heart-container"
+              className="product-option-container"
             >
               <img
                 style={{
                   width: "30px",
                   height: "30px",
-                  filter:
-                    "invert(49%) sepia(85%) saturate(557%) hue-rotate(165deg) brightness(95%) contrast(95%)",
                 }}
-                className="product-heart product-heart-empty"
+                className="compare-icon"
                 src="/assets/scale.png"
               />
               <div>
@@ -492,6 +499,7 @@ export default function ProductPage() {
                 <div className="shop-main-container-top-sorting-options">
                   {reviewSortingValues.map((elem) => (
                     <div
+                      className="shop-main-container-top-option"
                       key={elem.value}
                       onClick={async () => {
                         await setWhatIsShown("");
@@ -529,6 +537,7 @@ export default function ProductPage() {
                   <div className="shop-main-container-top-sorting-options">
                     {reviewLimitValues.map((elem) => (
                       <div
+                        className="shop-main-container-top-option"
                         key={elem.value}
                         onClick={async () => {
                           await setWhatIsShown("");
@@ -579,12 +588,14 @@ export default function ProductPage() {
                   />
                 );
               })}
-              <DefaultPagination
-                page={page}
-                setPage={setPage}
-                limit={displayOptions.limit.value}
-                totalCount={productElem.reviewCount.totalCount}
-              />
+              <div className="product-page-pagination-container">
+                <DefaultPagination
+                  page={page}
+                  setPage={setPage}
+                  limit={displayOptions.limit.value}
+                  totalCount={productElem.reviewCount.totalCount}
+                />
+              </div>
             </div>
           ) : (
             <h2>Отзывов пока нет!</h2>

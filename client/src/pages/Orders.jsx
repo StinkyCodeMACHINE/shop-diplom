@@ -117,38 +117,46 @@ export default function Cart() {
               );
             })}
             <div className="order-results">
+              <div className="order-results-overall">Итого: </div>
               <div>
-                Товаров:{" "}
-                {orderElem.orderProducts.reduce(
-                  (totalAmount, elem) => totalAmount + elem.amount,
-                  0
-                )}
-              </div>
-              <div>
-                Сумма:{" "}
-                {orderElem.money
-                  .toString()
-                  .replace(/\B(?=(\d{3})+(?!\d))/g, " ")}
-                &#x20BD;
-              </div>
-              <div>
-                Адрес: <span>{orderElem.address}</span>
-              </div>
-              <div>
-                Дата оформления:{" "}
-                {`${new Date(orderElem.createdAt).getDate()}.${new Date(
-                  orderElem.createdAt
-                ).getMonth()}.${new Date(orderElem.createdAt).getFullYear()}`}
-              </div>
-              <div>
-                Статус: <span>{orderElem.status.toLowerCase()}</span>
+                <div>
+                  Товаров:{" "}
+                  {orderElem.orderProducts.reduce(
+                    (totalAmount, elem) => totalAmount + elem.amount,
+                    0
+                  )}
+                </div>
+                <div>
+                  Сумма:{" "}
+                  {orderElem.money
+                    .toString()
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, " ")}
+                  &#x20BD;
+                </div>
+                <div>
+                  Адрес: <span>{orderElem.address}</span>
+                </div>
+                <div>
+                  Дата оформления:{" "}
+                  {`${new Date(orderElem.createdAt).getDate()}.${new Date(
+                    orderElem.createdAt
+                  ).getMonth()}.${new Date(orderElem.createdAt).getFullYear()}`}
+                </div>
+                <div>
+                  Статус: <span>{orderElem.status.toLowerCase()}</span>
+                </div>
               </div>
             </div>
           </div>
         ))}
-      {orders.length > 0 &&
-        <DefaultPagination page={page} setPage={setPage} limit={limit} totalCount={totalCount}/>
-      }
+      {orders.length > 0 && (
+        <DefaultPagination
+          page={page}
+          setPage={setPage}
+          limit={limit}
+          totalCount={totalCount}
+        />
+      )}
     </div>
   );
 }

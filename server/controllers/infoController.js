@@ -1,4 +1,4 @@
-const { productInfo } = require("../db/models");
+const { productInfo, product } = require("../db/models");
 const { Sequelize } = require("sequelize");
 const { Op } = require("sequelize");
 
@@ -13,6 +13,7 @@ async function getInstances(req, res) {
     where: {
       typeDefaultInfoId: keyId,
     },
+    
     group: ["value", "typeDefaultInfoId"],
     order: [["count", "DESC"]],
   });

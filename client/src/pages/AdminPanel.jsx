@@ -49,7 +49,7 @@ export default function AdminPanel() {
   const { product, setProduct, setWhatIsShown, whatIsShown } =
     useContext(Context);
   const [options, setOptions] = useState("");
-  const [searchValue, setSearchValueu] = useState("");
+  const [searchValue, setSearchValue] = useState("");
 
   const [page, setPage] = useState(1);
   const [prevThing, setPrevThing] = useState({});
@@ -364,33 +364,80 @@ export default function AdminPanel() {
           </div>
           <div className="admin-page-options">
             {options === "groups" && (
-              <button onClick={() => setWhatIsShown("group")}>
-                Добавить новую группу
-              </button>
+              <div
+                onClick={() => setWhatIsShown("group")}
+                className="product-option-container"
+              >
+                <div className="product-heart-icon-container">
+                  <img
+                    className="product-heart product-heart-empty"
+                    src="/assets/add.png"
+                  />
+                </div>
+
+                <div className="product-heart-text">Добавить новую группу</div>
+              </div>
             )}
             {options === "types" && (
-              <button onClick={() => setWhatIsShown("type")}>
-                Добавить новый тип
-              </button>
+              <div
+                onClick={() => setWhatIsShown("type")}
+                className="product-option-container"
+              >
+                <div className="product-heart-icon-container">
+                  <img
+                    className="product-heart product-heart-empty"
+                    src="/assets/add.png"
+                  />
+                </div>
+
+                <div className="product-heart-text">Добавить новый тип</div>
+              </div>
             )}
             {options === "brands" && (
-              <button onClick={() => setWhatIsShown("brand")}>
-                Добавить новый бренд
-              </button>
+              <div
+                oonClick={() => setWhatIsShown("brand")}
+                className="product-option-container"
+              >
+                <div className="product-heart-icon-container">
+                  <img
+                    className="product-heart product-heart-empty"
+                    src="/assets/add.png"
+                  />
+                </div>
+
+                <div className="product-heart-text">Добавить новый бренд</div>
+              </div>
             )}
             {options === "products" && (
-              <button onClick={() => setWhatIsShown("product")}>
-                Добавить новый товар
-              </button>
+              <div
+                oonClick={() => setWhatIsShown("product")}
+                className="product-option-container"
+              >
+                <div className="product-heart-icon-container">
+                  <img
+                    className="product-heart product-heart-empty"
+                    src="/assets/add.png"
+                  />
+                </div>
+
+                <div className="product-heart-text">Добавить новый товар</div>
+              </div>
             )}
             {options === "banners" && (
-              <button onClick={() => setWhatIsShown("banner")}>
-                Добавить новый баннер
-              </button>
-            )}
+              <div
+                oonClick={() => setWhatIsShown("banner")}
+                className="product-option-container"
+              >
+                <div className="product-heart-icon-container">
+                  <img
+                    className="product-heart product-heart-empty"
+                    src="/assets/add.png"
+                  />
+                </div>
 
-            {options === "orders" && <button></button>}
-            {options === "reviews" && <button></button>}
+                <div className="product-heart-text">Добавить новый баннер</div>
+              </div>
+            )}
           </div>
           {options !== "" && (
             <div className="admin-page-table">
@@ -485,9 +532,17 @@ export default function AdminPanel() {
                                 await setPrevThing(elem);
                                 await setWhatIsShown("changeGroup");
                               }}
-                              className="admin-page-table-option"
+                              className="product-option-container"
                             >
-                              Изменить
+                              <div className="product-heart-icon-container">
+                                <img
+                                  style={{ width: "30px", height: "30px" }}
+                                  className="product-heart product-heart-empty"
+                                  src="/assets/settings.png"
+                                />
+                              </div>
+
+                              <div className="product-heart-text">Изменить</div>
                             </div>
                           </td>
                           <td>
@@ -504,9 +559,21 @@ export default function AdminPanel() {
                                   totalCount: dataArray.count,
                                 });
                               }}
-                              className="admin-page-table-option"
+                              className="product-option-container"
                             >
-                              Удалить
+                              <div className="product-heart-icon-container">
+                                <img
+                                  style={{
+                                    width: "30px",
+                                    height: "30px",
+                                    filter: "var(--cred-filter)",
+                                  }}
+                                  className="product-heart product-heart-empty"
+                                  src="/assets/delete.png"
+                                />
+                              </div>
+
+                              <div className="product-heart-text">Удалить</div>
                             </div>
                           </td>
                         </tr>
@@ -547,9 +614,17 @@ export default function AdminPanel() {
                                 await setPrevThing(elem);
                                 await setWhatIsShown("changeType");
                               }}
-                              className="admin-page-table-option"
+                              className="product-option-container"
                             >
-                              Изменить
+                              <div className="product-heart-icon-container">
+                                <img
+                                  style={{ width: "30px", height: "30px" }}
+                                  className="product-heart product-heart-empty"
+                                  src="/assets/settings.png"
+                                />
+                              </div>
+
+                              <div className="product-heart-text">Изменить</div>
                             </div>
                           </td>
                           <td>
@@ -566,9 +641,21 @@ export default function AdminPanel() {
                                   totalCount: dataArray.count,
                                 });
                               }}
-                              className="admin-page-table-option"
+                              className="product-option-container"
                             >
-                              Удалить
+                              <div className="product-heart-icon-container">
+                                <img
+                                  style={{
+                                    width: "30px",
+                                    height: "30px",
+                                    filter: "var(--cred-filter)",
+                                  }}
+                                  className="product-heart product-heart-empty"
+                                  src="/assets/delete.png"
+                                />
+                              </div>
+
+                              <div className="product-heart-text">Удалить</div>
                             </div>
                           </td>
                         </tr>
@@ -609,9 +696,17 @@ export default function AdminPanel() {
                                 await setPrevThing(elem);
                                 await setWhatIsShown("changeBrand");
                               }}
-                              className="admin-page-table-option"
+                              className="product-option-container"
                             >
-                              Изменить
+                              <div className="product-heart-icon-container">
+                                <img
+                                  style={{ width: "30px", height: "30px" }}
+                                  className="product-heart product-heart-empty"
+                                  src="/assets/settings.png"
+                                />
+                              </div>
+
+                              <div className="product-heart-text">Изменить</div>
                             </div>
                           </td>
                           <td>
@@ -628,9 +723,21 @@ export default function AdminPanel() {
                                   totalCount: dataArray.count,
                                 });
                               }}
-                              className="admin-page-table-option"
+                              className="product-option-container"
                             >
-                              Удалить
+                              <div className="product-heart-icon-container">
+                                <img
+                                  style={{
+                                    width: "30px",
+                                    height: "30px",
+                                    filter: "var(--cred-filter)",
+                                  }}
+                                  className="product-heart product-heart-empty"
+                                  src="/assets/delete.png"
+                                />
+                              </div>
+
+                              <div className="product-heart-text">Удалить</div>
                             </div>
                           </td>
                         </tr>
@@ -724,9 +831,17 @@ export default function AdminPanel() {
                                 await setPrevThing(elem);
                                 await setWhatIsShown("changeProduct");
                               }}
-                              className="admin-page-table-option"
+                              className="product-option-container"
                             >
-                              Изменить
+                              <div className="product-heart-icon-container">
+                                <img
+                                  style={{ width: "30px", height: "30px" }}
+                                  className="product-heart product-heart-empty"
+                                  src="/assets/settings.png"
+                                />
+                              </div>
+
+                              <div className="product-heart-text">Изменить</div>
                             </div>
                           </td>
                           <td>
@@ -743,9 +858,21 @@ export default function AdminPanel() {
                                   totalCount: dataArray.count,
                                 });
                               }}
-                              className="admin-page-table-option"
+                              className="product-option-container"
                             >
-                              Удалить
+                              <div className="product-heart-icon-container">
+                                <img
+                                  style={{
+                                    width: "30px",
+                                    height: "30px",
+                                    filter: "var(--cred-filter)",
+                                  }}
+                                  className="product-heart product-heart-empty"
+                                  src="/assets/delete.png"
+                                />
+                              </div>
+
+                              <div className="product-heart-text">Удалить</div>
                             </div>
                           </td>
                         </tr>
@@ -816,107 +943,133 @@ export default function AdminPanel() {
                           })}
                         <div className="order-results">
                           <div>
-                            Товаров:{" "}
-                            {orderElem.orderProducts.reduce(
-                              (totalAmount, elem) => totalAmount + elem.amount,
-                              0
-                            )}
-                          </div>
-                          <div>
-                            Сумма:{" "}
-                            {orderElem.money
-                              .toString()
-                              .replace(/\B(?=(\d{3})+(?!\d))/g, " ")}
-                            &#x20BD;
-                          </div>
-                          <div>
-                            Адрес: <span>{orderElem.address}</span>
-                          </div>
-                          <div>
-                            Дата оформления:{" "}
-                            {`${new Date(
-                              orderElem.createdAt
-                            ).getDate()}.${new Date(
-                              orderElem.createdAt
-                            ).getMonth()}.${new Date(
-                              orderElem.createdAt
-                            ).getFullYear()}`}
-                          </div>
-                          <div>
-                            Статус:{" "}
-                            <span>{orderElem.status.toLowerCase()}</span>
-                          </div>
-                          <div>Телефон: {orderElem.phone} </div>
-                          <div>Адрес: {orderElem.address} </div>
-                          <div>Почта: {orderElem.email}</div>
-                          <div>ФИО: {orderElem.name}</div>
-                        </div>
-                        <div>
-                          <div
-                            onClick={async () => {
-                              await changeOrderStatus({ id: orderElem.id });
-                              let orders = await getAllOrders({
-                                name: searchValue,
-                              });
-                              orders = orders.flatMap((elem) =>
-                                elem.orderProducts.length === 0 ? [] : elem
-                              );
-                              const totalCount = orders.length;
-                              let limitedOrders = [];
+                            <div
+                              onClick={async () => {
+                                await changeOrderStatus({ id: orderElem.id });
+                                let orders = await getAllOrders({
+                                  name: searchValue,
+                                });
+                                orders = orders.flatMap((elem) =>
+                                  elem.orderProducts.length === 0 ? [] : elem
+                                );
+                                const totalCount = orders.length;
+                                let limitedOrders = [];
 
-                              //
-                              let offset = page * limit - limit;
-                              for (
-                                let i = offset;
-                                i < offset + limit && i < orders.length;
-                                i++
-                              ) {
-                                limitedOrders.push(orders[i]);
-                              }
+                                //
+                                let offset = page * limit - limit;
+                                for (
+                                  let i = offset;
+                                  i < offset + limit && i < orders.length;
+                                  i++
+                                ) {
+                                  limitedOrders.push(orders[i]);
+                                }
 
-                              //
-                              await setDisplayed({
-                                what: "orders",
-                                data: limitedOrders,
-                                totalCount,
-                              });
-                            }}
-                            className="admin-page-table-option"
-                          >
-                            Изменить статус заказа
+                                //
+                                await setDisplayed({
+                                  what: "orders",
+                                  data: limitedOrders,
+                                  totalCount,
+                                });
+                              }}
+                              className="product-option-container"
+                            >
+                              <div className="product-heart-icon-container">
+                                <img
+                                  style={{ width: "30px", height: "30px" }}
+                                  className="product-heart product-heart-empty"
+                                  src="/assets/settings.png"
+                                />
+                              </div>
+
+                              <div className="product-heart-text">
+                                Изменить статус заказа
+                              </div>
+                            </div>
+
+                            <div
+                              onClick={async () => {
+                                await deleteOrder({ id: orderElem.id });
+                                let orders = await getAllOrders({
+                                  name: searchValue,
+                                });
+                                orders = orders.flatMap((elem) =>
+                                  elem.orderProducts.length === 0 ? [] : elem
+                                );
+                                const totalCount = orders.length;
+                                let limitedOrders = [];
+
+                                //
+                                let offset = page * limit - limit;
+                                for (
+                                  let i = offset;
+                                  i < offset + limit && i < orders.length;
+                                  i++
+                                ) {
+                                  limitedOrders.push(orders[i]);
+                                }
+
+                                //
+                                await setDisplayed({
+                                  what: "orders",
+                                  data: limitedOrders,
+                                  totalCount,
+                                });
+                              }}
+                              className="product-option-container"
+                            >
+                              <div className="product-heart-icon-container">
+                                <img
+                                  style={{
+                                    width: "30px",
+                                    height: "30px",
+                                    filter: "var(--cred-filter)",
+                                  }}
+                                  className="product-heart product-heart-empty"
+                                  src="/assets/delete.png"
+                                />
+                              </div>
+
+                              <div className="product-heart-text">Удалить</div>
+                            </div>
                           </div>
-                          <div
-                            onClick={async () => {
-                              await deleteOrder({ id: orderElem.id });
-                              let orders = await getAllOrders({
-                                name: searchValue,
-                              });
-                              orders = orders.flatMap((elem) =>
-                                elem.orderProducts.length === 0 ? [] : elem
-                              );
-                              const totalCount = orders.length;
-                              let limitedOrders = [];
-
-                              //
-                              let offset = page * limit - limit;
-                              for (
-                                let i = offset;
-                                i < offset + limit && i < orders.length;
-                                i++
-                              ) {
-                                limitedOrders.push(orders[i]);
-                              }
-
-                              //
-                              await setDisplayed({
-                                what: "orders",
-                                data: limitedOrders,
-                                totalCount,
-                              });
-                            }}
-                            className="admin-page-table-option"
-                          >
-                            Удалить
+                          <div className="admin-panel-order-results">
+                            <div>
+                              Товаров:{" "}
+                              {orderElem.orderProducts.reduce(
+                                (totalAmount, elem) =>
+                                  totalAmount + elem.amount,
+                                0
+                              )}
+                            </div>
+                            <div>
+                              Сумма:{" "}
+                              {orderElem.money
+                                .toString()
+                                .replace(/\B(?=(\d{3})+(?!\d))/g, " ")}
+                              &#x20BD;
+                            </div>
+                            <div>
+                              Адрес: <span>{orderElem.address}</span>
+                            </div>
+                            <div>
+                              Дата оформления:{" "}
+                              {`${new Date(
+                                orderElem.createdAt
+                              ).getDate()}.${new Date(
+                                orderElem.createdAt
+                              ).getMonth()}.${new Date(
+                                orderElem.createdAt
+                              ).getFullYear()}`}
+                            </div>
+                            <div>
+                              Статус:{" "}
+                              <span>{orderElem.status.toLowerCase()}</span>
+                            </div>
+                            <div>Телефон: {orderElem.phone} </div>
+                            <div>Адрес: {orderElem.address} </div>
+                            <div>Почта: {orderElem.email}</div>
+                            <div>ФИО: {orderElem.name}</div>
                           </div>
                         </div>
                       </div>
@@ -1000,9 +1153,21 @@ export default function AdminPanel() {
                                   totalCount: dataArray.count,
                                 });
                               }}
-                              className="admin-page-table-option"
+                              className="product-option-container"
                             >
-                              Удалить
+                              <div className="product-heart-icon-container">
+                                <img
+                                  style={{
+                                    width: "30px",
+                                    height: "30px",
+                                    filter: "var(--cred-filter)",
+                                  }}
+                                  className="product-heart product-heart-empty"
+                                  src="/assets/delete.png"
+                                />
+                              </div>
+
+                              <div className="product-heart-text">Удалить</div>
                             </div>
                           </td>
                         </tr>
@@ -1061,9 +1226,17 @@ export default function AdminPanel() {
                                 await setPrevThing(elem);
                                 await setWhatIsShown("changeBanner");
                               }}
-                              className="admin-page-table-option"
+                              className="product-option-container"
                             >
-                              Изменить
+                              <div className="product-heart-icon-container">
+                                <img
+                                  style={{ width: "30px", height: "30px" }}
+                                  className="product-heart product-heart-empty"
+                                  src="/assets/settings.png"
+                                />
+                              </div>
+
+                              <div className="product-heart-text">Изменить</div>
                             </div>
                           </td>
                           <td>
@@ -1082,9 +1255,21 @@ export default function AdminPanel() {
                                   totalCount: dataArray.length,
                                 });
                               }}
-                              className="admin-page-table-option"
+                              className="product-option-container"
                             >
-                              Удалить
+                              <div className="product-heart-icon-container">
+                                <img
+                                  style={{
+                                    width: "30px",
+                                    height: "30px",
+                                    filter: "var(--cred-filter)",
+                                  }}
+                                  className="product-heart product-heart-empty"
+                                  src="/assets/delete.png"
+                                />
+                              </div>
+
+                              <div className="product-heart-text">Удалить</div>
                             </div>
                           </td>
                         </tr>

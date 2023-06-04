@@ -1,7 +1,12 @@
 import react, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Context } from "../../App";
-import { API_URL, COMPARE_ROUTE, PRODUCT_IMAGE_URL, PRODUCT_ROUTE } from "../../utils/consts";
+import {
+  API_URL,
+  COMPARE_ROUTE,
+  PRODUCT_IMAGE_URL,
+  PRODUCT_ROUTE,
+} from "../../utils/consts";
 import {
   addToFavourite,
   removeFromFavourite,
@@ -18,14 +23,14 @@ export default function ProductCard({
   price,
   discount,
   isHyped,
-  left
+  left,
 }) {
   const { product, setProduct, user } = useContext(Context);
 
-  const [isHoveredOver, setIsHoveredOver] = useState(false)
+  const [isHoveredOver, setIsHoveredOver] = useState(false);
 
   const navigate = useNavigate();
-  
+
   return (
     <div className="product-card">
       <img
@@ -34,9 +39,13 @@ export default function ProductCard({
         src={API_URL + PRODUCT_IMAGE_URL + img[0]}
       />
       <div className="type-and-rating">
-        <div className="type-brand">
-          <div>{product.types.find((type) => type.id === typeId).name}</div>
-          <div>{product.brands.find((brand) => brand.id === brandId).name}</div>
+        <div>
+          <div className="type-brand">
+            {product.types.find((type) => type.id === typeId).name}
+          </div>
+          <div className="type-brand">
+            {product.brands.find((brand) => brand.id === brandId).name}
+          </div>
         </div>
         <div className="rating">
           {rating > 0 ? (
@@ -64,7 +73,7 @@ export default function ProductCard({
         className="product-price-and-discount"
       >
         {discount && discount !== 1 && (
-          <div>
+          <div className="discounted-price">
             {Math.ceil(price * discount)
               .toString()
               .replace(/\B(?=(\d{3})+(?!\d))/g, " ")}
@@ -113,7 +122,7 @@ export default function ProductCard({
               onMouseLeave={async () => {
                 setIsHoveredOver(false);
               }}
-              className="product-heart-container"
+              className="product-option-container"
             >
               <div className="product-heart-icon-container">
                 <img
@@ -129,10 +138,10 @@ export default function ProductCard({
                   style={
                     product.favourite.find((elem) => elem.productId === id)
                       ? isHoveredOver
-                        ? { opacity: 0, transition: "600ms opacity ease-in" }
+                        ? { opacity: 0, transition: "500ms opacity ease-in" }
                         : { opacity: 1 }
                       : isHoveredOver
-                      ? { opacity: 1, transition: "600ms opacity ease-in" }
+                      ? { opacity: 1, transition: "500ms opacity ease-in" }
                       : {}
                   }
                   src="/assets/fheart.svg"
@@ -159,7 +168,7 @@ export default function ProductCard({
                   }));
                 }
               }}
-              className="product-heart-container"
+              className="product-option-container"
             >
               <img
                 className="product-heart product-heart-empty"
@@ -198,16 +207,14 @@ export default function ProductCard({
                   }
                 }
               }}
-              className="product-heart-container"
+              className="product-option-container"
             >
               <img
                 style={{
                   width: "30px",
                   height: "30px",
-                  filter:
-                    "invert(49%) sepia(85%) saturate(557%) hue-rotate(165deg) brightness(95%) contrast(95%)",
                 }}
-                className="product-heart product-heart-empty"
+                className="compare-icon"
                 src="/assets/scale.png"
               />
               <div>
@@ -219,7 +226,14 @@ export default function ProductCard({
 
             {/* добавить в корзину */}
 
-            <div>Доставка: в течение недели</div>
+            <div>
+              Доставка:{" "}
+              <span className="product-delivery-date">в течение недели</span>
+            </div>
+
+            {isHyped && (
+              <img className="product-hit-icon" src="/assets/hit.png" />
+            )}
           </>
         )}
       </div>

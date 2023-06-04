@@ -37,7 +37,10 @@ export default function DefaultPagination({ page, setPage, limit, totalCount }) 
   return (
     <div className="pagination">
       <div className="page-number" onClick={async () => await setPage(1)}>
-        {"<<"}
+        <img
+          className="pagination-arrow pagination-arrow-left"
+          src="/assets/double-arrow.png"
+        />
       </div>
       <div
         className="page-number"
@@ -45,14 +48,22 @@ export default function DefaultPagination({ page, setPage, limit, totalCount }) 
           await setPage((oldPage) => (oldPage > 1 ? oldPage - 1 : oldPage));
         }}
       >
-        {"<"}
+        <img
+          className="pagination-arrow pagination-arrow-left"
+          src="/assets/arrow.png"
+        />
       </div>
       {pages.map((pageElem) => (
         <div
           key={pageElem}
           onClick={async () => await setPage(pageElem)}
           style={
-            pageElem === page ? { backgroundColor: "blue", color: "white" } : {}
+            pageElem === page
+              ? {
+                  backgroundColor: "var(--cool-blue)",
+                  color: "white",
+                }
+              : {}
           }
           className="page-number"
         >
@@ -68,13 +79,13 @@ export default function DefaultPagination({ page, setPage, limit, totalCount }) 
           )
         }
       >
-        {">"}
+        <img className="pagination-arrow" src="/assets/arrow.png" />
       </div>
       <div
         className="page-number"
         onClick={async () => await setPage(pageCount)}
       >
-        {">>"}
+        <img className="pagination-arrow" src="/assets/double-arrow.png" />
       </div>
     </div>
   );

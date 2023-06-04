@@ -8,25 +8,33 @@ export default function Pagination() {
 
   const pageCount = Math.ceil(product.totalCount / product.limit);
   const pages = [];
-  const pageLimit = 7
-  let pagesLeft = pageLimit-1
-  for (let i = 1; i <= pageLimit/2 && (product.page-i) > 0; i++) {
-    pages.unshift(product.page-i)
-    pagesLeft = pagesLeft - 1
+  const pageLimit = 7;
+  let pagesLeft = pageLimit - 1;
+  for (let i = 1; i <= pageLimit / 2 && product.page - i > 0; i++) {
+    pages.unshift(product.page - i);
+    pagesLeft = pagesLeft - 1;
   }
-  pages.push(product.page)
-  for (let i = 1; i <= pageLimit / 2 && (product.page + i) <= pageCount; i++) {
+  pages.push(product.page);
+  for (let i = 1; i <= pageLimit / 2 && product.page + i <= pageCount; i++) {
     pages.push(product.page + i);
-    pagesLeft = pagesLeft - 1
+    pagesLeft = pagesLeft - 1;
   }
   if (pagesLeft > 0) {
-    for (let i = Math.ceil(pageLimit/2); product.page - i > 0 && pagesLeft>0; i++) {
+    for (
+      let i = Math.ceil(pageLimit / 2);
+      product.page - i > 0 && pagesLeft > 0;
+      i++
+    ) {
       pages.unshift(product.page - i);
-          pagesLeft = pagesLeft - 1;
+      pagesLeft = pagesLeft - 1;
     }
-    for (let i = Math.ceil(pageLimit / 2); product.page + i <= pageCount && pagesLeft>0; i++) {
+    for (
+      let i = Math.ceil(pageLimit / 2);
+      product.page + i <= pageCount && pagesLeft > 0;
+      i++
+    ) {
       pages.push(product.page + i);
-          pagesLeft = pagesLeft - 1;
+      pagesLeft = pagesLeft - 1;
     }
   }
 
@@ -36,7 +44,10 @@ export default function Pagination() {
         className="page-number"
         onClick={() => setProduct((oldProduct) => ({ ...oldProduct, page: 1 }))}
       >
-        {"<<"}
+        <img
+          className="pagination-arrow pagination-arrow-left"
+          src="/assets/double-arrow.png"
+        />
       </div>
       <div
         className="page-number"
@@ -47,7 +58,10 @@ export default function Pagination() {
           }));
         }}
       >
-        {"<"}
+        <img
+          className="pagination-arrow pagination-arrow-left"
+          src="/assets/arrow.png"
+        />
       </div>
       {pages.map((page) => (
         <div
@@ -57,7 +71,10 @@ export default function Pagination() {
           }
           style={
             product.page === page
-              ? { backgroundColor: "blue", color: "white" }
+              ? {
+                  backgroundColor: "var(--cool-blue)",
+                  color: "white",
+                }
               : {}
           }
           className="page-number"
@@ -78,7 +95,7 @@ export default function Pagination() {
           }))
         }
       >
-        {">"}
+        <img className="pagination-arrow" src="/assets/arrow.png" />
       </div>
       <div
         className="page-number"
@@ -89,7 +106,7 @@ export default function Pagination() {
           }))
         }
       >
-        {">>"}
+        <img className="pagination-arrow" src="/assets/double-arrow.png" />
       </div>
     </div>
   );

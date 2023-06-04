@@ -44,7 +44,10 @@ export default function Pagination() {
         className="page-number"
         onClick={() => setProduct((oldProduct) => ({ ...oldProduct, page: 1 }))}
       >
-        {"<<"}
+        <img
+          className="pagination-arrow pagination-arrow-left"
+          src="/assets/double-arrow.png"
+        />
       </div>
       <div
         className="page-number"
@@ -55,7 +58,10 @@ export default function Pagination() {
           }));
         }}
       >
-        {"<"}
+        <img
+          className="pagination-arrow pagination-arrow-left"
+          src="/assets/arrow.png"
+        />
       </div>
       {pages.map((page) => (
         <div
@@ -65,7 +71,10 @@ export default function Pagination() {
           }
           style={
             product.page === page
-              ? { backgroundColor: "blue", color: "white" }
+              ? {
+                  backgroundColor: "var(--cool-blue)",
+                  color: "white",
+                }
               : {}
           }
           className="page-number"
@@ -86,7 +95,7 @@ export default function Pagination() {
           }))
         }
       >
-        {">"}
+        <img className="pagination-arrow" src="/assets/arrow.png" />
       </div>
       <div
         className="page-number"
@@ -97,7 +106,7 @@ export default function Pagination() {
           }))
         }
       >
-        {">>"}
+        <img className="pagination-arrow" src="/assets/double-arrow.png" />
       </div>
     </div>
   );

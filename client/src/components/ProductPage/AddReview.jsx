@@ -6,7 +6,11 @@ import {
   countReviews,
 } from "../../API/productAPI";
 
-export default function AddReview({ productElem, setProductElem, displayOptions }) {
+export default function AddReview({
+  productElem,
+  setProductElem,
+  displayOptions,
+}) {
   const [existingReview, setExistingReview] = useState({});
   const [inputValues, setInputValues] = useState({
     text: "",
@@ -115,25 +119,28 @@ export default function AddReview({ productElem, setProductElem, displayOptions 
   return (
     <>
       {existingReview && Object.keys(existingReview).length > 0 ? (
-        <div>
-          {starsArr.map((star) => (
-            <img
-              key={star}
-              className="product-rating-star-icon"
-              src={
-                star <= inputValues.currentReviewRating
-                  ? "/assets/fratingstar.png"
-                  : "/assets/eratingstar.png"
-              }
-            />
-          ))}
-          Ваш отзыв уже существует!{" "}
+        <div className="product-your-rating">
+          Ваша оценка:{" "}
+          <div>
+            {starsArr.map((star) => (
+              <img
+                key={star}
+                className="product-rating-star-icon"
+                src={
+                  star <= inputValues.currentReviewRating
+                    ? "/assets/fratingstar.png"
+                    : "/assets/eratingstar.png"
+                }
+              />
+            ))}
+          </div>
           <span onClick={changeReview}>Изменить?</span>
         </div>
       ) : (
         <div className="product-page-add-rating-container">
           <h3>Оставьте свой отзыв:</h3>
           <form>
+            <h4>Оценка</h4>
             <div className="product-page-add-rating-stars-container">
               {starsArr.map((star) => {
                 return (
@@ -173,57 +180,86 @@ export default function AddReview({ productElem, setProductElem, displayOptions 
               })}
             </div>
 
-            <textarea
-              className="product-page-add-rating-text"
-              maxLength="1000"
-              placeholder="Опишите преимущества"
-              value={inputValues.advantages}
-              onChange={(e) =>
-                setInputValues((oldInputValues) => ({
-                  ...oldInputValues,
-                  advantages: e.target.value,
-                  advantagesLength: e.target.value.length,
-                }))
-              }
-            ></textarea>
+            <h4>Преимущества</h4>
+            <div className="product-page-rating-text-and-counter-container">
+              <textarea
+                rows="6"
+                className="product-page-add-rating-text"
+                maxLength="1000"
+                placeholder="Опишите преимущества"
+                value={inputValues.advantages}
+                onChange={(e) =>
+                  setInputValues((oldInputValues) => ({
+                    ...oldInputValues,
+                    advantages: e.target.value,
+                    advantagesLength: e.target.value.length,
+                  }))
+                }
+              ></textarea>
 
-            <div>Осталось символов: {1000 - inputValues.advantagesLength}</div>
-
-            <textarea
-              className="product-page-add-rating-text"
-              maxLength="1000"
-              placeholder="Опишите недостатки"
-              value={inputValues.disadvantages}
-              onChange={(e) =>
-                setInputValues((oldInputValues) => ({
-                  ...oldInputValues,
-                  disadvantages: e.target.value,
-                  disadvantagesLength: e.target.value.length,
-                }))
-              }
-            ></textarea>
-
-            <div>
-              Осталось символов: {1000 - inputValues.disadvantagesLength}
+              <div className="product-page-add-rating-counter">
+                Осталось символов: {1000 - inputValues.advantagesLength}
+              </div>
             </div>
 
-            <textarea
-              className="product-page-add-rating-text"
-              maxLength="1000"
-              placeholder="Введите текст отзыва"
-              value={inputValues.text}
-              onChange={(e) =>
-                setInputValues((oldInputValues) => ({
-                  ...oldInputValues,
-                  text: e.target.value,
-                  textLength: e.target.value.length,
-                }))
-              }
-            ></textarea>
+            <h4>Недостатки</h4>
+            <div className="product-page-rating-text-and-counter-container">
+              <textarea
+                rows="6"
+                className="product-page-add-rating-text"
+                maxLength="1000"
+                placeholder="Опишите недостатки"
+                value={inputValues.disadvantages}
+                onChange={(e) =>
+                  setInputValues((oldInputValues) => ({
+                    ...oldInputValues,
+                    disadvantages: e.target.value,
+                    disadvantagesLength: e.target.value.length,
+                  }))
+                }
+              ></textarea>
 
-            <div>Осталось символов: {1000 - inputValues.textLength}</div>
-            <div>
-              <button onClick={addHandler}>Добавить</button>
+              <div className="product-page-add-rating-counter">
+                Осталось символов: {1000 - inputValues.disadvantagesLength}
+              </div>
+            </div>
+
+            <h4>Текст отзыва</h4>
+            <div className="product-page-rating-text-and-counter-container">
+              <textarea
+                rows="6"
+                className="product-page-add-rating-text"
+                maxLength="1000"
+                placeholder="Введите текст отзыва"
+                value={inputValues.text}
+                onChange={(e) =>
+                  setInputValues((oldInputValues) => ({
+                    ...oldInputValues,
+                    text: e.target.value,
+                    textLength: e.target.value.length,
+                  }))
+                }
+              ></textarea>
+
+              <div className="product-page-add-rating-counter">
+                Осталось символов: {1000 - inputValues.textLength}
+              </div>
+            </div>
+
+            <div className="product-add-container">
+              {/* <div className="product-option-container" onClick={addHandler}>
+                Добавить
+              </div> */}
+              <div onClick={addHandler} className="product-option-container">
+                <div className="product-heart-icon-container">
+                  <img
+                    className="product-heart product-heart-empty"
+                    src="/assets/add.png"
+                  />
+                </div>
+
+                <div className="product-heart-text">Оставить отзыв</div>
+              </div>
             </div>
           </form>
         </div>

@@ -88,7 +88,7 @@ export default function ProductCard({
             }
           }
         }}
-        className="product-heart-container"
+        className="product-option-container"
       >
         <img
           className="product-heart product-heart-empty"

@@ -248,34 +248,45 @@ export default function Cart() {
             </div>
           )}
           <div className="cart-options">
-            <button
+            <div
               onClick={(e) => {
                 e.preventDefault();
                 setWhatIsShown("");
               }}
+              className="product-option-container"
             >
-              Закрыть
-            </button>
+              <div>Закрыть</div>
+            </div>
+
             {cart.length > 0 && (
               <>
-                <button
+                <div
                   onClick={(e) => {
                     e.preventDefault();
                     setCurrentlyShown("confirmation");
                   }}
+                  className="product-option-container"
                 >
-                  Оформить заказ
-                </button>
-                <button
-                  onClick={async (e) => {
+                  <img
+                    className="product-heart product-heart-empty"
+                    src="/assets/cart.svg"
+                  />
+                  <div>Оформить заказ</div>
+                </div>
+                <div
+                  onClick={(e) => {
                     e.preventDefault();
-
-                    setCart([]);
-                    setProduct((oldProduct) => ({ ...oldProduct, cart: [] }));
+                    setCurrentlyShown("confirmation");
                   }}
+                  className="product-option-container"
                 >
-                  Отчистить корзину
-                </button>
+                  <img
+                    style={{width: "30px", height: "30px", filter: "var(--cred-filter)"}}
+                    className="product-heart product-heart-empty"
+                    src="/assets/delete.png"
+                  />
+                  <div>Отчистить корзину</div>
+                </div>
               </>
             )}
           </div>

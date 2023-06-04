@@ -25,7 +25,7 @@ export default function Navbar() {
     type: {},
     searchResults: [],
   });
-  const [isHoveredOver, setIsHoveredOver] = useState(false)
+  const [isHoveredOver, setIsHoveredOver] = useState(false);
 
   const [profileModalShown, setProfileModalShown] = useState(false);
 
@@ -46,15 +46,17 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    const timer = setTimeout(() => !isHoveredOver && setProfileModalShown(false), 1500)
+    const timer = setTimeout(
+      () => !isHoveredOver && setProfileModalShown(false),
+      1500
+    );
     if (isHoveredOver) {
-      setProfileModalShown(true)
+      setProfileModalShown(true);
     }
     return () => {
       clearTimeout(timer);
     };
-    
-  }, [isHoveredOver])
+  }, [isHoveredOver]);
 
   function logOutHandler() {
     setUser({ user: {}, isAuth: false });
@@ -145,9 +147,17 @@ export default function Navbar() {
 
   return (
     <header className="navbar">
-      <Link to={MAIN_PAGE_ROUTE} onClick={(e) => setWhatIsShown("")}>
+      {/* <Link to={MAIN_PAGE_ROUTE} onClick={(e) => setWhatIsShown("")}>
         Шазам
-      </Link>
+      </Link> */}
+      <img
+        className="logo"
+        src="/assets/logowb.png"
+        onClick={async (e) => {
+          await setWhatIsShown("");
+          navigate(MAIN_PAGE_ROUTE);
+        }}
+      />
       <div className="navbar-search-bar-container">
         <div
           onClick={clickTypesHandler}
@@ -274,10 +284,6 @@ export default function Navbar() {
       </div>
       {user.isAuth ? (
         <div className="navbar-options">
-          {user.user.role === "ADMIN" && (
-            <div onClick={() => navigate(ADMIN_ROUTE)}>АдминПанель</div>
-          )}
-
           <div
             onClick={async () => await setWhatIsShown("cart")}
             className="navbar-option-container"
@@ -292,7 +298,7 @@ export default function Navbar() {
           </div>
           <div
             onClick={() => navigate(COMPARE_ROUTE)}
-            className="navbar-compare-container"
+            className="navbar-option-container"
           >
             <div className="navbar-cart-text">Сравнение</div>
             <div className="navbar-icon-counter-container">
@@ -300,10 +306,8 @@ export default function Navbar() {
                 style={{
                   width: "30px",
                   height: "30px",
-                  filter:
-                    "invert(49%) sepia(85%) saturate(557%) hue-rotate(165deg) brightness(95%) contrast(95%)",
                 }}
-                className="navbar-favourite-icon"
+                className="compare-icon"
                 src="/assets/scale.png"
               />
               <div className="navbar-favourite-count-container">
@@ -311,7 +315,6 @@ export default function Navbar() {
               </div>
             </div>
           </div>
-          <div>{user.email}</div>
 
           <div
             onClick={() => navigate(FAVOURITE_ROUTE)}
@@ -329,9 +332,20 @@ export default function Navbar() {
           <div
             onMouseLeave={() => setIsHoveredOver(false)}
             onMouseOver={() => setIsHoveredOver(true)}
-            className="navbar-profile-container"
+            className="navbar-option-container"
           >
-            <div>{!user.user.name ? "Без имени" : user.user.name}</div>
+            <div className="navbar-favourite-text">
+              {!user.user.name ? "Безымянный" : user.user.name}
+            </div>
+            <div className="navbar-icon-counter-container">
+              <img
+                style={{
+                  width: "30px",
+                  height: "30px",
+                }}
+                src="/assets/user.png"
+              />
+            </div>
             <div
               style={
                 !profileModalShown
@@ -341,7 +355,22 @@ export default function Navbar() {
               className="navbar-profile-modal-menu"
             >
               <div className="navbar-profile-modal-menu-triangle"></div>
-              <div className="navbar-option-container">
+              {user.user.role === "ADMIN" && (
+                <div className="navbar-profile-option-container">
+                  <div
+                    onClick={() => navigate(ADMIN_ROUTE)}
+                    className="navbar-orders-text"
+                  >
+                    АдминПанель
+                  </div>
+                  <img
+                    className="navbar-orders-icon"
+                    src="/assets/admin-panel.png"
+                  />
+                </div>
+              )}
+
+              <div className="navbar-profile-option-container">
                 <div
                   onClick={() => navigate(ORDERS_ROUTE)}
                   className="navbar-orders-text"
@@ -350,14 +379,27 @@ export default function Navbar() {
                 </div>
                 <img className="navbar-orders-icon" src="/assets/cart.svg" />
               </div>
-              <div onClick={() => navigate(PROFILE_ROUTE)}>Настройки</div>
-              <div
-                style={{
-                  borderTop: "1px solid var(--black-color)",
-                }}
-                onClick={logOutHandler}
-              >
-                Выйти
+
+              <div className="navbar-profile-option-container">
+                <div
+                  className="navbar-orders-text"
+                  onClick={() => navigate(PROFILE_ROUTE)}
+                >
+                  Настройки
+                </div>
+
+                <img
+                  className="navbar-orders-icon"
+                  src="/assets/settings.png"
+                />
+              </div>
+
+              <div className="navbar-profile-option-container">
+                <div className="navbar-orders-text" onClick={logOutHandler}>
+                  Выйти
+                </div>
+
+                <img className="navbar-orders-icon" src="/assets/logout.png" />
               </div>
             </div>
           </div>

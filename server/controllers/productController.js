@@ -18,7 +18,17 @@ async function create(req, res, next) {
     // let fileName = uuid.v4() + ".jpg";
     // img.mv(path.resolve(__dirname, "..", "static", "product-images", fileName)); было
 
-    let { name, price, brandId, typeId, info, discount, isHyped, description, left } = req.body;
+    let {
+      name,
+      price,
+      brandId,
+      typeId,
+      info,
+      discount,
+      isHyped,
+      description,
+      left,
+    } = req.body;
     const { img } = req.files;
     console.log(img);
     const fileNames = [];
@@ -122,7 +132,9 @@ async function getAll(req, res, next) {
             : priceRange.priceUpperLimit,
         };
     const order =
-      sorting && sorting.byWhat ? [[sorting.byWhat, sorting.order]] : [['id', 'ASC']];
+      sorting && sorting.byWhat
+        ? [[sorting.byWhat, sorting.order]]
+        : [["id", "ASC"]];
     let offset = page * limit - limit;
     let products;
     let options;
@@ -267,43 +279,85 @@ async function leaveReview(req, res, next) {
       },
     });
     if (foundReview) {
-      return next(new Error("Такой отзыв уже существует!"))
+      const updatedReview = await review.update(
+        {
+          thumbsUp: 0,
+          thumbsDown: 0,
+          advantages,
+          disadvantages,
+          text,
+          rating,
+        },
+        {
+          where: {
+            productId: id,
+            userId: req.user.id,
+          },
+          returning: true,
+        }
+      );
+
+      let newRating = 0;
+      if (reviewCount.length > 0) {
+        reviewCount.reviews.forEach(
+          (elem) => (newRating = newRating + elem.rating * elem.count)
+        );
+        newRating = newRating - foundReview.rating;
+        newRating = parseFloat(
+          (newRating  + rating) / (reviewCount.totalCount)
+        ).toFixed(2);
+      } else {
+        newRating = rating;
+      }
+
+      const productElem = await product.update(
+        {
+          rating: newRating,
+        },
+        {
+          where: {
+            id,
+          },
+          returning: true,
+        }
+      );
+      res.json({ review: updatedReview[1][0], product: productElem[1][0] });
     }
-    const reviewElem = await review.create({
-      advantages,
-      disadvantages,
-      text,
-      rating: rating,
-      userId: req.user.id,
-      productId: id,
-    });
-    let newRating = 0;
-    if (reviewCount.length>0) {
+    else {
+      const reviewElem = await review.create({
+        advantages,
+        disadvantages,
+        text,
+        rating,
+        userId: req.user.id,
+        productId: id,
+      });
+      let newRating = 0;
+      if (reviewCount.length > 0) {
         reviewCount.reviews.forEach(
           (elem) => (newRating = newRating + elem.rating * elem.count)
         );
         newRating = parseFloat(
           (newRating + rating) / (reviewCount.totalCount + 1)
         ).toFixed(2);
-    }
-    else {
-      newRating = rating;
-    }
-    
-
-    
-    const productElem = await product.update(
-      {
-        rating: newRating,
-      },
-      {
-        where: {
-          id,
-        },
-        returning: true,
+      } else {
+        newRating = rating;
       }
-    );
-    res.json({ review: reviewElem, product: productElem[1][0] });
+
+      const productElem = await product.update(
+        {
+          rating: newRating,
+        },
+        {
+          where: {
+            id,
+          },
+          returning: true,
+        }
+      );
+      res.json({ review: reviewElem, product: productElem[1][0] });
+    }
+    
   } catch (err) {
     next(new Error(err.message));
   }
@@ -312,7 +366,7 @@ async function leaveReview(req, res, next) {
 async function getReviews(req, res, next) {
   try {
     const { id } = req.params;
-    let { limit, sorting, page} = req.query;
+    let { limit, sorting, page } = req.query;
     limit = limit || 5;
     page = page || 1;
     const offset = page * limit - limit;
@@ -363,16 +417,14 @@ async function getAllReviews(req, res, next) {
       },
       limit,
       offset,
-      ...condition
-    })
+      ...condition,
+    });
 
     res.json(reviews);
   } catch (err) {
     next(new Error(err.message));
   }
 }
-
-
 
 async function getReview(req, res, next) {
   try {
@@ -413,8 +465,7 @@ async function deleteReview(req, res, next) {
       newRating = parseFloat(
         (newRating - rating) / (reviewCount.totalCount - 1)
       ).toFixed(2);
-    } 
-
+    }
 
     const productElem = await product.update(
       {
@@ -581,7 +632,17 @@ async function getReviewRatings(req, res, next) {
 async function changeProduct(req, res, next) {
   try {
     const { id } = req.params;
-    let { name, price, brandId, typeId, isHyped, info, discount, description, left } = req.body
+    let {
+      name,
+      price,
+      brandId,
+      typeId,
+      isHyped,
+      info,
+      discount,
+      description,
+      left,
+    } = req.body;
     const img = req.files && req.files.img;
     const fileNames = [];
     if (img && Array.isArray(img)) {
@@ -597,30 +658,31 @@ async function changeProduct(req, res, next) {
           )
         );
       }
-    } else if(img) {
+    } else if (img) {
       fileNames.push(uuid.v4() + ".png");
       img.mv(
         path.resolve(__dirname, "..", "static", "product-images", fileNames[0])
       );
     }
 
-
-    const productElem = await product.update({
-      name,
-      price,
-      brandId,
-      typeId,
-      img: img ? fileNames : Sequelize.literal('"img"'),
-      description,
-      left,
-      isHyped,
-      discount,
-    },
-    {
-      where: {
+    const productElem = await product.update(
+      {
+        name,
+        price,
+        brandId,
+        typeId,
+        img: img ? fileNames : Sequelize.literal('"img"'),
+        description,
+        left,
+        isHyped,
+        discount,
+      },
+      {
+        where: {
           id,
         },
-    });
+      }
+    );
 
     const prevInfo = await productInfo.findAll({
       where: {
@@ -670,9 +732,7 @@ async function deleteProduct(req, res, next) {
   } catch (err) {
     next(new Error(err.message));
   }
-  
 }
-
 
 module.exports = {
   create,

@@ -12,7 +12,13 @@ import { Context } from "../../../App";
 import { nanoid } from "nanoid";
 import { API_URL, BANNER_IMAGE_URL } from "../../../utils/consts";
 
-export default function ChangeBanner({ setDisplayed, page, limit, prevThing, searchValue }) {
+export default function ChangeBanner({
+  setDisplayed,
+  page,
+  limit,
+  prevThing,
+  searchValue,
+}) {
   const { product, setProduct, whatIsShown, setWhatIsShown } =
     useContext(Context);
   const [newSrc, setNewSrc] = useState("");
@@ -63,7 +69,10 @@ export default function ChangeBanner({ setDisplayed, page, limit, prevThing, sea
           ? result.types[0].name
           : "",
       }));
-      await setEnabled({brand: prevThing.brandId ? true : false, type: prevThing.typeId ? true : false})
+      await setEnabled({
+        brand: prevThing.brandId ? true : false,
+        type: prevThing.typeId ? true : false,
+      });
     }
 
     apiCalls();
@@ -89,7 +98,10 @@ export default function ChangeBanner({ setDisplayed, page, limit, prevThing, sea
         : null
     );
 
-    const changedBanner = await changeBanner({id: prevThing.id, banner: formData});
+    const changedBanner = await changeBanner({
+      id: prevThing.id,
+      banner: formData,
+    });
     await setInputValues({
       files: null,
       brand: product.brands[0].name,
@@ -105,7 +117,6 @@ export default function ChangeBanner({ setDisplayed, page, limit, prevThing, sea
       totalCount: dataArray.length,
     });
     setWhatIsShown("");
-
   }
 
   return (
@@ -191,7 +202,7 @@ export default function ChangeBanner({ setDisplayed, page, limit, prevThing, sea
                   : "/assets/default-img.png"
               }
             />
-
+          
             <input
               onChange={(e) => {
                 setInputValues((prevInputValues) => ({
@@ -202,8 +213,15 @@ export default function ChangeBanner({ setDisplayed, page, limit, prevThing, sea
               type="file"
             />
             <div>
-              <button onClick={() => setWhatIsShown("")}>Закрыть</button>
-              <button onClick={addHandler}>Изменить</button>
+              <button
+                className="product-option-container"
+                onClick={() => setWhatIsShown("")}
+              >
+                Закрыть
+              </button>
+              <button className="product-option-container" onClick={addHandler}>
+                Изменить
+              </button>
             </div>
           </form>
         </div>

@@ -21,7 +21,7 @@ export default function CreateBanner({ setDisplayed, page, limit }) {
     type: "",
   });
 
-  const [enabled, setEnabled] = useState({brand: false, type: true})
+  const [enabled, setEnabled] = useState({ brand: false, type: true });
   const [renderedOnce, setRenderedOnce] = useState(false);
 
   useEffect(() => {
@@ -36,7 +36,6 @@ export default function CreateBanner({ setDisplayed, page, limit }) {
     }
     inputValues.file && apiCalls();
   }, [inputValues.file]);
-
 
   useEffect(() => {
     async function apiCalls() {
@@ -67,11 +66,15 @@ export default function CreateBanner({ setDisplayed, page, limit }) {
     formData.append("img", inputValues.file);
     formData.append(
       "brandId",
-      enabled.brand ? product.brands.find((brand) => brand.name === inputValues.brand).id : null
+      enabled.brand
+        ? product.brands.find((brand) => brand.name === inputValues.brand).id
+        : null
     );
     formData.append(
       "typeId",
-      enabled.type ? product.types.find((type) => type.name === inputValues.type).id : null
+      enabled.type
+        ? product.types.find((type) => type.name === inputValues.type).id
+        : null
     );
 
     await createBanner(formData);
@@ -181,8 +184,15 @@ export default function CreateBanner({ setDisplayed, page, limit }) {
             />
 
             <div>
-              <button onClick={() => setWhatIsShown("")}>Закрыть</button>
-              <button onClick={addHandler}>Добавить</button>
+              <button
+                className="product-option-container"
+                onClick={() => setWhatIsShown("")}
+              >
+                Закрыть
+              </button>
+              <button className="product-option-container" onClick={addHandler}>
+                Добавить
+              </button>
             </div>
           </form>
         </div>

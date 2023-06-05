@@ -2,7 +2,7 @@ import react, { useState, useContext, useEffect } from "react";
 import { createBrand, getBrands } from "../../../API/productAPI";
 import { Context } from "../../../App";
 
-export default function CreateBrand({ setDisplayed, page, limit}) {
+export default function CreateBrand({ setDisplayed, page, limit }) {
   const [inputValues, setInputValues] = useState({
     name: "",
     file: null,
@@ -57,7 +57,7 @@ export default function CreateBrand({ setDisplayed, page, limit}) {
             type="text"
             placeholder="Введите название бренда"
           />
-          <img  src={newSrc ? newSrc : "/assets/default-img.png"} />
+          <img src={newSrc ? newSrc : "/assets/default-img.png"} />
           <input
             onChange={(e) => {
               setInputValues((prevInputValues) => ({
@@ -68,8 +68,15 @@ export default function CreateBrand({ setDisplayed, page, limit}) {
             type="file"
           />
           <div>
-            <button onClick={() => setWhatIsShown("")}>Закрыть</button>
-            <button onClick={addHandler}>Добавить</button>
+            <button
+              className="product-option-container"
+              onClick={() => setWhatIsShown("")}
+            >
+              Закрыть
+            </button>
+            <button className="product-option-container" onClick={addHandler}>
+              Добавить
+            </button>
           </div>
         </form>
       </div>

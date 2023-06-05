@@ -49,7 +49,7 @@ export default function GroupTypes() {
 
   return (
     <div className="group-types-container">
-      {renderedOnce && groupTypes.length > 0 && (
+      {renderedOnce && groupTypes.length > 0 ? (
         <>
           <h2>{name}</h2>
           <div className="product-page-group-and-type">
@@ -97,7 +97,8 @@ export default function GroupTypes() {
             })}
           </div>
         </>
-      )}
+      
+      ) : <div>Ничего найдено не было</div>}
     </div>
   );
 }

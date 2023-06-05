@@ -3,7 +3,7 @@ import Navbar from "./components/Navbar";
 import { check } from "./API/userAPI";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { adminRoutes, authRoutes, publicRoutes } from "./utils/routes";
-import { SHOP_ROUTE } from "./utils/consts";
+import { MAIN_PAGE_ROUTE, SHOP_ROUTE } from "./utils/consts";
 
 export const Context = createContext(null);
 
@@ -80,7 +80,7 @@ export default function App() {
                 return <Route key={path} path={path} element={element} />;
               })}
 
-              <Route path="*" element={<Navigate to={SHOP_ROUTE} />} />
+              <Route path="*" element={<Navigate to={MAIN_PAGE_ROUTE} />} />
             </Routes>
           </div>
         </Context.Provider>

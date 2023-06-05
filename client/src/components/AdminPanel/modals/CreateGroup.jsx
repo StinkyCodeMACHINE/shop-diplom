@@ -1,8 +1,12 @@
 import react, { useState, useContext, useEffect } from "react";
-import { createGroup, getGroups, getGroupsWithLimit } from "../../../API/productAPI";
+import {
+  createGroup,
+  getGroups,
+  getGroupsWithLimit,
+} from "../../../API/productAPI";
 import { Context } from "../../../App";
 
-export default function CreateGroup({setDisplayed, page, limit}) {
+export default function CreateGroup({ setDisplayed, page, limit }) {
   const [inputValues, setInputValues] = useState({
     name: "",
     file: null,
@@ -44,7 +48,6 @@ export default function CreateGroup({setDisplayed, page, limit}) {
       data: dataArray.rows,
       totalCount: dataArray.count,
     });
-    
   }
 
   return (
@@ -74,8 +77,15 @@ export default function CreateGroup({setDisplayed, page, limit}) {
             type="file"
           />
           <div>
-            <button onClick={() => setWhatIsShown("")}>Закрыть</button>
-            <button onClick={addHandler}>Добавить</button>
+            <button
+              className="product-option-container"
+              onClick={() => setWhatIsShown("")}
+            >
+              Закрыть
+            </button>
+            <button className="product-option-container" onClick={addHandler}>
+              Добавить
+            </button>
           </div>
         </form>
       </div>

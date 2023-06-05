@@ -16,7 +16,7 @@ function generateJWT(name, id, email, role, phone, img) {
       email,
       role,
       phone,
-      img
+      img,
     },
     process.env.SECRET_KEY,
     {
@@ -105,28 +105,27 @@ async function check(req, res, next) {
 
 async function changeProfile(req, res, next) {
   try {
-    // let { name, price, brandId, typeId, info } = req.body;
-    // const { img } = req.files;
-    // let fileName = uuid.v4() + ".jpg";
-    // img.mv(path.resolve(__dirname, "..", "static", "product-images", fileName)); было
-    let fileName = ""
+    let fileName = "";
     let { name, oldPassword, newPassword, phone } = req.body;
-    const img = req.files && req.files.img
+    const img = req.files && req.files.img;
     if (img) {
       fileName = uuid.v4() + ".png";
       img.mv(
         path.resolve(__dirname, "..", "static", "profile-images", fileName)
       );
     }
-    let comparePassword
-    let userElem
-    let encryptedPassword
+    let comparePassword;
+    let userElem;
+    let encryptedPassword;
     if (oldPassword && newPassword) {
       userElem = await user.findOne({ where: { id: req.user.id } });
       comparePassword = bcrypt.compareSync(oldPassword, userElem.password);
+      if (!comparePassword) {
+        return next(new Error("Указан неверный пароль!"));
+      }
       encryptedPassword = await bcrypt.hash(newPassword, 5);
     }
-    
+
     const productElem = await user.update(
       {
         img: img ? fileName : Sequelize.literal('"img"'),
@@ -143,13 +142,18 @@ async function changeProfile(req, res, next) {
         returning: true,
       }
     );
-
-    res.json(productElem[1][0]);
+    const token = generateJWT(
+      productElem[1][0].name,
+      productElem[1][0].id,
+      productElem[1][0].email,
+      productElem[1][0].role,
+      productElem[1][0].phone,
+      productElem[1][0].img
+    );
+    res.json({ token });
   } catch (err) {
     next(new Error(err.message));
   }
-  
-  
 }
 
 async function getUserInfo(req, res, next) {

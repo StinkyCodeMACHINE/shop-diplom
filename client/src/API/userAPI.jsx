@@ -28,7 +28,8 @@ export async function check() {
 
 export async function changeProfile(profile) {
   const { data } = await axiosAuthReq.put("/api/user/", profile);
-  return data;
+  localStorage.setItem("token", data.token);
+  return jwtDecode(data.token);
 }
 
 

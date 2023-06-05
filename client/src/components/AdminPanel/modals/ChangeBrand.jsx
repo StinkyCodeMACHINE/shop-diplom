@@ -1,5 +1,9 @@
 import react, { useState, useContext, useEffect } from "react";
-import { changeBrand, createBrand, getBrandsWithLimit } from "../../../API/productAPI";
+import {
+  changeBrand,
+  createBrand,
+  getBrandsWithLimit,
+} from "../../../API/productAPI";
 import { Context } from "../../../App";
 import { API_URL, BRAND_IMAGE_URL } from "../../../utils/consts";
 
@@ -80,8 +84,15 @@ export default function ChangeBrand({ setDisplayed, page, limit, prevThing }) {
             type="file"
           />
           <div>
-            <button onClick={() => setWhatIsShown("")}>Закрыть</button>
-            <button onClick={addHandler}>Изменить</button>
+            <button
+              className="product-option-container"
+              onClick={() => setWhatIsShown("")}
+            >
+              Закрыть
+            </button>
+            <button className="product-option-container" onClick={addHandler}>
+              Изменить
+            </button>
           </div>
         </form>
       </div>

@@ -302,7 +302,7 @@ export default function ProductPage() {
                 className="product-oldPrice"
                 style={
                   productElem.discount && productElem.discount !== 1
-                    ? { textDecoration: "line-through", fontSize: "0.8rem" }
+                    ? { textDecoration: "line-through", fontSize: "0.7rem" }
                     : {}
                 }
               >

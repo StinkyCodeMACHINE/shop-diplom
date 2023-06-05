@@ -1,7 +1,14 @@
 import react, { useState, useEffect, useContext } from "react";
-import { changeType, createType, getDefaultTypeInfo, getGroups, getTypes, getTypesWithLimit } from "../../../API/productAPI";
+import {
+  changeType,
+  createType,
+  getDefaultTypeInfo,
+  getGroups,
+  getTypes,
+  getTypesWithLimit,
+} from "../../../API/productAPI";
 import { Context } from "../../../App";
-import { nanoid } from "nanoid"
+import { nanoid } from "nanoid";
 import { API_URL, TYPE_IMAGE_URL } from "../../../utils/consts";
 
 export default function ChangeType({ setDisplayed, page, limit, prevThing }) {
@@ -16,8 +23,8 @@ export default function ChangeType({ setDisplayed, page, limit, prevThing }) {
   const [renderedOnce, setRenderedOnce] = useState(false);
 
   const { whatIsShown, product, setProduct, setWhatIsShown } =
-  useContext(Context);
-  
+    useContext(Context);
+
   useEffect(() => {
     async function apiCalls() {
       const reader = new FileReader();
@@ -30,16 +37,20 @@ export default function ChangeType({ setDisplayed, page, limit, prevThing }) {
     }
     inputValues.file && apiCalls();
   }, [inputValues.file]);
-  
+
   useEffect(() => {
     async function apiCalls() {
-      
       const groups = await getGroups();
-      const foundGroup = groups.find((groupElem) => groupElem.id === prevThing.groupId);
-      await setInputValues(prevInputValues => ({...prevInputValues, group: foundGroup.name}))
-      let typeInfo = await getDefaultTypeInfo(prevThing.id)
+      const foundGroup = groups.find(
+        (groupElem) => groupElem.id === prevThing.groupId
+      );
+      await setInputValues((prevInputValues) => ({
+        ...prevInputValues,
+        group: foundGroup.name,
+      }));
+      let typeInfo = await getDefaultTypeInfo(prevThing.id);
       typeInfo = typeInfo.map((elem) => ({ ...elem, number: nanoid() }));
-      await setInfo(typeInfo)
+      await setInfo(typeInfo);
       await setProduct((oldProduct) => ({
         ...oldProduct,
         groups,
@@ -51,7 +62,6 @@ export default function ChangeType({ setDisplayed, page, limit, prevThing }) {
     setRenderedOnce(true);
   }, []);
 
-
   async function addHandler(e) {
     e.preventDefault();
     const formData = new FormData();
@@ -62,8 +72,8 @@ export default function ChangeType({ setDisplayed, page, limit, prevThing }) {
       product.groups.find((group) => group.name === inputValues.group).id
     );
     formData.append("info", JSON.stringify(info));
-    const type = await changeType({type: formData, id: prevThing.id});
-    
+    const type = await changeType({ type: formData, id: prevThing.id });
+
     await setInputValues({ name: "", file: null, group: "" });
     await setInfo([]);
     await setNewSrc("");
@@ -155,16 +165,31 @@ export default function ChangeType({ setDisplayed, page, limit, prevThing }) {
                       );
                     }}
                   />
-                  <button onClick={() => removeStatHandler(elem.number)}>
+                  <button
+                    className="product-option-container"
+                    onClick={() => removeStatHandler(elem.number)}
+                  >
                     Удалить
                   </button>
                 </div>
               );
             })}
-            <button onClick={addStatHandler}>Добавить новое свойство</button>
+            <button
+              className="product-option-container"
+              onClick={addStatHandler}
+            >
+              Добавить новое свойство
+            </button>
             <div>
-              <button onClick={() => setWhatIsShown("")}>Закрыть</button>
-              <button onClick={addHandler}>Изменить</button>
+              <button
+                className="product-option-container"
+                onClick={() => setWhatIsShown("")}
+              >
+                Закрыть
+              </button>
+              <button className="product-option-container" onClick={addHandler}>
+                Изменить
+              </button>
             </div>
           </form>
         </div>

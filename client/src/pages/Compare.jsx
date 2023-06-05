@@ -114,7 +114,7 @@ export default function Compare() {
               style={{
                 width: "30px",
                 height: "30px",
-                filter: "var(--cred-filter)"
+                filter: "var(--cred-filter)",
               }}
               className="compare-icon"
               src="/assets/delete.png"
@@ -189,7 +189,7 @@ export default function Compare() {
                         productElem.discount && productElem.discount !== 1
                           ? {
                               textDecoration: "line-through",
-                              fontSize: "0.8rem",
+                              fontSize: "0.7rem",
                             }
                           : {}
                       }

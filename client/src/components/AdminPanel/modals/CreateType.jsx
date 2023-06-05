@@ -1,5 +1,10 @@
 import react, { useState, useEffect, useContext } from "react";
-import { createType, getGroups, getTypes, getTypesWithLimit } from "../../../API/productAPI";
+import {
+  createType,
+  getGroups,
+  getTypes,
+  getTypesWithLimit,
+} from "../../../API/productAPI";
 import { Context } from "../../../App";
 import { nanoid } from "nanoid";
 
@@ -146,16 +151,31 @@ export default function CreateType({ setDisplayed, page, limit }) {
                       );
                     }}
                   />
-                  <button onClick={() => removeStatHandler(elem.number)}>
+                  <button
+                    className="product-option-container"
+                    onClick={() => removeStatHandler(elem.number)}
+                  >
                     Удалить
                   </button>
                 </div>
               );
             })}
-            <button onClick={addStatHandler}>Добавить новое свойство</button>
+            <button
+              className="product-option-container"
+              onClick={addStatHandler}
+            >
+              Добавить новое свойство
+            </button>
             <div>
-              <button onClick={() => setWhatIsShown("")}>Закрыть</button>
-              <button onClick={addHandler}>Добавить</button>
+              <button
+                className="product-option-container"
+                onClick={() => setWhatIsShown("")}
+              >
+                Закрыть
+              </button>
+              <button className="product-option-container" onClick={addHandler}>
+                Добавить
+              </button>
             </div>
           </form>
         </div>

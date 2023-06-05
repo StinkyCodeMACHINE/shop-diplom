@@ -84,7 +84,7 @@ export default function ProductCard({
           className="product-oldPrice"
           style={
             discount && discount !== 1
-              ? { textDecoration: "line-through", fontSize: "0.8rem" }
+              ? { textDecoration: "line-through", fontSize: "0.7rem" }
               : {}
           }
         >

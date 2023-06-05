@@ -141,7 +141,7 @@ export default function CreateProduct({ setDisplayed, page, limit }) {
       description: "",
       left: 0,
       discount: 0,
-      isHyped: false
+      isHyped: false,
     });
 
     setInfo([]);
@@ -331,17 +331,35 @@ export default function CreateProduct({ setDisplayed, page, limit }) {
                       changeStatHandler("value", e.target.value, elem.number)
                     }
                   />
-                  <button onClick={() => removeStatHandler(elem.number)}>
+                  <button
+                    className="product-option-container"
+                    onClick={() => removeStatHandler(elem.number)}
+                  >
                     Удалить
                   </button>
                 </div>
               );
             })}
-            <button onClick={addStatHandler}>Добавить новое свойство</button>
+            <button
+              className="product-option-container"
+              onClick={addStatHandler}
+            >
+              Добавить новое свойство
+            </button>
 
             <div>
-              <button onClick={() => setWhatIsShown("")}>Закрыть</button>
-              <button onClick={addProductHandler}>Добавить</button>
+              <button
+                className="product-option-container"
+                onClick={() => setWhatIsShown("")}
+              >
+                Закрыть
+              </button>
+              <button
+                className="product-option-container"
+                onClick={addProductHandler}
+              >
+                Добавить
+              </button>
             </div>
           </form>
         </div>

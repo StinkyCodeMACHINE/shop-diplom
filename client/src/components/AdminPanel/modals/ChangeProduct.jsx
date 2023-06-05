@@ -36,7 +36,10 @@ export default function ChangeProduct({
       Object.keys(prevThing).length > 0 && prevThing.discount
         ? Math.ceil((1 - prevThing.discount) * 100)
         : 0,
-    isHyped: Object.keys(prevThing).length > 0 && prevThing.isHyped ? prevThing.isHyped : false,
+    isHyped:
+      Object.keys(prevThing).length > 0 && prevThing.isHyped
+        ? prevThing.isHyped
+        : false,
   });
 
   useEffect(() => {
@@ -126,7 +129,7 @@ export default function ChangeProduct({
         );
         await setInfo(remainingInfo);
       } else {
-        await setInfo(productElem.info)
+        await setInfo(productElem.info);
       }
       await setUsedPrevInfo(true);
     }
@@ -175,7 +178,7 @@ export default function ChangeProduct({
         formData.append("img", inputValues.files[i]);
       }
     }
-    
+
     formData.append("isHyped", inputValues.isHyped);
 
     formData.append("discount", 1 - inputValues.discount * 0.01);
@@ -398,17 +401,35 @@ export default function ChangeProduct({
                       changeStatHandler("value", e.target.value, elem.number)
                     }
                   />
-                  <button onClick={() => removeStatHandler(elem.number)}>
+                  <button
+                    className="product-option-container"
+                    onClick={() => removeStatHandler(elem.number)}
+                  >
                     Удалить
                   </button>
                 </div>
               );
             })}
-            <button onClick={addStatHandler}>Добавить новое свойство</button>
+            <button
+              className="product-option-container"
+              onClick={addStatHandler}
+            >
+              Добавить новое свойство
+            </button>
 
             <div>
-              <button onClick={() => setWhatIsShown("")}>Закрыть</button>
-              <button onClick={addProductHandler}>Изменить</button>
+              <button
+                className="product-option-container"
+                onClick={() => setWhatIsShown("")}
+              >
+                Закрыть
+              </button>
+              <button
+                className="product-option-container"
+                onClick={addProductHandler}
+              >
+                Изменить
+              </button>
             </div>
           </form>
         </div>

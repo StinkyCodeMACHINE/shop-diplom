@@ -129,7 +129,7 @@ export default function Favourite() {
               </div>
             )}
           </div>
-          {product.types.length > 0 && (
+          {product.types.length > 0 ? (
             <>
               <div className="product-cards">
                 {product.products.length > 0 &&
@@ -149,10 +149,11 @@ export default function Favourite() {
                     />
                   ))}
               </div>
-              <div className="favourite-nothing-found">
-                <h3>Ничего не было найдено</h3>
-              </div>
             </>
+          ) : (
+            <div className="favourite-nothing-found">
+              <h3>Ничего не было найдено</h3>
+            </div>
           )}
           {product.products.length > 0 && <Pagination />}
         </div>

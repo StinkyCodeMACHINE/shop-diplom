@@ -406,7 +406,21 @@ export default function Navbar() {
         </div>
       ) : (
         <div className="navbar-options">
-          <div onClick={() => navigate(LOGIN_ROUTE)}>Авторизоваться</div>
+          <div
+            onClick={() => navigate(LOGIN_ROUTE)}
+            className="navbar-option-container"
+          >
+            <div className="navbar-cart-text">Авторизоваться</div>
+            <div className="navbar-icon-counter-container">
+              <img
+                style={{
+                  width: "30px",
+                  height: "30px",
+                }}
+                src="/assets/user.png"
+              />
+            </div>
+          </div>
         </div>
       )}
 
@@ -428,3 +442,4 @@ export default function Navbar() {
     </header>
   );
 }
+

@@ -97,6 +97,7 @@ export default function Shop() {
             ))}
           </Carousel>
         )}
+        <img src="/assets/logo.png"/>
         <h2>Популярные бренды</h2>
         {displayed.brands.length > 0 && (
           <Carousel

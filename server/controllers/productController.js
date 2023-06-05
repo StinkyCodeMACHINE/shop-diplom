@@ -298,13 +298,12 @@ async function leaveReview(req, res, next) {
       );
 
       let newRating = 0;
-      if (reviewCount.length > 0) {
+      if (reviewCount.reviews.length > 0) {
         reviewCount.reviews.forEach(
-          (elem) => (newRating = newRating + elem.rating * elem.count)
+          (elem) => (newRating = newRating + elem.rating * Number(elem.count))
         );
-        newRating = newRating - foundReview.rating;
         newRating = parseFloat(
-          (newRating  + rating) / (reviewCount.totalCount)
+          (newRating  + rating) / (reviewCount.totalCount + 1)
         ).toFixed(2);
       } else {
         newRating = rating;
@@ -333,9 +332,9 @@ async function leaveReview(req, res, next) {
         productId: id,
       });
       let newRating = 0;
-      if (reviewCount.length > 0) {
+      if (reviewCount.reviews.length > 0) {
         reviewCount.reviews.forEach(
-          (elem) => (newRating = newRating + elem.rating * elem.count)
+          (elem) => (newRating = newRating + elem.rating * Number(elem.count))
         );
         newRating = parseFloat(
           (newRating + rating) / (reviewCount.totalCount + 1)

@@ -54,7 +54,7 @@ export default function AdminPanel() {
   const [page, setPage] = useState(1);
   const [prevThing, setPrevThing] = useState({});
   const [limit, setLimit] = useState(5);
-  const [selectedType, setSelectedType] = useState({})
+  const [selectedType, setSelectedType] = useState({});
   const [selectedBrand, setSelectedBrand] = useState({});
   const [displayed, setDisplayed] = useState({
     what: "",
@@ -395,7 +395,7 @@ export default function AdminPanel() {
             )}
             {options === "brands" && (
               <div
-                oonClick={() => setWhatIsShown("brand")}
+                onClick={() => setWhatIsShown("brand")}
                 className="product-option-container"
               >
                 <div className="product-heart-icon-container">
@@ -410,7 +410,7 @@ export default function AdminPanel() {
             )}
             {options === "products" && (
               <div
-                oonClick={() => setWhatIsShown("product")}
+                onClick={() => setWhatIsShown("product")}
                 className="product-option-container"
               >
                 <div className="product-heart-icon-container">
@@ -425,7 +425,7 @@ export default function AdminPanel() {
             )}
             {options === "banners" && (
               <div
-                oonClick={() => setWhatIsShown("banner")}
+                onClick={() => setWhatIsShown("banner")}
                 className="product-option-container"
               >
                 <div className="product-heart-icon-container">

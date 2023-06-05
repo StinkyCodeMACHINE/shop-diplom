@@ -1,11 +1,16 @@
 import react, { useState, useContext, useEffect } from "react";
-import { changeGroup, createGroup, getGroups, getGroupsWithLimit } from "../../../API/productAPI";
+import {
+  changeGroup,
+  createGroup,
+  getGroups,
+  getGroupsWithLimit,
+} from "../../../API/productAPI";
 import { Context } from "../../../App";
 import { API_URL, GROUP_IMAGE_URL } from "../../../utils/consts";
 
 export default function ChangeGroup({ setDisplayed, page, limit, prevThing }) {
   const [inputValues, setInputValues] = useState({
-    name: Object.keys(prevThing).length>0 ? prevThing.name : "",
+    name: Object.keys(prevThing).length > 0 ? prevThing.name : "",
     file: null,
   });
   const [newSrc, setNewSrc] = useState("");
@@ -32,7 +37,7 @@ export default function ChangeGroup({ setDisplayed, page, limit, prevThing }) {
     formData.append("name", inputValues.name);
     newSrc && formData.append("img", inputValues.file);
 
-    const group = await changeGroup({group: formData, id: prevThing.id});
+    const group = await changeGroup({ group: formData, id: prevThing.id });
     await setInputValues({ name: "", file: null });
     await setNewSrc("");
     const dataArray = await getGroupsWithLimit({ limit, page: page });
@@ -41,7 +46,7 @@ export default function ChangeGroup({ setDisplayed, page, limit, prevThing }) {
       data: dataArray.rows,
       totalCount: dataArray.count,
     });
-    setWhatIsShown("")
+    setWhatIsShown("");
   }
 
   return (
@@ -59,7 +64,15 @@ export default function ChangeGroup({ setDisplayed, page, limit, prevThing }) {
             type="text"
             placeholder="Введите название группы"
           />
-          <img src={newSrc ? newSrc : prevThing.img ? API_URL + GROUP_IMAGE_URL + prevThing.img : "/assets/default-img.png"} />
+          <img
+            src={
+              newSrc
+                ? newSrc
+                : prevThing.img
+                ? API_URL + GROUP_IMAGE_URL + prevThing.img
+                : "/assets/default-img.png"
+            }
+          />
 
           <input
             onChange={(e) => {
@@ -71,8 +84,15 @@ export default function ChangeGroup({ setDisplayed, page, limit, prevThing }) {
             type="file"
           />
           <div>
-            <button onClick={() => setWhatIsShown("")}>Закрыть</button>
-            <button onClick={addHandler}>Изменить</button>
+            <button
+              className="product-option-container"
+              onClick={() => setWhatIsShown("")}
+            >
+              Закрыть
+            </button>
+            <button className="product-option-container" onClick={addHandler}>
+              Изменить
+            </button>
           </div>
         </form>
       </div>

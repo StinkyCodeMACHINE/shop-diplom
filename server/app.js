@@ -21,7 +21,7 @@ const infoRouter = require("./routes/infoRouter");
 const orderRouter = require("./routes/orderRouter")
 const bannerRouter = require("./routes/bannerRouter")
 const { reviewRating, order, review } = require("./db/models");
-
+const whatsappclient = require("./service/whatsapp")
 // разрешение обращения от других источников
 // app.use((req, res, next) => {
 //   res.header("Access-Control-Allow-Origin", "*");
@@ -50,8 +50,7 @@ async function start() {
   try {
     await db.authenticate();
     await db.sync({ alter: true });
-    // await reviewRating.sync({force: true})
-    // await review.sync({ force: true });
+    whatsappclient.initialize()
     app.listen(port, () => {
       console.log(`Server listening on port ${port}...`);
     });
@@ -61,3 +60,5 @@ async function start() {
 };
 
 start();
+
+

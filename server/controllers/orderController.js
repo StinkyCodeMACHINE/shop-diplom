@@ -6,7 +6,7 @@ async function createOrder(req, res, next) {
   try {
     const { cart, phone, email, name, address } = req.body;
     const orderElem = await order.create({
-      status: "Придёт в течение недели",
+      status: "комплектуется",
       money: cart.reduce((money, elem) => money + elem.finalPrice, 0),
       phone,
       address,
@@ -170,3 +170,6 @@ module.exports = {
   changeStatus,
   deleteOrder,
 };
+
+
+// передано в доставку

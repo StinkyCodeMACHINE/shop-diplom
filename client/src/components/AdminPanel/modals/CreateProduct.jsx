@@ -216,7 +216,7 @@ export default function CreateProduct({ setDisplayed, page, limit }) {
               id="isHyped"
             />
             <label htmlFor="isHyped">Хит?</label>
-
+            <h3>Стоимость</h3>
             <input
               onChange={(e) =>
                 setInputValues((prevInputValues) => ({
@@ -232,6 +232,7 @@ export default function CreateProduct({ setDisplayed, page, limit }) {
               max={999999}
             />
             <div class="input-icon">
+              <h3>Размер скидки</h3>
               <input
                 onChange={(e) =>
                   setInputValues((prevInputValues) => ({
@@ -252,6 +253,7 @@ export default function CreateProduct({ setDisplayed, page, limit }) {
               />
               <i>%</i>
             </div>
+            <h3>Количество товара</h3>
 
             <input
               onChange={(e) =>

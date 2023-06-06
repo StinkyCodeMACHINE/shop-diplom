@@ -281,7 +281,11 @@ export default function Cart() {
                   className="product-option-container"
                 >
                   <img
-                    style={{width: "30px", height: "30px", filter: "var(--cred-filter)"}}
+                    style={{
+                      width: "30px",
+                      height: "30px",
+                      filter: "var(--cred-filter)",
+                    }}
                     className="product-heart product-heart-empty"
                     src="/assets/delete.png"
                   />
@@ -301,42 +305,49 @@ export default function Cart() {
                 <h2>Заказ успешно оформлен!</h2>Заказ успешно оформлен!
               </div>
             ) : (
-              <form>
-                <input
-                  onChange={inputChangeHandler}
-                  value={inputValues.name}
-                  type="text"
-                  id="name"
-                  placeholder="Введите ФИО..."
-                />
-                <input
-                  onChange={inputChangeHandler}
-                  onKeyPress={(e) => {
-                    if (!/[0-9]/.test(e.key)) {
-                      e.preventDefault();
-                    }
-                  }}
-                  value={inputValues.phone}
-                  type="tel"
-                  id="phone"
-                  maxLength={11}
-                  placeholder="89525473419"
-                />
-                <input
-                  onChange={inputChangeHandler}
-                  value={inputValues.address}
-                  type="text"
-                  id="address"
-                  placeholder="Ввведите ваш адрес..."
-                />
-                <input
-                  onChange={inputChangeHandler}
-                  value={inputValues.email}
-                  type="text"
-                  id="email"
-                  placeholder="Введите вашу почту..."
-                />
-                <button
+              <>
+                <form>
+                  <h3>Фио</h3>
+                  <input
+                    onChange={inputChangeHandler}
+                    value={inputValues.name}
+                    type="text"
+                    id="name"
+                    placeholder="Введите ФИО..."
+                  />
+                  <h3>Номер телефона</h3>
+                  <input
+                    onChange={inputChangeHandler}
+                    onKeyPress={(e) => {
+                      if (!/[0-9]/.test(e.key)) {
+                        e.preventDefault();
+                      }
+                    }}
+                    value={inputValues.phone}
+                    type="tel"
+                    id="phone"
+                    maxLength={11}
+                    placeholder="89525473419"
+                  />
+                  <h3>Адрес проживания</h3>
+
+                  <input
+                    onChange={inputChangeHandler}
+                    value={inputValues.address}
+                    type="text"
+                    id="address"
+                    placeholder="Ввведите ваш адрес..."
+                  />
+                  <h3>Адрес электронной почты</h3>
+                  <input
+                    onChange={inputChangeHandler}
+                    value={inputValues.email}
+                    type="text"
+                    id="email"
+                    placeholder="Введите вашу почту..."
+                  />
+                </form>
+                <div
                   onClick={async (e) => {
                     try {
                       e.preventDefault();
@@ -346,15 +357,15 @@ export default function Cart() {
                         ...oldProduct,
                         cart: [],
                       }));
-                      console.log(order);
                       await setLoading(false);
                       await setCurrentlyShown("allgood");
                     } catch (err) {}
                   }}
+                  className="product-option-container"
                 >
-                  Подтвердить данные
-                </button>
-              </form>
+                  <div className="product-heart-text">Подтвердить данные</div>
+                </div>
+              </>
             )
           ) : (
             <div>Загрузка</div>

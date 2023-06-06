@@ -162,7 +162,7 @@ export default function Shop() {
                 >
                   <img
                     className="main-page-slider-img"
-                    style={{ height: "200px" }}
+                    style={{ height: "250px" }}
                     src={
                       typeElem.img
                         ? API_URL + TYPE_IMAGE_URL + typeElem.img

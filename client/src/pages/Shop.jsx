@@ -51,19 +51,9 @@ export default function Shop() {
         groups: result.groups,
         favourite: result.favourite,
       }));
-      console.log(
-        "1 useeffect бренды типы и фавориты product: " +
-          JSON.stringify(product, null, 2)
-      );
-      console.log(
-        "1 useeffect бренды типы и фавориты user: " +
-          JSON.stringify(user, null, 2)
-      );
     }
 
     apiCalls();
-
-    console.log("1 useeffect бренды типы и фавориты");
   }, [user]);
 
   //изменение пагинации
@@ -97,8 +87,6 @@ export default function Shop() {
     }
 
     apiCalls();
-
-    console.log("2 useeffect селбренды селтипы и пейдж и имя");
   }, [product.page, product.limit]);
 
   //при смене выбранного типа, бренда или требуемого названия
@@ -137,8 +125,6 @@ export default function Shop() {
       ...oldRenderedOnce,
       pageOne: true,
     }));
-
-    console.log("3 useeffect селбренды селтипы");
   }, [
     product.selectedBrand,
     product.selectedType,
@@ -173,7 +159,6 @@ export default function Shop() {
           };
         })
       );
-      console.log("data: " + JSON.stringify(data, null, 2));
       await setInfoInstances(data);
     }
 

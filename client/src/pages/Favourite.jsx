@@ -41,7 +41,6 @@ export default function Favourite() {
 
     apiCalls();
 
-    console.log("1 useeffect бренды типы и фавориты");
   }, [user.user.id]);
 
   //изменение пагинации
@@ -61,7 +60,6 @@ export default function Favourite() {
 
     apiCalls();
 
-    console.log("2 useeffect селбренды селтипы и пейдж и имя");
   }, [product.page, product.favourite]);
 
   useEffect(() => {
@@ -77,10 +75,8 @@ export default function Favourite() {
 
     apiCalls();
 
-    console.log("3 useeffect селбренды селтипы");
   }, [product.limit]);
 
-  console.log("fav brands: " + product.brands);
 
   return (
     renderedOnce && (

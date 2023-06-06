@@ -26,7 +26,6 @@ export default function AddReview({
   });
 
   useEffect(() => {
-    console.log("ass1");
     async function apiCalls() {
       const check = await getReview(productElem.id);
       if (check) {

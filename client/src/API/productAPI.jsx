@@ -245,7 +245,6 @@ export async function removeFromFavourite(id) {
 }
 
 export async function getFavouriteIds() {
-  console.log(`token from shit: ${localStorage.getItem("token")}`);
   const { data } = await axiosAuthReq.get(`/api/favourite/`);
   return data;
 }

@@ -799,7 +799,7 @@ a {
 }
 .input-icon i {
   position: absolute;
-  top: 8%;
+  top: 55%;
   left: 15%;
 }
 
@@ -1242,6 +1242,8 @@ h2 {
 .product-rating-user-rating {
   display: flex;
   align-items: center;
+  width: 200px;
+  justify-content: space-between;
 }
 
 .product-page-pagination-container {
@@ -1492,4 +1494,53 @@ tbody {
 .modal-inner-container select,
 .modal-inner-container input {
   width: 100%;
+}
+
+.confirmation {
+  display: grid;
+  place-items: center;
+}
+.confirmation .product-option-container {
+  width: 200px;
+}
+.confirmation form {
+  display: grid;
+  place-items: center;
+}
+
+.admin-page-product-description {
+  display: -webkit-box;
+  -webkit-line-clamp: 10;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+}
+
+.admin-page-product-description {
+  display: -webkit-box;
+  -webkit-line-clamp: 12;
+
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+}
+
+.admin-page-table .product-option-container {
+  width: 135px;
+}
+
+.admin-page-price {
+  width: 80px;
+}
+td {
+  padding: 0.5rem;
+}
+.admin-page-hype {
+  width: 120px;
+}
+
+.admin-page-review-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 12;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }

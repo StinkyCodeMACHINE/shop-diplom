@@ -768,10 +768,12 @@ export default function AdminPanel() {
                           <td>{elem.id}</td>
                           <td>{elem.name}</td>
                           <td>
-                            {elem.price
-                              .toString()
-                              .replace(/\B(?=(\d{3})+(?!\d))/g, " ")}
-                            &#x20BD;
+                            <div className="admin-page-price">
+                              {elem.price
+                                .toString()
+                                .replace(/\B(?=(\d{3})+(?!\d))/g, " ")}
+                              &#x20BD;
+                            </div>
                           </td>
                           <td>
                             {elem.discount
@@ -804,7 +806,11 @@ export default function AdminPanel() {
                               </div>
                             </div>
                           </td>
-                          <td>{elem.isHyped ? "Популярен" : "Непопулярен"}</td>
+                          <td>
+                            <div className="admin-page-hype">
+                              {elem.isHyped ? "Популярен" : "Непопулярен"}
+                            </div>
+                          </td>
                           <td>
                             <img
                               className="admin-page-elem-img"
@@ -1100,9 +1106,21 @@ export default function AdminPanel() {
                         <tr>
                           <td>{elem.id}</td>
                           <td>{elem.productId}</td>
-                          <td>{elem.advantages}</td>
-                          <td>{elem.disadvantages}</td>
-                          <td>{elem.text}</td>
+                          <td>
+                            <div className="admin-page-review-text">
+                              {elem.advantages}
+                            </div>
+                          </td>
+                          <td>
+                            <div className="admin-page-review-text">
+                              {elem.disadvantages}
+                            </div>
+                          </td>
+                          <td>
+                            <div className="admin-page-review-text">
+                              {elem.text}
+                            </div>
+                          </td>
                           <td>
                             <div className="product-rating-user-rating">
                               {starsArr.map((star) => {

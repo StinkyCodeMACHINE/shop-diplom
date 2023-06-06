@@ -55,7 +55,6 @@ export default function ProductPage() {
 
   //получение типов избранного и групп
   useEffect(() => {
-    console.log("ass1");
     async function apiCalls() {
       const favourite = await getFavouriteIds();
       const types = await getTypes();
@@ -75,14 +74,9 @@ export default function ProductPage() {
 
   //запись товара и категории, группы
   useEffect(() => {
-    console.log("ass2");
     async function apiCalls() {
       const oneProduct = await getOneProduct(id);
       const type = product.types.find((type) => type.id === oneProduct.typeId);
-      console.log("type groupId: " + type.groupId);
-      console.log(product.types);
-      console.log("type: " + JSON.stringify(type));
-      console.log("groups: " + product.groups);
       const group = product.groups.find((group) => group.id === type.groupId);
 
       await setProductElem((oldProduct) => ({
@@ -99,7 +93,6 @@ export default function ProductPage() {
 
   //поиск обзоров при изменении параметров отображения
   useEffect(() => {
-    console.log("ass2");
     async function apiCalls() {
       const reviews = await getReviews({
         id,
@@ -121,7 +114,6 @@ export default function ProductPage() {
 
   //поиск обзоров при изменении страницы
   useEffect(() => {
-    console.log("ass2");
     async function apiCalls() {
       const reviews = await getReviews({
         id,
@@ -141,7 +133,6 @@ export default function ProductPage() {
     renderedOnce && apiCalls();
   }, [page]);
 
-  console.log("PP types: " + JSON.stringify(product.types));
   return (
     productElem.img &&
     renderedOnce && (

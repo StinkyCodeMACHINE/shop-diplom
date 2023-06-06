@@ -29,9 +29,7 @@ export default function App() {
   const [whatIsShown, setWhatIsShown] = useState("");
   const [authChecked, setAuthChecked] = useState(false);
 
-  console.log(
-    `user: ${user.user.email} | role: ${user.user.role} | isAuth: ${user.isAuth}`
-  );
+  
 
   useEffect(() => {
     async function apiCalls() {

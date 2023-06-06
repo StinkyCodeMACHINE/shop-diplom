@@ -39,7 +39,6 @@ export default function Navbar() {
         types,
         groups,
       }));
-      console.log(`Navbar shit 1 types${JSON.stringify(product.types)}`);
     }
 
     apiCalls();
@@ -142,8 +141,6 @@ export default function Navbar() {
       }));
     }
   }
-  console.log("navbar product.favourite: ", JSON.stringify(product.favourite));
-  console.log("navbar render types: " + JSON.stringify(product.types));
 
   return (
     <header className="navbar">

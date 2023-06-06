@@ -30,7 +30,6 @@ export default function Compare() {
 
   //запись категорий брендов и избранного
   useEffect(() => {
-    console.log("ass1");
     async function apiCalls() {
       const types = await getTypes();
       const brands = await getBrands();
@@ -70,16 +69,6 @@ export default function Compare() {
     apiCalls();
     setRenderedOnce(true);
   }, [product.toCompare]);
-
-  //   //для теста
-  //   useEffect(() => {
-  //     console.log("ass1");
-  //     async function apiCalls() {
-  //       await setProduct((oldProduct) => ({ ...oldProduct, toCompare: [31, 33] }));
-  //     }
-
-  //     apiCalls();
-  //   }, []);
 
   return (
     <div className="compare-page-main-container">

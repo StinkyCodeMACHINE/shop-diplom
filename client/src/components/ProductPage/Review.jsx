@@ -1,4 +1,4 @@
-import react, { useState, useContext } from "react";
+import react, { useState, useContext, useEffect } from "react";
 import {
   rateReview,
   getReviewRatings,
@@ -26,11 +26,38 @@ export default function Rating({
   const {  user } = useContext(Context);
 
   const [diffValue, setDiffValue] = useState(diff);
+
+  const [dateText, setDateText] = useState("")
   
   const starsArr = [];
   for (let i = 0; i < 5; i++) {
     starsArr.push(i + 1);
   }
+
+  useEffect(() => {
+    if (Math.floor((Date.now() - date) / 86400000) === 0) {
+      setDateText("сегодня")
+    } 
+    else if (Math.floor((Date.now() - date) / 86400000).toString().slice(-1) === "1") {
+      setDateText(`${Math.floor((Date.now() - date) / 86400000)} день назад`);
+    }
+    else if (
+      Math.floor((Date.now() - date) / 86400000)
+        .toString()
+        .slice(-1) === "2" ||
+      Math.floor((Date.now() - date) / 86400000)
+        .toString()
+        .slice(-1) === "3" ||
+      Math.floor((Date.now() - date) / 86400000)
+        .toString()
+        .slice(-1) === "4"
+    ) {
+      setDateText(`${Math.floor((Date.now() - date) / 86400000)} дня назад`);
+    } else {
+      setDateText(`${Math.floor((Date.now() - date) / 86400000)} дней назад`);
+    }
+    
+  }, [])
 
   return (
     <div className="product-rating-container">
@@ -67,12 +94,7 @@ export default function Rating({
             </div>
           </div>
           <div className="product-rating-date">
-            Опубликовано:{" "}
-            {`${
-              Math.floor((Date.now() - date) / 86400000)
-                ? Math.floor((Date.now() - date) / 86400000) + "дней назад"
-                : "cегодня"
-            } `}
+            Опубликовано: {dateText}
           </div>
         </div>
         <div>

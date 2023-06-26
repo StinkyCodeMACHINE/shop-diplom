@@ -1,5 +1,10 @@
 **/node_modules
 **.env
 **/whatsappsessiondata
-**/static
+**/static/banner-images/**
+**/static/brand-images/**
+**/static/group-images/**
+**/static/product-images/**
+**/static/profile-images/**
+**/static/type-images/**
 **/.wwebjs_cache

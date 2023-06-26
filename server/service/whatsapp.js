@@ -6,7 +6,7 @@ const {
   LocalAuth,
   MessageMedia,
 } = require("whatsapp-web.js");
-const { review, user, order, orderProduct } = require("../db/models");
+const { review, user, order, orderProduct, product } = require("../db/models");
 const path = require("path");
 const { Op } = require("sequelize");
 
@@ -40,16 +40,6 @@ client.on("qr", (qr) => {
 client.on("ready", async () => {
   console.log("Client is ready!");
 
-  // const number = "89178744986";
-  // const sanitized_number = number.toString().replace(/[- )(]/g, "");
-
-  // const number_details = await client.getNumberId(sanitized_number);
-
-  // if (number_details) {
-  //   const sendMessageData = await client.sendMessage(number_details._serialized, "aaaaaa");
-  // } else {
-  //   throw new Error(final_number + " не существует!")
-  // }
 });
 
 client.on("message", async (message) => {
@@ -79,9 +69,9 @@ client.on("message", async (message) => {
     });
 
     if (orders && orders.length > 0) {
-      let response = `Всего у вас ${orders.length} ${
-        orders.length === 1 ? "заказ" : "заказа"
-      }.\r\n`;
+      let response = `Всего ${orders.length} ${
+        orders.length === 1 ? "заказ" : orders.length === 2 || orders.length === 3 || orders.length === 4 ? "заказа" : "заказов"
+      } ${orders.length === 1 ? "ожидает" : "ожидают"} доставки.`;
       orders.forEach((order) => {
         let totalAmount = 0;
 
@@ -90,56 +80,72 @@ client.on("message", async (message) => {
         );
         response =
           response +
-          `\r\nЗаказ № ${order.id} для "${order.name}" по адресу "${
+          `\r\n\r\nЗаказ № ${order.id} для "${order.name}" по адресу "${
             order.address
-          }" общей суммой в ${
-            order.money
-          } руб. и ${totalAmount} товарами: ${order.status.toLowerCase()} \r\n`;
+          }" общей суммой в ${order.money.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} руб. и ${totalAmount} товарами: ${order.status.toLowerCase()} `;
       });
       client.sendMessage(message.from, response);
     }
   }
-});
 
-client.on("message", async (message) => {
-  if (message.body.includes("!заказ ") && message.body !== "!заказы") {
-    const contact = await message.getContact();
-    const numberWithoutCode = contact.number.substring(1);
-    const orderElem = await order.findOne({
-      include: [
-        {
-          model: user,
-          as: "user",
-          where: {
-            phone: "8" + numberWithoutCode,
+  else if (message.body.includes("!заказ ")) {
+    try {
+      const contact = await message.getContact();
+      const numberWithoutCode = contact.number.substring(1);
+      const orderElem = await order.findOne({
+        include: [
+          {
+            model: user,
+            as: "user",
+            where: {
+              phone: "8" + numberWithoutCode,
+            },
           },
+          {
+            model: orderProduct,
+            as: "orderProducts",
+            include: {
+              model: product,
+              as: "product",
+            }
+          },
+        ],
+        where: {
+          id: message.body.split(" ")[1],
         },
-        {
-          model: orderProduct,
-          as: "orderProducts",
-        },
-      ],
-      where: {
-        id: message.body.split(' ')[1],
-      },
-    });
+      });
 
-    if (orderElem && Object.keys(orderElem).length > 0) {
-      let response = ``;
-      let totalAmount = 0;
+      if (orderElem && Object.keys(orderElem).length > 0) {
+        let response = ``;
+        let totalAmount = 0;
 
-      orderElem.orderProducts.forEach(
-        (product) => (totalAmount = totalAmount + product.amount)
-      );
-      response = `\r\nЗаказ № ${orderElem.id} для "${orderElem.name}" по адресу "${
-        orderElem.address
-      }" общей суммой в ${
-        orderElem.money
-      } руб. и ${totalAmount} товарами: ${orderElem.status.toLowerCase()} \r\n`;
-      client.sendMessage(message.from, response);
-    } else {
-      client.sendMessage(message.from, "Такой заказ не был найден!");
+        orderElem.orderProducts.forEach(
+          (product) => (totalAmount = totalAmount + product.amount)
+        );
+        response = `Заказ № ${orderElem.id} для "${
+          orderElem.name
+        }" по адресу "${orderElem.address}" общей суммой в ${orderElem.money.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} руб. и ${totalAmount} товарами: ${orderElem.status.toLowerCase()}\r\n \r\nСодержимое заказа:`;
+
+        orderElem.orderProducts.forEach(
+          (orderProduct) =>
+            (response =
+              response +
+              `\r\n\r\n${orderProduct.product.name} в количестве ${
+                orderProduct.amount
+              } шт. и стоимостью в ${orderProduct.price
+                .toString()
+                .replace(/\B(?=(\d{3})+(?!\d))/g, " ")} руб.`)
+        );
+        client.sendMessage(message.from, response);
+
+      } else {
+        client.sendMessage(message.from, "Такой заказ не был найден!");
+      }
     }
+    catch (err) {
+        client.sendMessage(message.from, `Укажите комманду в формате "!заказ *номер заказа*"`);
+    }
+    
   }
 });
 

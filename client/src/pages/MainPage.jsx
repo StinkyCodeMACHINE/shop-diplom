@@ -44,10 +44,13 @@ export default function Shop() {
   useEffect(() => {
     async function apiCalls() {
       const result = {};
-      const groups = await getGroups();
-      const types = await getTypes();
-      const brands = await getBrands();
-      const banners = await getBanners({ searchValue: "" });
+      let groups = await getGroups();
+      groups = groups.sort(() => Math.random() - 0.5);
+      let types = await getTypes();
+      types = types.sort(() => Math.random() - 0.5);
+      let brands = await getBrands();
+      brands = brands.sort(() => Math.random() - 0.5);
+      let banners = await getBanners({ searchValue: "" });
       await setDisplayed({ types, brands, banners, groups });
       await setRenderedOnce(true);
     }
@@ -97,85 +100,91 @@ export default function Shop() {
             ))}
           </Carousel>
         )}
-        <img src="/assets/logo.png"/>
-        <h2>Популярные бренды</h2>
+        <img src="/assets/logo.png" />
+
         {displayed.brands.length > 0 && (
-          <Carousel
-            width={"1000px"}
-            onClickItem={(item) => item.props.onClick()}
-            showStatus={false}
-            showThumbs={false}
-            centerMode={true}
-            centerSlidePercentage={33.3}
-          >
-            {displayed.brands.flatMap((brandElem, index) =>
-              index < 10 ? (
-                <div
-                  onClick={async (e) => {
-                    await setProduct((oldProduct) => ({
-                      ...oldProduct,
-                      selectedBrand: brandElem,
-                      selectedGroup: {},
-                      selectedType: {},
-                    }));
-                    navigate(SHOP_ROUTE);
-                  }}
-                  className="main-page-slider-things-card"
-                >
-                  <img
-                    src={
-                      brandElem.img
-                        ? API_URL + BRAND_IMAGE_URL + brandElem.img
-                        : "/assets/default-img.png"
-                    }
-                  />
-                </div>
-              ) : (
-                []
-              )
-            )}
-          </Carousel>
+          <>
+            <h2>Популярные бренды</h2>
+            <Carousel
+              width={"1000px"}
+              onClickItem={(item) => item.props.onClick()}
+              showStatus={false}
+              showThumbs={false}
+              centerMode={true}
+              centerSlidePercentage={33.3}
+            >
+              {displayed.brands.flatMap((brandElem, index) =>
+                index < 10 ? (
+                  <div
+                    onClick={async (e) => {
+                      await setProduct((oldProduct) => ({
+                        ...oldProduct,
+                        selectedBrand: brandElem,
+                        selectedGroup: {},
+                        selectedType: {},
+                      }));
+                      navigate(SHOP_ROUTE);
+                    }}
+                    className="main-page-slider-things-card"
+                  >
+                    <img
+                      src={
+                        brandElem.img
+                          ? API_URL + BRAND_IMAGE_URL + brandElem.img
+                          : "/assets/default-img.png"
+                      }
+                    />
+                  </div>
+                ) : (
+                  []
+                )
+              )}
+            </Carousel>
+          </>
         )}
-        <h2>Популярные категории</h2>
+
         {displayed.types.length > 0 && (
-          <Carousel
-            width={"1000px"}
-            onClickItem={(item) => item.props.onClick()}
-            showStatus={false}
-            showThumbs={false}
-            centerMode={true}
-            centerSlidePercentage={33.3}
-          >
-            {displayed.types.flatMap((typeElem, index) =>
-              index < 10 ? (
-                <div
-                  onClick={async (e) => {
-                    await setProduct((oldProduct) => ({
-                      ...oldProduct,
-                      selectedBrand: {},
-                      selectedGroup: {},
-                      selectedType: typeElem,
-                    }));
-                    navigate(SHOP_ROUTE);
-                  }}
-                  className="main-page-slider-things-card"
-                >
-                  <img
-                    className="main-page-slider-img"
-                    style={{ height: "250px" }}
-                    src={
-                      typeElem.img
-                        ? API_URL + TYPE_IMAGE_URL + typeElem.img
-                        : "/assets/default-img.png"
-                    }
-                  />
-                  <div>{typeElem.name}</div>
-                </div>
-              ) : (
-                []
-              )
-            )}
-          </Carousel>
+          <>
+            <h2>Популярные категории</h2>
+            <Carousel
+              width={"1000px"}
+              onClickItem={(item) => item.props.onClick()}
+              showStatus={false}
+              showThumbs={false}
+              centerMode={true}
+              centerSlidePercentage={33.3}
+            >
+              {displayed.types.flatMap((typeElem, index) =>
+                index < 10 ? (
+                  <div
+                    onClick={async (e) => {
+                      await setProduct((oldProduct) => ({
+                        ...oldProduct,
+                        selectedBrand: {},
+                        selectedGroup: {},
+                        selectedType: typeElem,
+                      }));
+                      navigate(SHOP_ROUTE);
+                    }}
+                    className="main-page-slider-things-card"
+                  >
+                    <img
+                      className="main-page-slider-img"
+                      style={{ height: "250px" }}
+                      src={
+                        typeElem.img
+                          ? API_URL + TYPE_IMAGE_URL + typeElem.img
+                          : "/assets/default-img.png"
+                      }
+                    />
+                    <div>{typeElem.name}</div>
+                  </div>
+                ) : (
+                  []
+                )
+              )}
+            </Carousel>
+          </>
         )}
       </div>
     )

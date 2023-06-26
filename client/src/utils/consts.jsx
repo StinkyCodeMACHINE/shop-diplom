@@ -24,7 +24,7 @@ export const productSortingValues = [
   { value: { byWhat: ""}, text: "Отсутствует" },
   { value: { byWhat: "price", order: "ASC" }, text: "Сначала недорогие" },
   { value: { byWhat: "price", order: "DESC" }, text: "Сначала дорогие" },
-  { value: {byWhat: "isHyped", order: "DESC"}, text: "Сначала самые популярные" }, //указываются админом
+  { value: {byWhat: "isHyped", order: "DESC"}, text: "Сначала самые популярные" },
   { value: { byWhat: "discount", order: "ASC" }, text: "По размеру скидки" },
   // { value: {byWhat: "", order: "DESC"}, text: "Сначала обсуждаемые" },
   {

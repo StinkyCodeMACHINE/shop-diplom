@@ -43,7 +43,7 @@ app.use("/api/info", infoRouter);
 app.use("/api/order", orderRouter);
 app.use("/api/banner", bannerRouter);
 
-// Обработка ошибок, последний middleware
+// Обработка ошибок
 app.use(errorHandler)
 
 async function start() {

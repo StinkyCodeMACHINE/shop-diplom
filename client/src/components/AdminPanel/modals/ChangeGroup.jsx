@@ -83,7 +83,7 @@ export default function ChangeGroup({ setDisplayed, page, limit, prevThing }) {
             }}
             type="file"
           />
-          <div>
+          <div className="product-options-container">
             <button
               className="product-option-container"
               onClick={() => setWhatIsShown("")}

@@ -16,8 +16,6 @@ import {
   getFavouriteProducts,
   getGroups,
 } from "../API/productAPI";
-import Pagination from "../components/Favourite/Pagination";
-import ProductCard from "../components/Favourite/ProductCard";
 
 export default function GroupTypes() {
   const { product, setProduct, user, whatIsShown, setWhatIsShown } =
@@ -69,7 +67,6 @@ export default function GroupTypes() {
             </Link>
             <div>{">"}</div>
             <Link className="product-page-group">{name}</Link>
-            <div>{">"}</div>
           </div>
           <div className="group-types-cards-container">
             {groupTypes.map((groupTypesElem) => {
@@ -84,14 +81,16 @@ export default function GroupTypes() {
                   }}
                   className="group-types-card"
                 >
-                  <img
-                    src={
-                      groupTypesElem.img
-                        ? API_URL + TYPE_IMAGE_URL + groupTypesElem.img
-                        : "/assets/default-img.png"
-                    }
-                  />
-                  <div>{groupTypesElem.name}</div>
+                  <div>
+                    <img
+                      src={
+                        groupTypesElem.img
+                          ? API_URL + TYPE_IMAGE_URL + groupTypesElem.img
+                          : "/assets/default-img.png"
+                      }
+                    />
+                    <div>{groupTypesElem.name}</div>
+                  </div>
                 </div>
               );
             })}

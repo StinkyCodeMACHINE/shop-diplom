@@ -20,18 +20,6 @@ export default function Cart() {
     address: "",
   });
 
-  //   //для теста
-  //   useEffect(() => {
-  //     async function apiCalls() {
-  //       await setProduct((oldProduct) => ({
-  //         ...oldProduct,
-  //         cart: [31, 32],
-  //       }));
-  //     }
-
-  //     apiCalls();
-  //   }, []);
-
   useEffect(() => {
     async function apiCalls() {
       let cartArray = [];
@@ -46,8 +34,8 @@ export default function Cart() {
             left: productData.left === null ? 99 : productData.left,
             amount: 1,
             finalPrice: productData.discount
-              ? productData.price * productData.discount
-              : productData.price,
+              ? Math.ceil(productData.price * productData.discount)
+              : Math.ceil(productData.price),
           });
         }
         if (remove.length > 0) {
@@ -64,18 +52,6 @@ export default function Cart() {
 
     product.cart.length > 0 ? apiCalls() : setCart([]);
   }, [product.cart]);
-
-  // useEffect(() => {
-  //   async function apiCalls() {
-  //     const interval = setInterval(() => {
-  //       setWhatIsShown("");
-  //     }, 3000);
-  //     return () => clearInterval(interval);
-  //   }
-
-  //   currentlyShown === "allgood" && apiCalls()
-
-  // }, [currentlyShown]);
 
   async function inputChangeHandler(e) {
     if (e.target.id === "phone") {
@@ -138,9 +114,9 @@ export default function Cart() {
                                     ...elem,
                                     amount: elem.amount - 1,
                                     finalPrice: elem.discount
-                                      ? elem.price *
+                                      ? Math.ceil(elem.price *
                                         elem.discount *
-                                        (elem.amount - 1)
+                                        (elem.amount - 1))
                                       : elem.price * (elem.amount - 1),
                                   }
                                 : elem
@@ -169,10 +145,10 @@ export default function Cart() {
                                       : 1,
                                   finalPrice: elem.discount
                                     ? Number(e.target.value) > 0
-                                      ? elem.price *
+                                      ? Math.ceil(elem.price *
                                         elem.discount *
-                                        Number(e.target.value)
-                                      : elem.price * elem.discount
+                                        Number(e.target.value))
+                                      : Math.ceil(elem.price * elem.discount)
                                     : Number(e.target.value) > 0
                                     ? elem.price * Number(e.target.value)
                                     : elem.price * 1,
@@ -197,9 +173,9 @@ export default function Cart() {
                                       ? elem.amount + 1
                                       : cartElem.left,
                                   finalPrice: elem.discount
-                                    ? elem.price *
+                                    ? Math.ceil(elem.price *
                                       elem.discount *
-                                      (elem.amount + 1)
+                                      (elem.amount + 1))
                                     : elem.price * (elem.amount + 1),
                                 }
                               : elem
@@ -213,7 +189,7 @@ export default function Cart() {
                     <div>
                       Цена:{" "}
                       <span>
-                        {cartElem.finalPrice
+                        {Math.ceil(cartElem.finalPrice)
                           .toString()
                           .replace(/\B(?=(\d{3})+(?!\d))/g, " ")}
                         &#x20BD;
@@ -240,7 +216,10 @@ export default function Cart() {
                 Сумма:{" "}
                 {cart.length > 0 &&
                   cart
-                    .reduce((money, elem) => money + elem.finalPrice, 0)
+                    .reduce(
+                      (money, elem) => money + Math.ceil(elem.finalPrice),
+                      0
+                    )
                     .toString()
                     .replace(/\B(?=(\d{3})+(?!\d))/g, " ")}
                 &#x20BD;

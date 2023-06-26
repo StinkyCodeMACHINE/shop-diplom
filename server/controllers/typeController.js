@@ -17,7 +17,8 @@ async function create(req, res, next) {
       info = JSON.parse(info);
       info.forEach((element) => {
         defaultTypeInfo.create({
-          key: element.key,
+          key: element.key.charAt(0).toUpperCase() +
+                    element.key.slice(1),
           typeId: typeElem.id,
         });
       });
@@ -120,7 +121,8 @@ async function changeType(req, res, next) {
 
       info.forEach((element) => {
         defaultTypeInfo.create({
-          key: element.key,
+          key: element.key.charAt(0).toUpperCase() +
+                    element.key.slice(1),
           typeId: id,
         });
       });

@@ -4,6 +4,7 @@ import { Context } from "../../App";
 import {
   API_URL,
   COMPARE_ROUTE,
+  LOGIN_ROUTE,
   PRODUCT_IMAGE_URL,
   PRODUCT_ROUTE,
 } from "../../utils/consts";
@@ -101,10 +102,9 @@ export default function ProductCard({
         </div>
       </div>
       <div>
-        {user.isAuth && (
-          <>
-            <div
-              onClick={async () => {
+          <div
+            onClick={async () => {
+              if (user.isAuth) {
                 if (product.favourite.find((elem) => elem.productId === id)) {
                   await removeFromFavourite(id);
                 } else {
@@ -115,47 +115,52 @@ export default function ProductCard({
                   ...oldProduct,
                   favourite: favourite,
                 }));
-              }}
-              onMouseOver={async () => {
-                setIsHoveredOver(true);
-              }}
-              onMouseLeave={async () => {
-                setIsHoveredOver(false);
-              }}
-              className="product-option-container"
-            >
-              <div className="product-heart-icon-container">
-                <img
-                  style={{
-                    filter:
-                      "invert(30%) sepia(67%) saturate(6061%) hue-rotate(352deg) brightness(96%) contrast(110%)",
-                  }}
-                  className="product-heart product-heart-empty"
-                  src="/assets/eheart.svg"
-                />
-                <img
-                  className="product-heart product-heart-full"
-                  style={
-                    product.favourite.find((elem) => elem.productId === id)
-                      ? isHoveredOver
-                        ? { opacity: 0, transition: "500ms opacity ease-in" }
-                        : { opacity: 1 }
-                      : isHoveredOver
-                      ? { opacity: 1, transition: "500ms opacity ease-in" }
-                      : {}
-                  }
-                  src="/assets/fheart.svg"
-                />
-              </div>
-
-              <div className="product-heart-text">
-                {product.favourite.find((elem) => elem.productId === id)
-                  ? "В избранном"
-                  : "В избранное"}
-              </div>
+              }
+              else {
+                navigate(LOGIN_ROUTE)
+              }
+            }}
+            onMouseOver={async () => {
+              setIsHoveredOver(true);
+            }}
+            onMouseLeave={async () => {
+              setIsHoveredOver(false);
+            }}
+            className="product-option-container"
+          >
+            <div className="product-heart-icon-container">
+              <img
+                style={{
+                  filter:
+                    "invert(30%) sepia(67%) saturate(6061%) hue-rotate(352deg) brightness(96%) contrast(110%)",
+                }}
+                className="product-heart product-heart-empty"
+                src="/assets/eheart.svg"
+              />
+              <img
+                className="product-heart product-heart-full"
+                style={
+                  product.favourite.find((elem) => elem.productId === id)
+                    ? isHoveredOver
+                      ? { opacity: 0, transition: "500ms opacity ease-in" }
+                      : { opacity: 1 }
+                    : isHoveredOver
+                    ? { opacity: 1, transition: "500ms opacity ease-in" }
+                    : {}
+                }
+                src="/assets/fheart.svg"
+              />
             </div>
-            <div
-              onClick={async () => {
+
+            <div className="product-heart-text">
+              {product.favourite.find((elem) => elem.productId === id)
+                ? "В избранном"
+                : "В избранное"}
+            </div>
+          </div>
+          <div
+            onClick={async () => {
+              if (user.isAuth) {
                 if (product.cart.find((elem) => elem === id)) {
                   await setProduct((oldProduct) => ({
                     ...oldProduct,
@@ -167,21 +172,26 @@ export default function ProductCard({
                     cart: [...oldProduct.cart, id],
                   }));
                 }
-              }}
-              className="product-option-container"
-            >
-              <img
-                className="product-heart product-heart-empty"
-                src="/assets/cart.svg"
-              />
-              <div>
-                {product.cart.find((elem) => elem === id)
-                  ? "Убрать из корзины"
-                  : "В корзину"}
-              </div>
+              } else {
+                navigate(LOGIN_ROUTE);
+              }
+              
+            }}
+            className="product-option-container"
+          >
+            <img
+              className="product-heart product-heart-empty"
+              src="/assets/cart.svg"
+            />
+            <div>
+              {product.cart.find((elem) => elem === id)
+                ? "Убрать из корзины"
+                : "В корзину"}
             </div>
-            <div
-              onClick={async () => {
+          </div>
+          <div
+            onClick={async () => {
+              if (user.isAuth) {
                 if (product.toCompare.find((elem) => elem === id)) {
                   await setProduct((oldProduct) => ({
                     ...oldProduct,
@@ -206,36 +216,36 @@ export default function ProductCard({
                     navigate(COMPARE_ROUTE);
                   }
                 }
+              } else {
+                navigate(LOGIN_ROUTE);
+              }
+              
+            }}
+            className="product-option-container"
+          >
+            <img
+              style={{
+                width: "30px",
+                height: "30px",
               }}
-              className="product-option-container"
-            >
-              <img
-                style={{
-                  width: "30px",
-                  height: "30px",
-                }}
-                className="compare-icon"
-                src="/assets/scale.png"
-              />
-              <div>
-                {product.toCompare.find((elem) => elem === id)
-                  ? "Добавлено в сравнение"
-                  : "Сравнить"}
-              </div>
-            </div>
-
-            {/* добавить в корзину */}
-
+              className="compare-icon"
+              src="/assets/scale.png"
+            />
             <div>
-              Доставка:{" "}
-              <span className="product-delivery-date">в течение недели</span>
+              {product.toCompare.find((elem) => elem === id)
+                ? "Добавлено в сравнение"
+                : "Сравнить"}
             </div>
+          </div>
 
-            {isHyped && (
-              <img className="product-hit-icon" src="/assets/hit.png" />
-            )}
-          </>
-        )}
+          <div>
+            Доставка:{" "}
+            <span className="product-delivery-date">в течение недели</span>
+          </div>
+
+          {isHyped && (
+            <img className="product-hit-icon" src="/assets/hit.png" />
+          )}
       </div>
     </div>
   );

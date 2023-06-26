@@ -3,18 +3,19 @@ const { Sequelize } = require("sequelize");
 const { Op } = require("sequelize");
 
 async function getInstances(req, res) {
-  const { keyId } = req.params;
+  let { typeId, key } = req.query;
+  typeId = Number(typeId)
   const info = await productInfo.findAll({
     attributes: [
       "value",
       [Sequelize.fn("COUNT", Sequelize.col("value")), "count"],
-      "typeDefaultInfoId",
+      "typeId",
     ],
     where: {
-      typeDefaultInfoId: keyId,
+      key,
+      typeId,
     },
-    
-    group: ["value", "typeDefaultInfoId"],
+    group: ["value", "typeId"],
     order: [["count", "DESC"]],
   });
   res.json(info);

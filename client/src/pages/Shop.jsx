@@ -75,7 +75,7 @@ export default function Shop() {
           Object.keys(selectedInfoInstance).length > 0
             ? {
                 value: selectedInfoInstance.value,
-                typeDefaultInfoId: selectedInfoInstance.typeDefaultInfoId,
+                typeId: selectedInfoInstance.typeId,
               }
             : {},
       });
@@ -108,7 +108,7 @@ export default function Shop() {
           Object.keys(selectedInfoInstance).length > 0
             ? {
                 value: selectedInfoInstance.value,
-                typeDefaultInfoId: selectedInfoInstance.typeDefaultInfoId,
+                typeId: selectedInfoInstance.typeId,
               }
             : {},
       });
@@ -150,7 +150,7 @@ export default function Shop() {
     async function apiCalls() {
       const data = await Promise.all(
         defaultInfo.map(async (infoElem) => {
-          let infoInstances = await getInstances(infoElem.id);
+          let infoInstances = await getInstances(infoElem.key, infoElem.typeId);
           // infoInstances = infoInstances.sort((a, b) => b.count - a.count);
           return {
             stat: infoElem,
@@ -192,7 +192,7 @@ export default function Shop() {
           Object.keys(selectedInfoInstance).length > 0
             ? {
                 value: selectedInfoInstance.value,
-                typeDefaultInfoId: selectedInfoInstance.typeDefaultInfoId,
+                typeId: selectedInfoInstance.typeId,
               }
             : {},
       });
@@ -213,7 +213,7 @@ export default function Shop() {
           Object.keys(selectedInfoInstance).length > 0
             ? {
                 value: selectedInfoInstance.value,
-                typeDefaultInfoId: selectedInfoInstance.typeDefaultInfoId,
+                typeId: selectedInfoInstance.typeId,
               }
             : {},
       });
@@ -424,7 +424,7 @@ export default function Shop() {
                   />
                   <img
                     onClick={() => resetPriceLimits(2)}
-                    class="shop-side-options-price-x"
+                    className="shop-side-options-price-x"
                     src="/assets/x.svg"
                   />
                 </div>
@@ -442,87 +442,95 @@ export default function Shop() {
                     <h2>Характеристики</h2>
                     <div className="shop-side-options-stats">
                       {infoInstances.length > 0 &&
-                        infoInstances.map((instanceElem) => (
-                          <div key={instanceElem.id}>
-                            <div
-                              onClick={async () => {
-                                await setInfoInstances((oldInfoInstances) => {
-                                  const array = oldInfoInstances.map(
-                                    (instanceElem) => ({ ...instanceElem })
-                                  );
-                                  const index = array.findIndex(
-                                    (elem) =>
-                                      elem.stat.id === instanceElem.stat.id
-                                  );
-                                  array[index].hidden = !array[index].hidden;
-                                  return array;
-                                });
-
-                                !instanceElem.hidden &&
-                                  selectedInfoInstance.typeDefaultInfoId ===
-                                    instanceElem.values[0].typeDefaultInfoId &&
-                                  (await setSelectedInfoInstance({}));
-                              }}
-                              className="shop-side-options-stats-stat"
-                            >
-                              <img
-                                style={
-                                  instanceElem.hidden
-                                    ? { transform: "rotate(-270deg)" }
-                                    : { transform: "rotate(-90deg)" }
-                                }
-                                src="/assets/drop-down-arrow.svg"
-                              />
-                              <h3>{instanceElem.stat.key}</h3>
-                            </div>
-                            <div
-                              className="shop-side-options-stats-stat-instance"
-                              style={
-                                instanceElem.hidden
-                                  ? {
-                                      transform: "scaleY(0)",
-                                      maxHeight: "0px",
-                                      opacity: 0,
-                                    }
-                                  : {
-                                      transform: "scaleY(1)",
-                                      height: "auto",
-                                      maxHeight: "50px",
-                                      opacity: 1,
-                                    }
-                              }
-                            >
-                              {instanceElem.values.map((value) => (
+                        infoInstances.map(
+                          (instanceElem) =>
+                            instanceElem.values.length > 0 && (
+                              <div key={instanceElem.id}>
                                 <div
-                                  className="shop-side-option"
-                                  key={value.value}
-                                  style={
-                                    selectedInfoInstance.value ===
-                                      value.value &&
-                                    selectedInfoInstance.typeDefaultInfoId ===
-                                      value.typeDefaultInfoId
-                                      ? { color: "var(--cool-blue)" }
-                                      : {}
-                                  }
-                                  onClick={() => {
-                                    if (
-                                      selectedInfoInstance.value ===
-                                        value.value &&
+                                  onClick={async () => {
+                                    await setInfoInstances(
+                                      (oldInfoInstances) => {
+                                        const array = oldInfoInstances.map(
+                                          (instanceElem) => ({
+                                            ...instanceElem,
+                                          })
+                                        );
+                                        const index = array.findIndex(
+                                          (elem) =>
+                                            elem.stat.id ===
+                                            instanceElem.stat.id
+                                        );
+                                        array[index].hidden =
+                                          !array[index].hidden;
+                                        return array;
+                                      }
+                                    );
+
+                                    !instanceElem.hidden &&
                                       selectedInfoInstance.typeDefaultInfoId ===
-                                        value.typeDefaultInfoId
-                                    ) {
-                                      setSelectedInfoInstance({});
-                                    } else {
-                                      setSelectedInfoInstance(value);
-                                    }
+                                        instanceElem.values[0]
+                                          .typeDefaultInfoId &&
+                                      (await setSelectedInfoInstance({}));
                                   }}
+                                  className="shop-side-options-stats-stat"
                                 >
-                                  {value.value} <span>({value.count})</span>
+                                  <img
+                                    style={
+                                      instanceElem.hidden
+                                        ? { transform: "rotate(-270deg)" }
+                                        : { transform: "rotate(-90deg)" }
+                                    }
+                                    src="/assets/drop-down-arrow.svg"
+                                  />
+                                  <h3>{instanceElem.stat.key}</h3>
                                 </div>
-                              ))}
-                            </div>
-                          </div>
-                        ))}
+                                <div
+                                  className="shop-side-options-stats-stat-instance"
+                                  style={
+                                    instanceElem.hidden
+                                      ? {
+                                          transform: "scaleY(0)",
+                                          maxHeight: "0px",
+                                          opacity: 0,
+                                        }
+                                      : {
+                                          transform: "scaleY(1)",
+                                          // height: "auto",
+                                          maxHeight: "1000px",
+                                          opacity: 1,
+                                        }
+                                  }
+                                >
+                                  {instanceElem.values.map((value) => (
+                                    <div
+                                      className="shop-side-option"
+                                      key={value.value}
+                                      style={
+                                        selectedInfoInstance.value ===
+                                          value.value &&
+                                        selectedInfoInstance.key === value.key
+                                          ? { color: "var(--cool-blue)" }
+                                          : {}
+                                      }
+                                      onClick={() => {
+                                        if (
+                                          selectedInfoInstance.value ===
+                                            value.value &&
+                                          selectedInfoInstance.key === value.key
+                                        ) {
+                                          setSelectedInfoInstance({});
+                                        } else {
+                                          setSelectedInfoInstance(value);
+                                        }
+                                      }}
+                                    >
+                                      {value.value} <span>({value.count})</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )
+                        )}
                     </div>
                   </>
                 )}

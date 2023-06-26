@@ -212,7 +212,7 @@ export default function ChangeBanner({
               }}
               type="file"
             />
-            <div>
+            <div className="product-options-container">
               <button
                 className="product-option-container"
                 onClick={() => setWhatIsShown("")}

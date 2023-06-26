@@ -1,5 +1,5 @@
 const bcrypt = require("bcrypt"); //хеширование паролей
-const { user, basket } = require("../db/models");
+const { user} = require("../db/models");
 const jwt = require("jsonwebtoken");
 const sendMail = require("../service/mail");
 const uuid = require("uuid"); // генерирует случайный текст
@@ -49,10 +49,6 @@ async function registration(req, res, next) {
     activationLink,
   });
   res.json(userElem[0]);
-  // const basketElem = await basket.create({ userId: userElem.id });
-  // const token = generateJWT(userElem.name, userElem.id, userElem.email, userElem.role);
-
-  // res.json({ token });
 }
 
 async function login(req, res, next) {
@@ -73,18 +69,24 @@ async function login(req, res, next) {
     userElem.phone,
     userElem.img
   );
-  console.log(`token from shit ${token}`);
   res.json({ token });
 }
 
 async function activateAccount(req, res, next) {
   try {
     const { link } = req.params;
+    const users = await user.findAll({
+      attributes: [
+        "isActivated",
+        [Sequelize.fn("COUNT", Sequelize.col("isActivated")), "count"],
+      ],
+      group: ["isActivated"],
+      order: [["isActivated", "DESC"]],
+    });  
     const userElem = await user.update(
-      { isActivated: true },
+      { isActivated: true, role: users.find((roleCount) => roleCount.isActivated === true) ? "USER" : "ADMIN"},
       { where: { activationLink: link }, returning: true }
     );
-    await basket.create({ userId: userElem[1][0].id });
     res.redirect(process.env.CLIENT_URL);
   } catch (err) {
     next(new Error(err.message));

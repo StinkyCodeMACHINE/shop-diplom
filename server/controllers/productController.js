@@ -1,5 +1,6 @@
 const uuid = require("uuid"); // генерирует случайные id
 const path = require("path");
+const axios = require("axios");
 const {
   product,
   productInfo,
@@ -7,17 +8,18 @@ const {
   review,
   user,
   reviewRating,
+  type,
+  group,
+  brand,
 } = require("../db/models");
 const { Op } = require("sequelize");
 const { Sequelize } = require("sequelize");
+const whatsappclient = require("../service/whatsapp");
+const ExcelJS = require("exceljs");
+const fs = require("fs");
 
 async function create(req, res, next) {
   try {
-    // let { name, price, brandId, typeId, info } = req.body;
-    // const { img } = req.files;
-    // let fileName = uuid.v4() + ".jpg";
-    // img.mv(path.resolve(__dirname, "..", "static", "product-images", fileName)); было
-
     let {
       name,
       price,
@@ -76,16 +78,152 @@ async function create(req, res, next) {
     if (info) {
       info = JSON.parse(info);
       info.forEach((element) => {
-        productInfo.create({
-          key: element.key,
-          value: element.value.toLowerCase(),
-          productId: productElem.id,
-          typeDefaultInfoId: element.id,
-        });
+        if (element.value !== "") {
+          productInfo.create({
+            key: element.key,
+            value: element.value.toLowerCase(),
+            productId: productElem.id,
+            typeDefaultInfoId: element.id,
+            typeId: productElem.typeId,
+          });
+        }
+        
       });
     }
 
     res.json(productElem);
+  } catch (err) {
+    next(new Error(err.message));
+  }
+}
+
+async function loadFromExcel(req, res, next) {
+  try {
+    const { excel } = req.files;
+    const types = await type.findAll();
+    const brands = await brand.findAll();
+
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.load(excel.data);
+    const workSheet = workbook.worksheets[0];
+    let createdAmount = 0;
+    let updatedAmount = 0;
+
+    for (let i = 2; i <= workSheet.rowCount; i++) {
+      try {
+        const row = workSheet.getRow(i);
+
+        const foundProduct = await product.findOne({
+          where: {
+            name: row.values[3],
+          },
+        });
+
+        if (foundProduct) {
+          await product.update(
+            {
+              left: Sequelize.literal(`"left" + ${row.values[9]}`),
+            },
+            {
+              where: {
+                id: foundProduct.id,
+              },
+            }
+          );
+          updatedAmount = updatedAmount + 1;
+        } else {
+          const links = typeof row.values[6] === 'object' ? row.values[6].hyperlink.split(",") : row.values[6].split(",");
+          const fileNames = [];
+
+          const response = [];
+          for (let j = 0; j < links.length; j++) {
+            try {
+              const img = await axios.get(links[j], {
+                responseType: "arraybuffer",
+              });
+              fileNames.push(uuid.v4() + ".png");
+              response.push(img);
+            }
+            catch (err) {
+              console.log(err)
+            }
+            
+            
+          }
+
+          const foundTypeId = types.find(
+            (type) => type.name.localeCompare(row.values[1], undefined, {sensitivity: 'accent'}) === 0
+          ).id;
+          const foundBrandId = brands.find(
+            (brand) =>
+              (brand.name.localeCompare(row.values[2], undefined, {sensitivity: "accent"}) === 0)
+          ).id;
+          if (!foundTypeId || !foundBrandId) {
+            return next(new Error("Не найден бренд или категория"))
+          }
+
+          const productElem = await product.create({
+            name: row.values[3],
+            price: row.values[4],
+            brandId: foundBrandId,
+            typeId: foundTypeId,
+            img: fileNames,
+            description: row.values[7],
+            left: row.values[9],
+            discount: 1 - row.values[5],
+          });
+
+          createdAmount = createdAmount + 1;
+
+          try {
+            for (let j = 0; j < fileNames.length; j++) {
+              await fs.writeFile(
+                path.resolve(
+                  __dirname,
+                  "..",
+                  "static",
+                  "product-images",
+                  fileNames[j]
+                ),
+                response[j].data,
+                (err) => {
+                  if (err) {
+                    console.log(err);
+                  }
+                }
+              );
+            }
+          } catch (axiosErr) {
+            console.log(axiosErr);
+          }
+
+          const info = row.values[8].split(",");
+
+          if (info) {
+            info.forEach((element) => {
+              if (element.value !== "") {
+                productInfo.create({
+                  key: isNaN(element.split(":")[0])
+                    ? element.split(":")[0].charAt(0).toUpperCase() +
+                      element.split(":")[0].slice(1)
+                    : element.split(":")[0],
+                  value: isNaN(element.split(":")[1])
+                    ? element.split(":")[1].toLowerCase()
+                    : element.split(":")[1],
+                  productId: productElem.id,
+                  typeId: foundTypeId,
+                });
+              }
+            });
+          }
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    // ... use workbook
+    res.json({ createdAmount, updatedAmount });
   } catch (err) {
     next(new Error(err.message));
   }
@@ -142,7 +280,7 @@ async function getAll(req, res, next) {
       selectedInfoInstance && Object.keys(selectedInfoInstance).length > 0
         ? {
             value: selectedInfoInstance.value,
-            typeDefaultInfoId: selectedInfoInstance.typeDefaultInfoId,
+            typeId: selectedInfoInstance.typeId,
           }
         : {};
 
@@ -281,8 +419,6 @@ async function leaveReview(req, res, next) {
     if (foundReview) {
       const updatedReview = await review.update(
         {
-          thumbsUp: 0,
-          thumbsDown: 0,
           advantages,
           disadvantages,
           text,
@@ -297,13 +433,19 @@ async function leaveReview(req, res, next) {
         }
       );
 
+      const deletedReviewRatings = await reviewRating.destroy({
+        where: {
+          reviewId: id,
+        },
+      });
+
       let newRating = 0;
       if (reviewCount.reviews.length > 0) {
         reviewCount.reviews.forEach(
           (elem) => (newRating = newRating + elem.rating * Number(elem.count))
         );
         newRating = parseFloat(
-          (newRating  + rating) / (reviewCount.totalCount + 1)
+          (newRating + rating) / (reviewCount.totalCount + 1)
         ).toFixed(2);
       } else {
         newRating = rating;
@@ -321,8 +463,7 @@ async function leaveReview(req, res, next) {
         }
       );
       res.json({ review: updatedReview[1][0], product: productElem[1][0] });
-    }
-    else {
+    } else {
       const reviewElem = await review.create({
         advantages,
         disadvantages,
@@ -356,7 +497,6 @@ async function leaveReview(req, res, next) {
       );
       res.json({ review: reviewElem, product: productElem[1][0] });
     }
-    
   } catch (err) {
     next(new Error(err.message));
   }
@@ -664,6 +804,11 @@ async function changeProduct(req, res, next) {
       );
     }
 
+    const foundProduct = await product.findOne({
+      where: {
+        id,
+      },
+    });
     const productElem = await product.update(
       {
         name,
@@ -704,13 +849,54 @@ async function changeProduct(req, res, next) {
       });
 
       info.forEach((element) => {
-        productInfo.create({
-          key: element.key,
-          value: element.value.toLowerCase(),
-          productId: id,
-          typeDefaultInfoId: element.id,
-        });
+        if (element.value !== "") {
+          productInfo.create({
+            key: element.key,
+            value: element.value.toLowerCase(),
+            productId: id,
+            typeDefaultInfoId: element.id,
+            typeId,
+          });
+        }
+        
       });
+    }
+
+    if (
+      discount &&
+      Math.ceil(foundProduct.discount * 100) > Math.ceil(discount * 100) &&
+      discount != 1
+    ) {
+      const favouriteProducts = await favourite.findAll({
+        where: {
+          productId: id,
+        },
+        include: {
+          model: product,
+          as: "product",
+        },
+      });
+      if (favouriteProducts.length > 0) {
+        for (let i = 0; i < favouriteProducts.length; i++) {
+          const userElem = await user.findOne({
+            where: {
+              id: favouriteProducts[i].userId,
+            },
+          });
+          const number = userElem.phone;
+
+          const number_details = await whatsappclient.getNumberId(number);
+
+          if (number_details) {
+            const sendMessageData = await whatsappclient.sendMessage(
+              number_details._serialized,
+              `Понравившийся вам товар, "${
+                favouriteProducts[i].product.name
+              }", продается с ${Math.ceil((1 - discount) * 100)}% скидкой!`
+            );
+          }
+        }
+      }
     }
 
     res.json(productElem);
@@ -722,6 +908,20 @@ async function changeProduct(req, res, next) {
 async function deleteProduct(req, res, next) {
   try {
     const { id } = req.params;
+    const { img } = req.query;
+
+    img &&
+      img.forEach((imgElem) => {
+        fs.unlink(
+          path.resolve(__dirname, "..", "static", "product-images", imgElem),
+          (err) => {
+            if (err) {
+              console.log(err);
+            }
+          }
+        );
+      });
+
     const result = await product.destroy({
       where: {
         id,
@@ -735,6 +935,7 @@ async function deleteProduct(req, res, next) {
 
 module.exports = {
   create,
+  loadFromExcel,
   getAll,
   getOne,
   leaveReview,

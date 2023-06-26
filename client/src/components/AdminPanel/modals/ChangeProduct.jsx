@@ -108,13 +108,12 @@ export default function ChangeProduct({
       );
       const productElem = await getOneProduct(prevThing.id);
 
-      // setInfo(product.info);
       const defaultInfoArray = typeInfo.map((elem) => ({
         id: elem.id,
         key: elem.key,
-        value:
-          productElem.info.find((infoElem) => infoElem.key === elem.key)
-            .value || "",
+        value: productElem.info.find((infoElem) => infoElem.key === elem.key)
+          ? productElem.info.find((infoElem) => infoElem.key === elem.key).value
+          : "",
       }));
       await setDeafultInfo(defaultInfoArray);
 
@@ -150,13 +149,13 @@ export default function ChangeProduct({
     ]);
   }
 
-  function removeStatHandler(number) {
-    setInfo((prevInfo) => prevInfo.filter((stat) => stat.number !== number));
+  function removeStatHandler(id) {
+    setInfo((prevInfo) => prevInfo.filter((stat) => stat.id !== id));
   }
 
-  function changeStatHandler(key, value, number) {
+  function changeStatHandler(value, id) {
     setInfo((prevInfo) =>
-      prevInfo.map((i) => (i.number === number ? { ...i, [key]: value } : i))
+      prevInfo.map((i) => (i.id === id ? { ...i, value } : i))
     );
   }
 
@@ -223,7 +222,7 @@ export default function ChangeProduct({
       <>
         <div className="modal-inner-container">
           <form>
-            <h2>Добавить устройство</h2>
+            <h2>Изменить товар</h2>
             <select
               name="type"
               value={inputValues.type}
@@ -279,6 +278,7 @@ export default function ChangeProduct({
               id="isHyped"
             />
             <label htmlFor="isHyped">Хит?</label>
+            <h3>Стоимость</h3>
 
             <input
               onChange={(e) =>
@@ -294,27 +294,32 @@ export default function ChangeProduct({
               min={1}
               max={999999}
             />
-            <div class="input-icon">
-              <input
-                onChange={(e) =>
-                  setInputValues((prevInputValues) => ({
-                    ...prevInputValues,
-                    discount:
-                      Number(e.target.value) === null
-                        ? 0
-                        : Number(e.target.value) > 100
-                        ? 100
-                        : Number(e.target.value),
-                  }))
-                }
-                value={inputValues.discount}
-                type="number"
-                placeholder="Введите размер скидки (если есть)"
-                min={0}
-                max={100}
-              />
-              <i>%</i>
+            <div>
+              <h3>Размер скидки</h3>
+              <div className="input-icon">
+                <input
+                  onChange={(e) =>
+                    setInputValues((prevInputValues) => ({
+                      ...prevInputValues,
+                      discount:
+                        Number(e.target.value) === null
+                          ? 0
+                          : Number(e.target.value) > 100
+                          ? 100
+                          : Number(e.target.value),
+                    }))
+                  }
+                  value={inputValues.discount}
+                  type="number"
+                  placeholder="Введите размер скидки (если есть)"
+                  min={0}
+                  max={100}
+                />
+                <i>%</i>
+              </div>
             </div>
+            <h3>Количество товара</h3>
+
             <input
               onChange={(e) =>
                 setInputValues((prevInputValues) => ({
@@ -389,7 +394,7 @@ export default function ChangeProduct({
                     placeholder="Введите название свойства"
                     value={elem.key}
                     onChange={(e) =>
-                      changeStatHandler("key", e.target.value, elem.number)
+                      changeStatHandler(e.target.value, elem.number)
                     }
                   />
                   <input
@@ -397,13 +402,11 @@ export default function ChangeProduct({
                     type="text"
                     placeholder="Введите значение свойства"
                     value={elem.value}
-                    onChange={(e) =>
-                      changeStatHandler("value", e.target.value, elem.number)
-                    }
+                    onChange={(e) => changeStatHandler(e.target.value, elem.id)}
                   />
                   <button
                     className="product-option-container"
-                    onClick={() => removeStatHandler(elem.number)}
+                    onClick={() => removeStatHandler(elem.id)}
                   >
                     Удалить
                   </button>
@@ -417,7 +420,7 @@ export default function ChangeProduct({
               Добавить новое свойство
             </button>
 
-            <div>
+            <div className="product-options-container">
               <button
                 className="product-option-container"
                 onClick={() => setWhatIsShown("")}

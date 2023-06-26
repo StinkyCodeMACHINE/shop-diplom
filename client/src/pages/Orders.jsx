@@ -1,6 +1,6 @@
 import react, { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { createOrder, getOneProduct } from "../API/productAPI";
+import { cancelOrder, createOrder, getOneProduct } from "../API/productAPI";
 import { Context } from "../App";
 import { API_URL, PRODUCT_IMAGE_URL, PRODUCT_ROUTE } from "../utils/consts";
 import { nanoid } from "nanoid";
@@ -12,36 +12,26 @@ export default function Cart() {
     useContext(Context);
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
-  //   //для теста
-  //   useEffect(() => {
-  //     async function apiCalls() {
-  //       await setProduct((oldProduct) => ({
-  //         ...oldProduct,
-  //         cart: [31, 32],
-  //       }));
-  //     }
 
-  //     apiCalls();
-  //   }, []);
-  const [dbResults, setDbResults] = useState([])
+  const [dbResults, setDbResults] = useState([]);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(2)
-  const [totalCount, setTotalCount] = useState(0)
+  const [limit, setLimit] = useState(2);
+  const [totalCount, setTotalCount] = useState(0);
 
   useEffect(() => {
     async function apiCalls() {
       let orders = await getOrders();
       orders = orders.flatMap((elem) =>
-      elem.orderProducts.length === 0 ? [] : elem
+        elem.orderProducts.length === 0 ? [] : elem
       );
-      await setDbResults(orders)
-      await setTotalCount(orders.length)
-      let limitedOrders = []
-      
+      await setDbResults(orders);
+      await setTotalCount(orders.length);
+      let limitedOrders = [];
+
       //
-      let offset = page * limit - limit
-      for (let i=offset;i<offset+limit && i<orders.length; i++) {
-        limitedOrders.push(orders[i])
+      let offset = page * limit - limit;
+      for (let i = offset; i < offset + limit && i < orders.length; i++) {
+        limitedOrders.push(orders[i]);
       }
       await setOrders(limitedOrders);
     }
@@ -61,8 +51,8 @@ export default function Cart() {
       await setOrders(limitedOrders);
     }
 
-    dbResults.length>0 && apiCalls();
-  }, [page]);
+    dbResults.length > 0 && apiCalls();
+  }, [page, dbResults]);
 
   return (
     <div className="orders-page-main-container">
@@ -117,6 +107,41 @@ export default function Cart() {
               );
             })}
             <div className="order-results">
+              <div
+                onClick={async () => {
+                  await cancelOrder({ id: orderElem.id });
+                  let orders = await getOrders();
+                  orders = orders.flatMap((elem) =>
+                    elem.orderProducts.length === 0 ? [] : elem
+                  );
+                  await setDbResults(orders);
+                  await setTotalCount(orders.length);
+                  let limitedOrders = [];
+
+                  //
+                  let offset = page * limit - limit;
+                  for (
+                    let i = offset;
+                    i < offset + limit && i < orders.length;
+                    i++
+                  ) {
+                    limitedOrders.push(orders[i]);
+                  }
+                  await setOrders(limitedOrders);
+                }}
+                className="product-option-container"
+              >
+                <img
+                  className="product-heart product-heart-empty"
+                  src="/assets/delete.png"
+                  style={{
+                    width: "30px",
+                    height: "30px",
+                    filter: "var(--cred-filter)",
+                  }}
+                />
+                <div>Отменить заказ</div>
+              </div>
               <div className="order-results-overall">Итого: </div>
               <div>
                 <div>

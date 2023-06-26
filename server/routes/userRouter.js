@@ -15,7 +15,6 @@ router.post("/login", login);
 
 router.get("/auth", checkAuth, check);
 router.get("/one", checkAuth, getUserInfo);
-// router.get("/activation/:link", activateAccount);
 router.get("/activation/:link", activateAccount);
 router.put("/", checkAuth, changeProfile)
 

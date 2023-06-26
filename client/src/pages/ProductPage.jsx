@@ -21,6 +21,7 @@ import {
   reviewSortingValues,
   GROUP_TYPES_ROUTE,
   COMPARE_ROUTE,
+  LOGIN_ROUTE,
 } from "../utils/consts";
 import { Context } from "../App";
 import DefaultPagination from "../components/DefaultPagination";
@@ -319,23 +320,28 @@ export default function ProductPage() {
               </div>
             </div>
 
-            {user.isAuth && (
+            
               <div
                 onClick={async () => {
-                  if (
-                    product.favourite.find(
-                      (elem) => elem.productId === Number(id)
-                    )
-                  ) {
-                    await removeFromFavourite(id);
+                  if (user.isAuth) {
+                    if (
+                      product.favourite.find(
+                        (elem) => elem.productId === Number(id)
+                      )
+                    ) {
+                      await removeFromFavourite(id);
+                    } else {
+                      await addToFavourite(id);
+                    }
+                    let favourite = await getFavouriteIds();
+                    await setProduct((oldProduct) => ({
+                      ...oldProduct,
+                      favourite: favourite,
+                    }));
                   } else {
-                    await addToFavourite(id);
+                    navigate(LOGIN_ROUTE);
                   }
-                  let favourite = await getFavouriteIds();
-                  await setProduct((oldProduct) => ({
-                    ...oldProduct,
-                    favourite: favourite,
-                  }));
+                  
                 }}
                 onMouseOver={async () => {
                   setIsHoveredOver(true);
@@ -369,21 +375,28 @@ export default function ProductPage() {
 
                 <div className="product-heart-text">Добавить в избранное</div>
               </div>
-            )}
+            
 
             <div
               onClick={async () => {
-                if (product.cart.find((elem) => elem === Number(id))) {
-                  await setProduct((oldProduct) => ({
-                    ...oldProduct,
-                    cart: oldProduct.cart.filter((elem) => elem !== Number(id)),
-                  }));
+                if (user.isAuth) {
+                  if (product.cart.find((elem) => elem === Number(id))) {
+                    await setProduct((oldProduct) => ({
+                      ...oldProduct,
+                      cart: oldProduct.cart.filter(
+                        (elem) => elem !== Number(id)
+                      ),
+                    }));
+                  } else {
+                    await setProduct((oldProduct) => ({
+                      ...oldProduct,
+                      cart: [...oldProduct.cart, Number(id)],
+                    }));
+                  }
                 } else {
-                  await setProduct((oldProduct) => ({
-                    ...oldProduct,
-                    cart: [...oldProduct.cart, Number(id)],
-                  }));
+                  navigate(LOGIN_ROUTE);
                 }
+                
               }}
               className="product-option-container"
             >
@@ -400,30 +413,35 @@ export default function ProductPage() {
 
             <div
               onClick={async () => {
-                if (product.toCompare.find((elem) => elem === Number(id))) {
-                  await setProduct((oldProduct) => ({
-                    ...oldProduct,
-                    toCompare: oldProduct.toCompare.filter(
-                      (elem) => elem !== Number(id)
-                    ),
-                  }));
-                } else {
-                  await setProduct((oldProduct) => ({
-                    ...oldProduct,
-                    toCompare:
-                      oldProduct.toCompare.length < 2
-                        ? [...oldProduct.toCompare, Number(id)]
-                        : oldProduct.toCompare.map((element, index) =>
-                            index === 1 ? Number(id) : element
-                          ),
-                  }));
-                  if (
-                    product.toCompare.length === 1 ||
-                    product.toCompare.length === 2
-                  ) {
-                    navigate(COMPARE_ROUTE);
+                if (user.isAuth) {
+                  if (product.toCompare.find((elem) => elem === Number(id))) {
+                    await setProduct((oldProduct) => ({
+                      ...oldProduct,
+                      toCompare: oldProduct.toCompare.filter(
+                        (elem) => elem !== Number(id)
+                      ),
+                    }));
+                  } else {
+                    await setProduct((oldProduct) => ({
+                      ...oldProduct,
+                      toCompare:
+                        oldProduct.toCompare.length < 2
+                          ? [...oldProduct.toCompare, Number(id)]
+                          : oldProduct.toCompare.map((element, index) =>
+                              index === 1 ? Number(id) : element
+                            ),
+                    }));
+                    if (
+                      product.toCompare.length === 1 ||
+                      product.toCompare.length === 2
+                    ) {
+                      navigate(COMPARE_ROUTE);
+                    }
                   }
+                } else {
+                  navigate(LOGIN_ROUTE);
                 }
+                
               }}
               className="product-option-container"
             >
@@ -450,10 +468,10 @@ export default function ProductPage() {
               return (
                 <div
                   key={stat.id}
-                  style={index % 2 === 1 ? { backgroundColor: "white" } : {}}
                   className="product-page-stat"
                 >
-                  {stat.key}: {stat.value}
+                  <div className="product-page-stat-key">{stat.key}</div>
+                  <div className="product-page-stat-value">{stat.value}</div>
                 </div>
               );
             })}

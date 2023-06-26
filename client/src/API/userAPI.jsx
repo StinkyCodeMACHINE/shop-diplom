@@ -6,7 +6,7 @@ export async function registration(name, email, password) {
     name,
     email,
     password,
-    role: "ADMIN",
+    role: "USER",
   });
   return data;
 }

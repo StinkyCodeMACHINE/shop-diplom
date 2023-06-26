@@ -5,7 +5,7 @@ import CreateBrand from "../components/AdminPanel/modals/CreateBrand";
 import CreateProduct from "../components/AdminPanel/modals/CreateProduct";
 import { Context } from "../App";
 import {
-  changeOrderStatus,
+  setToDelivering,
   countReviews,
   deleteBanner,
   deleteBrand,
@@ -26,6 +26,7 @@ import {
   getReviews,
   getTypes,
   getTypesWithLimit,
+  setToDelivered,
 } from "../API/productAPI";
 import {
   API_URL,
@@ -44,6 +45,7 @@ import ChangeType from "../components/AdminPanel/modals/ChangeType";
 import ChangeProduct from "../components/AdminPanel/modals/ChangeProduct";
 import CreateBanner from "../components/AdminPanel/modals/CreateBanner";
 import ChangeBanner from "../components/AdminPanel/modals/ChangeBanner";
+import LoadProductsExcel from "../components/AdminPanel/modals/LoadProductsExcel";
 
 export default function AdminPanel() {
   const { product, setProduct, setWhatIsShown, whatIsShown } =
@@ -71,6 +73,11 @@ export default function AdminPanel() {
   useEffect(() => {
     options !== "" && apiCalls(false);
   }, [page]);
+
+  // при отсутствии даты
+  useEffect(() => {
+    displayed.data.length === 0 && page > 1 && setPage(oldPage => oldPage-1)
+  }, [displayed.data]);
 
   useEffect(() => {
     async function apiCalls() {
@@ -205,7 +212,8 @@ export default function AdminPanel() {
       {whatIsShown !== "" &&
         whatIsShown !== "limit" &&
         whatIsShown !== "cart" &&
-        whatIsShown !== "types" && (
+        whatIsShown !== "types" &&
+        whatIsShown !== "results" && (
           <div
             className="admin-page-modal-opacity"
             onClick={async (e) => {
@@ -238,6 +246,13 @@ export default function AdminPanel() {
             )}
             {whatIsShown === "product" && (
               <CreateProduct
+                limit={limit}
+                page={page}
+                setDisplayed={setDisplayed}
+              />
+            )}
+            {whatIsShown === "productExcel" && (
+              <LoadProductsExcel
                 limit={limit}
                 page={page}
                 setDisplayed={setDisplayed}
@@ -314,7 +329,7 @@ export default function AdminPanel() {
               }
               className="admin-page-option"
             >
-              Типы
+              Категории
             </div>
             <div
               style={options === "brands" ? { color: "blue" } : {}}
@@ -390,7 +405,9 @@ export default function AdminPanel() {
                   />
                 </div>
 
-                <div className="product-heart-text">Добавить новый тип</div>
+                <div className="product-heart-text">
+                  Добавить новую категорию
+                </div>
               </div>
             )}
             {options === "brands" && (
@@ -409,19 +426,37 @@ export default function AdminPanel() {
               </div>
             )}
             {options === "products" && (
-              <div
-                onClick={() => setWhatIsShown("product")}
-                className="product-option-container"
-              >
-                <div className="product-heart-icon-container">
-                  <img
-                    className="product-heart product-heart-empty"
-                    src="/assets/add.png"
-                  />
+              <>
+                <div
+                  onClick={() => setWhatIsShown("product")}
+                  className="product-option-container"
+                >
+                  <div className="product-heart-icon-container">
+                    <img
+                      className="product-heart product-heart-empty"
+                      src="/assets/add.png"
+                    />
+                  </div>
+
+                  <div className="product-heart-text">Добавить новый товар</div>
                 </div>
 
-                <div className="product-heart-text">Добавить новый товар</div>
-              </div>
+                <div
+                  onClick={() => setWhatIsShown("productExcel")}
+                  className="product-option-container"
+                >
+                  <div className="product-heart-icon-container">
+                    <img
+                      className="product-heart product-heart-empty"
+                      src="/assets/add.png"
+                    />
+                  </div>
+
+                  <div className="product-heart-text">
+                    Загрузить товары из таблицы Excel
+                  </div>
+                </div>
+              </>
             )}
             {options === "banners" && (
               <div
@@ -441,63 +476,64 @@ export default function AdminPanel() {
           </div>
           {options !== "" && (
             <div className="admin-page-table">
-              <div className="admin-page-search-container">
-                <input
-                  onChange={(e) => setSearchValue(e.target.value)}
-                  value={searchValue}
-                  placeholder={
-                    options === "orders" ||
-                    options === "reviews" ||
-                    options === "banners"
-                      ? "Введите id"
-                      : "Введите название"
-                  }
-                  className="navbar-search-bar"
-                  type="text"
-                />
-                <img
-                  onClick={async () => {
-                    await setSearchValue("");
-                  }}
-                  class="navbar-x-icon"
-                  src="/assets/x.svg"
-                />
-              </div>
-
-              <div className="shop-main-container-top-option-container">
-                <div
-                  onClick={() =>
-                    whatIsShown !== "limit"
-                      ? setWhatIsShown("limit")
-                      : setWhatIsShown("")
-                  }
-                >
-                  Показывать: <span>{limit}</span>
+              <div className="admin-page-search-options">
+                <div className="admin-page-search-container">
+                  <input
+                    onChange={(e) => setSearchValue(e.target.value)}
+                    value={searchValue}
+                    placeholder={
+                      options === "orders" ||
+                      options === "reviews" ||
+                      options === "banners"
+                        ? "Введите id"
+                        : "Введите название"
+                    }
+                    className="navbar-search-bar"
+                    type="text"
+                  />
+                  <img
+                    onClick={async () => {
+                      await setSearchValue("");
+                    }}
+                    class="navbar-x-icon"
+                    src="/assets/x.svg"
+                  />
                 </div>
-                <img
-                  style={
-                    whatIsShown !== "limit"
-                      ? { transform: "rotate(-270deg)" }
-                      : { transform: "rotate(-90deg)" }
-                  }
-                  src="/assets/drop-down-arrow.svg"
-                  className="navbar-types-icon"
-                />
-                {whatIsShown === "limit" && (
-                  <div className="shop-main-container-top-sorting-options">
-                    {productLimitValues.map((elem) => (
-                      <div
-                        key={elem.value}
-                        onClick={() => {
-                          setWhatIsShown("");
-                          setLimit(elem.value);
-                        }}
-                      >
-                        {elem.value}
-                      </div>
-                    ))}
+                <div className="shop-main-container-top-option-container">
+                  <div
+                    onClick={() =>
+                      whatIsShown !== "limit"
+                        ? setWhatIsShown("limit")
+                        : setWhatIsShown("")
+                    }
+                  >
+                    Показывать: <span>{limit}</span>
                   </div>
-                )}
+                  <img
+                    style={
+                      whatIsShown !== "limit"
+                        ? { transform: "rotate(-270deg)" }
+                        : { transform: "rotate(-90deg)" }
+                    }
+                    src="/assets/drop-down-arrow.svg"
+                    className="navbar-types-icon"
+                  />
+                  {whatIsShown === "limit" && (
+                    <div className="shop-main-container-top-sorting-options">
+                      {productLimitValues.map((elem) => (
+                        <div
+                          key={elem.value}
+                          onClick={() => {
+                            setWhatIsShown("");
+                            setLimit(elem.value);
+                          }}
+                        >
+                          {elem.value}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
 
               {options === "groups" && displayed.what === "groups" && (
@@ -781,7 +817,13 @@ export default function AdminPanel() {
                               : "0%"}
                           </td>
                           <td>
-                            <div className="admin-page-rating-stars-and-stuff">
+                            <div
+                              className={
+                                !elem.rating
+                                  ? "admin-page-rating-stars-and-stuff admin-page-rating-zero-stars"
+                                  : "admin-page-rating-stars-and-stuff"
+                              }
+                            >
                               <div>
                                 {starsArr.map((star) => {
                                   return (
@@ -853,7 +895,10 @@ export default function AdminPanel() {
                           <td>
                             <div
                               onClick={async () => {
-                                await deleteProduct({ id: elem.id });
+                                await deleteProduct({
+                                  id: elem.id,
+                                  img: elem.img,
+                                });
                                 const dataArray = await getProducts({
                                   limit,
                                   page: page,
@@ -951,7 +996,7 @@ export default function AdminPanel() {
                           <div>
                             <div
                               onClick={async () => {
-                                await changeOrderStatus({ id: orderElem.id });
+                                await setToDelivering({ id: orderElem.id });
                                 let orders = await getAllOrders({
                                   name: searchValue,
                                 });
@@ -984,12 +1029,56 @@ export default function AdminPanel() {
                                 <img
                                   style={{ width: "30px", height: "30px" }}
                                   className="product-heart product-heart-empty"
-                                  src="/assets/settings.png"
+                                  src="/assets/add.png"
                                 />
                               </div>
 
                               <div className="product-heart-text">
-                                Изменить статус заказа
+                                Передано в доставку
+                              </div>
+                            </div>
+
+                            <div
+                              onClick={async () => {
+                                await setToDelivered({ id: orderElem.id });
+                                let orders = await getAllOrders({
+                                  name: searchValue,
+                                });
+                                orders = orders.flatMap((elem) =>
+                                  elem.orderProducts.length === 0 ? [] : elem
+                                );
+                                const totalCount = orders.length;
+                                let limitedOrders = [];
+
+                                //
+                                let offset = page * limit - limit;
+                                for (
+                                  let i = offset;
+                                  i < offset + limit && i < orders.length;
+                                  i++
+                                ) {
+                                  limitedOrders.push(orders[i]);
+                                }
+
+                                //
+                                await setDisplayed({
+                                  what: "orders",
+                                  data: limitedOrders,
+                                  totalCount,
+                                });
+                              }}
+                              className="product-option-container"
+                            >
+                              <div className="product-heart-icon-container">
+                                <img
+                                  style={{ width: "30px", height: "30px" }}
+                                  className="product-heart product-heart-empty"
+                                  src="/assets/checkmark.svg"
+                                />
+                              </div>
+
+                              <div className="product-heart-text">
+                                Доставлено
                               </div>
                             </div>
 
@@ -1060,13 +1149,9 @@ export default function AdminPanel() {
                             </div>
                             <div>
                               Дата оформления:{" "}
-                              {`${new Date(
-                                orderElem.createdAt
-                              ).getDate()}.${new Date(
-                                orderElem.createdAt
-                              ).getMonth()}.${new Date(
-                                orderElem.createdAt
-                              ).getFullYear()}`}
+                              {`${new Date(orderElem.createdAt).getDate()}.${
+                                new Date(orderElem.createdAt).getMonth() + 1
+                              }.${new Date(orderElem.createdAt).getFullYear()}`}
                             </div>
                             <div>
                               Статус:{" "}
@@ -1139,13 +1224,13 @@ export default function AdminPanel() {
                             </div>
                           </td>
                           <td>{elem.diff}</td>
-                          <td>{`${new Date(
-                            elem.createdAt
-                          ).getDate()}.${new Date(
-                            elem.createdAt
-                          ).getMonth()}.${new Date(
-                            elem.createdAt
-                          ).getFullYear()}`}</td>
+                          <td>
+                            <div className="admin-page-review-date">{`${new Date(
+                              elem.createdAt
+                            ).getDate()}.${
+                              new Date(elem.createdAt).getMonth() + 1
+                            }.${new Date(elem.createdAt).getFullYear()}`}</div>
+                          </td>
                           <td>{elem.user.name}</td>
                           <td>{elem.user.email}</td>
                           <td>

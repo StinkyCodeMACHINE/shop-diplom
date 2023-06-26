@@ -109,7 +109,7 @@ export default function ChangeType({ setDisplayed, page, limit, prevThing }) {
                 }));
               }}
               type="text"
-              placeholder="Введите название типа"
+              placeholder="Введите название категории"
             />
             <select
               name="group"
@@ -180,7 +180,7 @@ export default function ChangeType({ setDisplayed, page, limit, prevThing }) {
             >
               Добавить новое свойство
             </button>
-            <div>
+            <div className="product-options-container">
               <button
                 className="product-option-container"
                 onClick={() => setWhatIsShown("")}

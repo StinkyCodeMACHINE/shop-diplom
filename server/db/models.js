@@ -132,8 +132,12 @@ const brand = db.define("brand", {
 
 const review = db.define("review", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  thumbsUp: { type: DataTypes.INTEGER, defaultValue: 0 },
-  thumbsDown: { type: DataTypes.INTEGER, defaultValue: 0 },
+  thumbsUp: { type: DataTypes.INTEGER, defaultValue: 0, validate: { min: 0 } },
+  thumbsDown: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+    validate: { min: 0 },
+  },
   advantages: { type: DataTypes.TEXT },
   disadvantages: { type: DataTypes.TEXT },
   text: { type: DataTypes.TEXT, allowNull: false },
@@ -166,7 +170,7 @@ const productInfo = db.define(
   { freezeTableName: true }
 );
 
-user.hasOne(order, { onDelete: "cascade", hooks: true });
+user.hasMany(order, { onDelete: "cascade", hooks: true });
 order.belongsTo(user);
 
 user.hasMany(review, { onDelete: "cascade", hooks: true });
@@ -225,13 +229,14 @@ type.hasMany(banner, {
 });
 banner.belongsTo(type);
 
-type.hasMany(product, { onDelete: "cascade", hooks: true });
-
 type.hasMany(defaultTypeInfo, { onDelete: "cascade", hooks: true });
 defaultTypeInfo.belongsTo(type);
 
 defaultTypeInfo.hasMany(productInfo, { onDelete: "cascade", hooks: true });
 productInfo.belongsTo(defaultTypeInfo);
+
+type.hasMany(productInfo, { onDelete: "cascade", hooks: true });
+productInfo.belongsTo(type);
 
 module.exports = {
   user,

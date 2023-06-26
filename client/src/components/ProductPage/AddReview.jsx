@@ -246,9 +246,6 @@ export default function AddReview({
             </div>
 
             <div className="product-add-container">
-              {/* <div className="product-option-container" onClick={addHandler}>
-                Добавить
-              </div> */}
               <div onClick={addHandler} className="product-option-container">
                 <div className="product-heart-icon-container">
                   <img

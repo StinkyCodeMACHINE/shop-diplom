@@ -16,8 +16,6 @@ import {
   addToFavourite,
   removeFromFavourite,
 } from "../API/productAPI";
-import Pagination from "../components/Favourite/Pagination";
-import ProductCard from "../components/Favourite/ProductCard";
 
 export default function Compare() {
   //31 33

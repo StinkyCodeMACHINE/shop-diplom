@@ -19,7 +19,7 @@ async function sendMail(recipient, activationLink) {
     text: "",
     html: `
             <div>
-                <h1>Для активации перейдите по ссылке</h1>
+                <h1>Для активации аккаунта перейдите по ссылке:</h1>
                 <a href="${process.env.API_URL}user/activation/${activationLink}">${process.env.API_URL}user/activation/${activationLink}</a>
             </div>
         `,
@@ -27,3 +27,5 @@ async function sendMail(recipient, activationLink) {
 }
 
 module.exports = sendMail;
+
+

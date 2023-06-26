@@ -15,11 +15,13 @@ const {
   deleteProduct,
   getAllReviews,
   deleteReview,
+  loadFromExcel,
 } = require("../controllers/productController");
 const checkRole = require("../middleware/checkRole");
 const checkAuth = require("../middleware/checkAuth");
 
 router.post("/", checkRole("ADMIN"), create);
+router.post("/excel", checkRole("ADMIN"), loadFromExcel);
 router.post("/:id/review", checkAuth, leaveReview);
 router.post("/:id/review/rate/:reviewId", checkAuth, rateReview);
 router.get("/", getAll);

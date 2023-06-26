@@ -103,6 +103,12 @@ export async function createProduct(product) {
   return data;
 }
 
+export async function loadFromExcel(excel) {
+  const { data } = await axiosAuthReq.post("/api/product/excel", excel);
+  return data;
+}
+
+
 export async function getProducts({
   typeId,
   brandId,
@@ -142,8 +148,12 @@ export async function getOneProduct(id) {
   return data;
 }
 
-export async function deleteProduct({ id }) {
-  const { data } = await axiosAuthReq.delete(`/api/product/${id}`);
+export async function deleteProduct({ id, img }) {
+  const { data } = await axiosAuthReq.delete(`/api/product/${id}`, {
+    params: {
+      img
+    }
+  });
   return data;
 }
 
@@ -186,7 +196,7 @@ export async function getAllReviews({ page, limit, searchValue }) {
     params: {
       page,
       limit,
-      searchValue
+      searchValue,
     },
   });
   return data;
@@ -259,8 +269,13 @@ export async function getFavouriteProducts(page, limit) {
   return data;
 }
 
-export async function getInstances(keyId) {
-  const { data } = await axiosReq.get(`/api/info/${keyId}/`);
+export async function getInstances(key, typeId) {
+  const { data } = await axiosReq.get(`/api/info/`, {
+    params: {
+      typeId,
+      key,
+    },
+  });
   return data;
 }
 
@@ -280,7 +295,7 @@ export async function getOrders() {
   return data;
 }
 
-export async function getAllOrders({searchValue}) {
+export async function getAllOrders({ searchValue }) {
   const { data } = await axiosAuthReq.get(`/api/order/all`, {
     params: {
       searchValue,
@@ -289,14 +304,23 @@ export async function getAllOrders({searchValue}) {
   return data;
 }
 
-export async function changeOrderStatus({ id }) {
-  const { data } = await axiosAuthReq.put(`/api/order/${id}`);
+export async function setToDelivering({ id }) {
+  const { data } = await axiosAuthReq.put(`/api/order/${id}/delivering`);
   return data;
 }
 
+export async function setToDelivered({ id }) {
+  const { data } = await axiosAuthReq.put(`/api/order/${id}/delivered`);
+  return data;
+}
 
 export async function deleteOrder({ id }) {
   const { data } = await axiosAuthReq.delete(`/api/order/${id}`);
+  return data;
+}
+
+export async function cancelOrder({ id }) {
+  const { data } = await axiosAuthReq.delete(`/api/order/${id}/cancel`);
   return data;
 }
 
@@ -327,6 +351,3 @@ export async function deleteBanner({ id, img }) {
   });
   return data;
 }
-
-
-

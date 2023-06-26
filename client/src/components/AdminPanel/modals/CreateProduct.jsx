@@ -160,7 +160,7 @@ export default function CreateProduct({ setDisplayed, page, limit }) {
       <>
         <div className="modal-inner-container">
           <form>
-            <h2>Добавить устройство</h2>
+            <h2>Добавить товар</h2>
             <select
               name="type"
               value={inputValues.type}
@@ -231,27 +231,30 @@ export default function CreateProduct({ setDisplayed, page, limit }) {
               min={1}
               max={999999}
             />
-            <div class="input-icon">
+            <div>
               <h3>Размер скидки</h3>
-              <input
-                onChange={(e) =>
-                  setInputValues((prevInputValues) => ({
-                    ...prevInputValues,
-                    discount:
-                      Number(e.target.value) === null
-                        ? 0
-                        : Number(e.target.value) > 100
-                        ? 100
-                        : Number(e.target.value),
-                  }))
-                }
-                value={inputValues.discount}
-                type="number"
-                placeholder="Введите размер скидки (если есть)"
-                min={0}
-                max={100}
-              />
-              <i>%</i>
+
+              <div className="input-icon">
+                <input
+                  onChange={(e) =>
+                    setInputValues((prevInputValues) => ({
+                      ...prevInputValues,
+                      discount:
+                        Number(e.target.value) === null
+                          ? 0
+                          : Number(e.target.value) > 100
+                          ? 100
+                          : Number(e.target.value),
+                    }))
+                  }
+                  value={inputValues.discount}
+                  type="number"
+                  placeholder="Введите размер скидки (если есть)"
+                  min={0}
+                  max={100}
+                />
+                <i>%</i>
+              </div>
             </div>
             <h3>Количество товара</h3>
 
@@ -349,7 +352,7 @@ export default function CreateProduct({ setDisplayed, page, limit }) {
               Добавить новое свойство
             </button>
 
-            <div>
+            <div className="product-options-container">
               <button
                 className="product-option-container"
                 onClick={() => setWhatIsShown("")}

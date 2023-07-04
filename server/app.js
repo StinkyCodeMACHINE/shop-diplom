@@ -22,12 +22,6 @@ const orderRouter = require("./routes/orderRouter")
 const bannerRouter = require("./routes/bannerRouter")
 const { reviewRating, order, review } = require("./db/models");
 const whatsappclient = require("./service/whatsapp")
-// разрешение обращения от других источников
-// app.use((req, res, next) => {
-//   res.header("Access-Control-Allow-Origin", "*");
-//   next();
-// });
-
 
 app.use(cors())
 app.use(express.json())

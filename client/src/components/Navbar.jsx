@@ -144,9 +144,6 @@ export default function Navbar() {
 
   return (
     <header className="navbar">
-      {/* <Link to={MAIN_PAGE_ROUTE} onClick={(e) => setWhatIsShown("")}>
-        Шазам
-      </Link> */}
       <img
         className="logo"
         src="/assets/logowb.png"
@@ -439,4 +436,3 @@ export default function Navbar() {
     </header>
   );
 }
-

@@ -10,7 +10,7 @@
     brightness(108%) contrast(101%);
   --gray: #817d7d;
   --gray-a: hsla(0, 2%, 50%, 0.2);
-  --green-a: hsla(137, 70%, 45%, 0.2);
+  --green-a: hwb(137 13% 24% / 0.2);
   --cred-a: hsla(9, 93%, 58%, 0.2);
   --cred: #f84f31;
   --green: #23c552;
